@@ -1,0 +1,77 @@
+@import './styles/tokens.css';
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--sk-color-border-strong)) transparent;
+}
+
+html,
+body {
+  block-size: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--sk-font-sans);
+  font-size: var(--sk-text-md);
+  line-height: var(--sk-leading-normal);
+  color: hsl(var(--sk-color-text));
+  background: hsl(var(--sk-color-bg-app));
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#app {
+  block-size: 100%;
+}
+
+dialog {
+  max-inline-size: calc(100% - (var(--sk-space-lg) * 2));
+  max-block-size: calc(100% - (var(--sk-space-lg) * 2));
+  overflow: auto;
+}
+
+html[data-window='overlay'] body,
+html[data-window='break'] body,
+html[data-window='locate'] body {
+  overflow: hidden;
+  background: transparent;
+}
+
+html[data-window='break'] body {
+  padding: var(--sk-space-sm);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: var(--sk-edge) solid hsl(var(--sk-color-focus));
+  outline-offset: var(--sk-space-3xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: var(--sk-duration-reduced) !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: var(--sk-duration-reduced) !important;
+  }
+}

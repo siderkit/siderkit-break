@@ -1,0 +1,13 @@
+{
+  "threshold": 3,
+  "min-tokens": 50,
+  "reporters": ["console"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/target/**",
+    "**/gen/**",
+    "**/*.md"
+  ]
+}

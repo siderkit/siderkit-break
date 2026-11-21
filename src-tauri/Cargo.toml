@@ -1,0 +1,51 @@
+[package]
+name = "siderkit-break"
+version = "1.0.0"
+description = "A tiny cross-platform break reminder."
+authors = ["Siderkit contributors"]
+edition = "2021"
+rust-version = "1.77.2"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/siderkit/siderkit-break"
+
+[lib]
+name = "siderkit_break_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.6", features = [] }
+
+[dependencies]
+base64 = "0.23.1"
+log = "0.4.35"
+rodio = { version = "0.21.1", default-features = false, features = ["playback", "wav"] }
+rusqlite = { version = "0.43.0", features = ["bundled"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+tauri = { version = "2.12.7", features = ["tray-icon", "image-png", "macos-private-api"] }
+tauri-plugin-autostart = "2.7.0"
+tauri-plugin-dialog = "2.7.3"
+tauri-plugin-global-shortcut = "2.4.1"
+tauri-plugin-log = "2.10.2"
+tauri-plugin-notification = "2.8.1"
+tauri-plugin-single-instance = "2.5.5"
+tauri-plugin-window-state = "2.5.0"
+thiserror = "2.0.21"
+uuid = { version = "1.29.3", features = ["v7", "serde"] }
+
+[dev-dependencies]
+proptest = "1.12.0"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61.2", features = [
+    "Win32_Foundation",
+    "Win32_Globalization",
+    "Win32_UI_WindowsAndMessaging",
+] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+gdkx11 = "0.18.2"
+gtk = { version = "0.18.2", features = ["v3_24"] }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

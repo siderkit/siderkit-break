@@ -1,0 +1,343 @@
+/* ════════════════════════════════════════════════════════════════
+   Siderkit Break design tokens — single source of truth.
+   Rules:
+   1. Components may only use var(--sk-*); raw px/rem/hex/rgba values
+      are forbidden outside this file (scripts/check-tokens.mjs).
+   2. Names are semantic; value-suffix names such as -16 are forbidden.
+   3. Colors are HSL triplets: hsl(var(--sk-color-x)) or
+      hsl(var(--sk-color-x) / 0.5).
+   4. Dark theme repaints the same names; no parallel component CSS.
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+
+  /* ── Brand & semantic colors ────────────────────────────────── */
+  --sk-color-brand: 150 60% 30%;
+  --sk-color-brand-strong: 150 64% 23%;
+  --sk-color-brand-soft: 150 55% 90%;
+  --sk-color-on-brand: 150 100% 98%;
+  --sk-color-break: 12 64% 59%;
+  --sk-color-break-soft: 13 58% 91%;
+  --sk-color-countdown: 205 55% 38%;
+  --sk-color-countdown-soft: 205 45% 91%;
+  --sk-color-warning: 25 60% 44%;
+  --sk-color-swatch-forest: 150 62% 38%;
+  --sk-color-swatch-ocean: 205 82% 46%;
+  --sk-color-swatch-ember: 8 80% 52%;
+  --sk-color-swatch-plum: 272 68% 50%;
+  --sk-color-swatch-slate: 220 10% 44%;
+  --sk-color-swatch-rose: 332 75% 56%;
+  --sk-color-swatch-aurora: 180 70% 42%;
+  --sk-color-swatch-sand: 42 85% 52%;
+  --sk-color-swatch-shine: 0 0% 100% / 0.5;
+  --sk-color-swatch-ring: 0 0% 100% / 0.3;
+
+  /* ── Surfaces ───────────────────────────────────────────────── */
+  --sk-color-bg-app: 39 39% 93%;
+  --sk-color-bg-surface: 40 100% 97%;
+  --sk-color-bg-raised: 45 100% 99%;
+  --sk-gradient-app:
+    radial-gradient(circle at 18% 8%, hsl(var(--sk-color-brand-soft) / 0.8), transparent 34%),
+    hsl(var(--sk-color-bg-app));
+
+  /* ── Text ───────────────────────────────────────────────────── */
+  --sk-color-text: 162 18% 14%;
+  --sk-color-text-muted: 150 6% 46%;
+
+  /* ── Lines ──────────────────────────────────────────────────── */
+  --sk-color-border: 162 18% 14% / 0.12;
+  --sk-color-border-strong: 162 18% 14% / 0.22;
+  --sk-color-track: 150 60% 30% / 0.12;
+
+  /* ── Floating surfaces ──────────────────────────────────────── */
+  --sk-color-overlay-surface: 40 100% 97% / 0.4;
+  --sk-color-focus: 12 64% 59%;
+
+  /* ── Spacing ────────────────────────────────────────────────── */
+  --sk-space-3xs: 2px;
+  --sk-space-2xs: 4px;
+  --sk-space-xs: 6px;
+  --sk-space-sm: 8px;
+  --sk-space-md: 12px;
+  --sk-space-lg: 16px;
+  --sk-space-xl: 20px;
+
+  /* ── Radius ─────────────────────────────────────────────────── */
+  --sk-radius-xs: 4px;
+  --sk-radius-sm: 8px;
+  --sk-radius-md: 12px;
+  --sk-radius-lg: 20px;
+  --sk-radius-full: 9999px;
+
+  /* ── Borders ────────────────────────────────────────────────── */
+  --sk-edge: 1px;
+
+  /* ── Typography ─────────────────────────────────────────────── */
+  --sk-font-sans: 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+  --sk-text-xs: 12px;
+  --sk-text-sm: 13px;
+  --sk-text-md: 14px;
+  --sk-text-lg: 16px;
+  --sk-text-xl: 20px;
+  --sk-text-display: 44px;
+  --sk-text-display-compact: 34px;
+  --sk-text-overlay: 20px;
+  --sk-overlay-drop-size: 18px;
+  --sk-text-clock-long: 26px;
+  --sk-leading-none: 1;
+  --sk-leading-tight: 1.25;
+  --sk-leading-normal: 1.5;
+  --sk-weight-medium: 500;
+  --sk-weight-semibold: 600;
+  --sk-tracking-tight: -0.02em;
+  --sk-tracking-wide: 0.08em;
+
+  /* ── Controls ───────────────────────────────────────────────── */
+  --sk-control-height: 44px;
+  --sk-control-height-sm: 32px;
+  --sk-toggle-width: 42px;
+  --sk-toggle-height: 24px;
+  --sk-toggle-thumb-size: 18px;
+  --sk-toggle-inset: 3px;
+  --sk-number-field-width: 64px;
+  --sk-timer-ring-size: 180px;
+  --sk-timer-ring-size-compact: 136px;
+  --sk-brand-mark-size: 32px;
+  --sk-icon-button-size: 26px;
+  --sk-icon-size: 16px;
+  --sk-icon-stroke: 1.5px;
+  --sk-shadow-icon-drop: 0 2px 5px hsl(var(--sk-color-brand-strong) / 0.3);
+  --sk-overlay-blur: 6px;
+  --sk-overlay-drop-blur: 3px;
+  /* Locate hint geometry; kept in sync with locate.rs so the rounded frame
+     centers on the droplet in both the idle and countdown shapes. */
+  --sk-locate-center-x: 120px;
+  --sk-locate-center-y: 104px;
+  --sk-locate-frame-size: 34px;
+  --sk-locate-frame-radius: 10px;
+  --sk-locate-frame-stroke: 2px;
+  --sk-locate-frame-halo-spread: 4px;
+  --sk-locate-frame-halo-blur: 16px;
+  --sk-locate-echo-stroke: 1px;
+  --sk-locate-frame-in-duration: 0.34s;
+  --sk-locate-glow-duration: 1.6s;
+  --sk-locate-echo-duration: 0.95s;
+  --sk-locate-echo-delay: 0.18s;
+  --sk-locate-label-gap: 32px;
+  --sk-locate-label-padding-block: 6px;
+  --sk-locate-label-padding-inline: 12px;
+  --sk-locate-label-arrow: 6px;
+  --sk-overlay-drop-hover-opacity: 0.62;
+  --sk-shadow-droplet: 0 1px 3px hsl(220 20% 10% / 0.18);
+  --sk-shadow-droplet-hover: 0 2px 5px hsl(220 20% 10% / 0.24);
+  --sk-drop-body-top: 195 60% 99% / 0.04;
+  --sk-drop-body-middle: 205 35% 82% / 0.09;
+  --sk-drop-body-bottom: 214 30% 42% / 0.16;
+  --sk-drop-outline: 215 30% 25% / 0.42;
+  --sk-drop-shine: 0 0% 100% / 0.92;
+  --sk-drop-shine-soft: 0 0% 100% / 0.26;
+  --sk-drop-inner-rim: 0 0% 100% / 0.42;
+  --sk-drop-inner-rim-strong: 0 0% 100% / 0.62;
+  --sk-drop-stroke: 1px;
+  --sk-drop-rim-stroke: 0.9px;
+  --sk-drop-pulse-rim: 0 0% 100% / 0.6;
+  --sk-drop-pulse-halo: 0 0% 100% / 0.22;
+  --sk-drop-move-outline: 0 0% 100% / 0.8;
+  --sk-swatch-size: 28px;
+  --sk-dialog-inline-size: 320px;
+  --sk-dialog-inline-size-wide: 440px;
+  --sk-dialog-max-block-size: calc(100dvh - (var(--sk-space-lg) * 2));
+  --sk-history-dialog-block-size: min(560px, var(--sk-dialog-max-block-size));
+  --sk-progress-height: 6px;
+  --sk-language-list-height: 232px;
+
+  /* ── Motion ─────────────────────────────────────────────────── */
+  --sk-duration-fast: 0.12s;
+  --sk-duration-base: 0.18s;
+  --sk-duration-slow: 0.24s;
+  --sk-duration-reduced: 0.01ms;
+  --sk-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Elevation ──────────────────────────────────────────────── */
+  --sk-shadow-card: 0 18px 48px hsl(162 20% 20% / 0.14);
+  --sk-shadow-soft: 0 2px 6px hsl(162 20% 20% / 0.08);
+  --sk-shadow-thumb: 0 1px 4px hsl(162 20% 20% / 0.24);
+
+  /* ── Opacity ────────────────────────────────────────────────── */
+  --sk-opacity-disabled: 0.45;
+  --sk-opacity-loading: 0.55;
+}
+
+[data-theme='Dark'] {
+  color-scheme: dark;
+
+  --sk-shadow-droplet: 0 1px 3px hsl(0 0% 0% / 0.3);
+  --sk-shadow-droplet-hover: 0 2px 5px hsl(0 0% 0% / 0.36);
+  --sk-drop-body-top: 0 0% 100% / 0.05;
+  --sk-drop-body-middle: 200 25% 82% / 0.1;
+  --sk-drop-body-bottom: 205 30% 72% / 0.16;
+  --sk-drop-outline: 0 0% 100% / 0.55;
+  --sk-drop-shine: 0 0% 100% / 0.95;
+  --sk-drop-shine-soft: 0 0% 100% / 0.3;
+  --sk-drop-inner-rim: 0 0% 100% / 0.4;
+  --sk-drop-inner-rim-strong: 0 0% 100% / 0.6;
+  --sk-drop-pulse-rim: 0 0% 100% / 0.45;
+  --sk-drop-pulse-halo: 0 0% 100% / 0.18;
+  --sk-drop-move-outline: 0 0% 100% / 0.7;
+
+  --sk-color-brand: 150 55% 68%;
+  --sk-color-brand-strong: 150 60% 80%;
+  --sk-color-brand-soft: 150 30% 18%;
+  --sk-color-on-brand: 150 35% 10%;
+  --sk-color-break: 13 79% 73%;
+  --sk-color-break-soft: 10 27% 18%;
+  --sk-color-countdown: 200 60% 70%;
+  --sk-color-countdown-soft: 205 25% 18%;
+  --sk-color-warning: 24 67% 66%;
+  --sk-color-bg-app: 163 17% 8%;
+  --sk-color-bg-surface: 162 16% 11%;
+  --sk-color-bg-raised: 156 16% 14%;
+  --sk-gradient-app:
+    radial-gradient(circle at 18% 8%, hsl(var(--sk-color-brand-soft) / 0.55), transparent 34%),
+    hsl(var(--sk-color-bg-app));
+  --sk-color-text: 140 20% 94%;
+  --sk-color-text-muted: 153 10% 65%;
+  --sk-color-border: 140 20% 94% / 0.12;
+  --sk-color-border-strong: 140 20% 94% / 0.2;
+  --sk-color-track: 161 35% 67% / 0.16;
+  --sk-color-overlay-surface: 162 16% 11% / 0.52;
+  --sk-color-focus: 13 79% 73%;
+  --sk-shadow-card: 0 18px 48px hsl(0 0% 0% / 0.35);
+  --sk-shadow-soft: 0 2px 6px hsl(0 0% 0% / 0.24);
+  --sk-shadow-thumb: 0 1px 4px hsl(0 0% 0% / 0.35);
+}
+
+/* ── Color styles ────────────────────────────────────────────────
+   Each palette repaints the same semantic names; components never
+   branch on a palette. Forest is the base token set above. */
+:root[data-palette='Ocean'] {
+  --sk-color-brand: 205 80% 36%;
+  --sk-color-brand-strong: 205 85% 28%;
+  --sk-color-brand-soft: 205 65% 91%;
+  --sk-color-on-brand: 200 100% 98%;
+  --sk-color-break: 38 85% 46%;
+  --sk-color-break-soft: 38 75% 91%;
+}
+
+:root[data-theme='Dark'][data-palette='Ocean'] {
+  --sk-color-brand: 205 75% 70%;
+  --sk-color-brand-strong: 205 80% 82%;
+  --sk-color-brand-soft: 205 35% 18%;
+  --sk-color-on-brand: 205 40% 10%;
+  --sk-color-break: 38 85% 68%;
+  --sk-color-break-soft: 38 30% 18%;
+}
+
+:root[data-palette='Ember'] {
+  --sk-color-brand: 8 78% 44%;
+  --sk-color-brand-strong: 8 82% 35%;
+  --sk-color-brand-soft: 8 70% 92%;
+  --sk-color-on-brand: 10 100% 98%;
+  --sk-color-break: 180 60% 36%;
+  --sk-color-break-soft: 180 45% 90%;
+}
+
+:root[data-theme='Dark'][data-palette='Ember'] {
+  --sk-color-brand: 8 75% 72%;
+  --sk-color-brand-strong: 8 80% 83%;
+  --sk-color-brand-soft: 8 35% 19%;
+  --sk-color-on-brand: 8 40% 10%;
+  --sk-color-break: 180 55% 64%;
+  --sk-color-break-soft: 180 25% 18%;
+}
+
+:root[data-palette='Plum'] {
+  --sk-color-brand: 272 65% 42%;
+  --sk-color-brand-strong: 272 70% 33%;
+  --sk-color-brand-soft: 272 55% 93%;
+  --sk-color-on-brand: 275 100% 98%;
+  --sk-color-break: 38 85% 48%;
+  --sk-color-break-soft: 38 75% 91%;
+}
+
+:root[data-theme='Dark'][data-palette='Plum'] {
+  --sk-color-brand: 272 70% 76%;
+  --sk-color-brand-strong: 272 75% 86%;
+  --sk-color-brand-soft: 272 30% 19%;
+  --sk-color-on-brand: 272 35% 10%;
+  --sk-color-break: 38 85% 68%;
+  --sk-color-break-soft: 38 28% 18%;
+}
+
+:root[data-palette='Slate'] {
+  --sk-color-brand: 220 10% 36%;
+  --sk-color-brand-strong: 220 12% 28%;
+  --sk-color-brand-soft: 220 12% 92%;
+  --sk-color-on-brand: 210 25% 98%;
+  --sk-color-break: 12 75% 52%;
+  --sk-color-break-soft: 12 65% 92%;
+}
+
+:root[data-theme='Dark'][data-palette='Slate'] {
+  --sk-color-brand: 220 10% 74%;
+  --sk-color-brand-strong: 220 12% 85%;
+  --sk-color-brand-soft: 220 10% 19%;
+  --sk-color-on-brand: 220 15% 10%;
+  --sk-color-break: 12 75% 70%;
+  --sk-color-break-soft: 12 28% 18%;
+}
+
+:root[data-palette='Rose'] {
+  --sk-color-brand: 332 72% 46%;
+  --sk-color-brand-strong: 332 76% 37%;
+  --sk-color-brand-soft: 332 65% 93%;
+  --sk-color-on-brand: 330 100% 98%;
+  --sk-color-break: 175 55% 36%;
+  --sk-color-break-soft: 175 45% 90%;
+}
+
+:root[data-theme='Dark'][data-palette='Rose'] {
+  --sk-color-brand: 332 75% 77%;
+  --sk-color-brand-strong: 332 80% 87%;
+  --sk-color-brand-soft: 332 30% 19%;
+  --sk-color-on-brand: 332 35% 10%;
+  --sk-color-break: 175 55% 62%;
+  --sk-color-break-soft: 175 25% 18%;
+}
+
+:root[data-palette='Aurora'] {
+  --sk-color-brand: 180 72% 30%;
+  --sk-color-brand-strong: 180 76% 23%;
+  --sk-color-brand-soft: 180 60% 91%;
+  --sk-color-on-brand: 180 100% 98%;
+  --sk-color-break: 12 75% 55%;
+  --sk-color-break-soft: 12 65% 92%;
+}
+
+:root[data-theme='Dark'][data-palette='Aurora'] {
+  --sk-color-brand: 180 60% 68%;
+  --sk-color-brand-strong: 180 65% 80%;
+  --sk-color-brand-soft: 180 30% 18%;
+  --sk-color-on-brand: 180 35% 10%;
+  --sk-color-break: 12 78% 72%;
+  --sk-color-break-soft: 12 28% 18%;
+}
+
+:root[data-palette='Sand'] {
+  --sk-color-brand: 42 88% 30%;
+  --sk-color-brand-strong: 42 90% 23%;
+  --sk-color-brand-soft: 42 80% 91%;
+  --sk-color-on-brand: 45 100% 98%;
+  --sk-color-break: 205 65% 42%;
+  --sk-color-break-soft: 205 55% 91%;
+}
+
+:root[data-theme='Dark'][data-palette='Sand'] {
+  --sk-color-brand: 42 85% 65%;
+  --sk-color-brand-strong: 42 90% 78%;
+  --sk-color-brand-soft: 42 30% 18%;
+  --sk-color-on-brand: 42 40% 10%;
+  --sk-color-break: 205 65% 68%;
+  --sk-color-break-soft: 205 28% 18%;
+}

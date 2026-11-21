@@ -1,0 +1,111 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Siderkit Break",
+  "version": "1.0.0",
+  "identifier": "com.siderkit.break",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Siderkit Break",
+        "create": false,
+        "width": 360,
+        "height": 600,
+        "minWidth": 320,
+        "minHeight": 520,
+        "resizable": true,
+        "center": true,
+        "visible": true
+      },
+      {
+        "label": "overlay",
+        "title": "Siderkit Break Countdown",
+        "url": "overlay.html",
+        "create": false,
+        "width": 128,
+        "height": 32,
+        "resizable": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "focus": false,
+        "focusable": false,
+        "shadow": false,
+        "visible": false
+      },
+      {
+        "label": "locate",
+        "title": "Siderkit Break Locate",
+        "url": "locate.html",
+        "create": false,
+        "width": 240,
+        "height": 160,
+        "resizable": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "focus": false,
+        "focusable": false,
+        "shadow": false,
+        "visible": false
+      },
+      {
+        "label": "break",
+        "title": "Siderkit Break",
+        "url": "break.html",
+        "create": false,
+        "width": 360,
+        "height": 200,
+        "resizable": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": false,
+        "center": false,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "publisher": "Siderkit",
+    "copyright": "Copyright © 2026 Siderkit contributors",
+    "category": "Productivity",
+    "license": "MIT OR Apache-2.0",
+    "licenseFile": "../LICENSE",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "shortDescription": "A tiny, calm break reminder.",
+    "longDescription": "Siderkit Break keeps a focus timer out of your way with a tray presence and a small always-on-top countdown.",
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      },
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "10.15.7"
+    }
+  }
+}

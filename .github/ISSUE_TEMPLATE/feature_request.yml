@@ -1,0 +1,56 @@
+name: Feature request
+description: Suggest a focused improvement to Siderkit Break.
+title: '[Feature]: '
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Siderkit Break is intentionally small. Explain the problem first, then the smallest change that would solve it.
+        Features that require accounts, cloud sync, telemetry, or a larger task-management surface are out of scope for 1.0.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the situation, not only the proposed control.
+      placeholder: I lose track of the current round when the main window is hidden...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should the app do? Keep it as small as possible.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Existing settings, shortcuts, or workarounds you tried.
+    validations:
+      required: false
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Primary platform
+      options:
+        - Windows
+        - macOS
+        - Linux (X11)
+        - Linux (Wayland)
+        - All platforms
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This request works without an account, a server, or a network connection.
+          required: true
+        - label: This request does not add telemetry or engagement mechanics.
+          required: true
+        - label: I searched existing issues and discussions for this request.
+          required: true

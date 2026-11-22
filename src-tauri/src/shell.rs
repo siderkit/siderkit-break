@@ -48,8 +48,8 @@ pub fn hide_break_card(app: &AppHandle) {
     }
 }
 
-/// Fits the break card window to the height the card actually needs, so long
-/// translations and wrapped action rows are never clipped.
+/// Fits the break card window to the height the card needs, so long translations
+/// and wrapped action rows are never clipped.
 pub fn resize_break_card(app: &AppHandle, height: f64) -> Result<(), String> {
     let window = app
         .get_webview_window("break")
@@ -364,16 +364,28 @@ pub fn open_project_page() -> Result<(), String> {
 }
 
 pub fn sync_windows(app: &AppHandle, snapshot: &TimerSnapshot, missed_deadline: bool) {
-    let notice = engine_host::countdown_notice(app);
-    if !missed_deadline && (snapshot.phase.is_break() || notice.is_some()) {
-        show_break_card(app);
+    let settings = engine_host::get_settings(app).ok();
+    let notice = engine_host::notice(app);
+    let reminders_on = settings
+        .as_ref()
+        .map_or(true, |settings| settings.notifications.enabled);
+    if show_reminder_card(
+        reminders_on,
+        snapshot.phase,
+        notice.is_some(),
+        missed_deadline,
+    ) {
+        // A card that opens while the next phase already runs must not take
+        // keyboard focus away from the user's work.
+        let steal_focus = notice.is_none() || snapshot.phase == Phase::Idle;
+        show_break_card(app, steal_focus);
     } else {
         hide_break_card(app);
     }
     if missed_deadline {
         show_main_window(app);
     }
-    if let Ok(settings) = engine_host::get_settings(app) {
+    if let Some(settings) = &settings {
         if let Some(window) = app.get_webview_window("overlay") {
             let result = if settings.overlay.enabled {
                 window.show()
@@ -393,6 +405,17 @@ pub fn sync_windows(app: &AppHandle, snapshot: &TimerSnapshot, missed_deadline: 
     }
 }
 
+/// The reminder card is the only phase-boundary surface: it shows during a
+/// break, or while a completed focus, break, or countdown notice is open.
+fn show_reminder_card(
+    reminders_on: bool,
+    phase: Phase,
+    has_notice: bool,
+    missed_deadline: bool,
+) -> bool {
+    reminders_on && !missed_deadline && (phase.is_break() || has_notice)
+}
+
 /// The overlay has two shapes: a tiny droplet while idle and a compact
 /// countdown label while a phase is running. Hover handling decides whether the
 /// pointer can grab the current shape.
@@ -405,8 +428,7 @@ fn sync_overlay_size(app: &AppHandle, snapshot: &TimerSnapshot) {
     let before = window.outer_size().ok();
     let origin = window.outer_position().ok();
     let before_logical = before.map(|size| (size.width as f64 / scale, size.height as f64 / scale));
-    // Once the webview has measured the label, keep that width; the fallback
-    // only covers the first frame after leaving the idle shape.
+    // Keep the measured label width; the fallback covers the first active frame.
     let width = if idle {
         OVERLAY_IDLE_SIZE
     } else {
@@ -428,8 +450,7 @@ fn sync_overlay_size(app: &AppHandle, snapshot: &TimerSnapshot) {
             warn!("failed to resize overlay: {error}");
         }
     }
-    // Keep the droplet itself still while the window changes between the tiny
-    // idle shape and the countdown; an active resize only moves the right edge.
+    // Keep the droplet still across shapes; an active resize only moves the right edge.
     if let (Some(origin), Ok(after)) = (origin, window.outer_size()) {
         let before_idle = before_logical.is_some_and(|(width, height)| {
             (width - OVERLAY_IDLE_SIZE).abs() < 0.5 && (height - OVERLAY_IDLE_SIZE).abs() < 0.5
@@ -445,13 +466,18 @@ fn sync_overlay_size(app: &AppHandle, snapshot: &TimerSnapshot) {
     }
 }
 
-fn show_break_card(app: &AppHandle) {
+fn show_break_card(app: &AppHandle, steal_focus: bool) {
     let Some(window) = app.get_webview_window("break") else {
         return;
     };
     position_break_card(&window);
     let _ = window.show();
-    let _ = window.set_focus();
+    // X11 ignores pre-map positioning, so repeat it once the card is visible.
+    #[cfg(target_os = "linux")]
+    position_break_card(&window);
+    if steal_focus {
+        let _ = window.set_focus();
+    }
 }
 
 fn position_break_card(window: &WebviewWindow) {

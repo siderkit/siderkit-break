@@ -1,0 +1,95 @@
+name: Bug report
+description: Report a reproducible problem with Siderkit Break.
+title: '[Bug]: '
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem. Please search existing issues first.
+        For security vulnerabilities, use the private advisory link instead of a public issue.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: A clear description of the problem.
+      placeholder: The break card appeared but the timer kept running...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the shortest sequence that shows the problem.
+      placeholder: |
+        1. Open Settings and set focus to 1 minute.
+        2. Start focus.
+        3. Wait for the break card.
+        4. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The version shown in Settings → About, or the commit hash for a source build.
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows 10
+        - Windows 11
+        - macOS Intel
+        - macOS Apple Silicon
+        - Ubuntu 22.04 or newer (X11)
+        - Other Linux (X11)
+        - Linux (Wayland)
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: How did you install it?
+      options:
+        - NSIS installer
+        - MSI installer
+        - deb package
+        - rpm package
+        - AppImage
+        - Built from source
+        - Running the development server
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs or screenshots
+      description: Drag in screenshots, recordings, or relevant log lines. Remove personal data first.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true

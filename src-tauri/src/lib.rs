@@ -4,8 +4,8 @@ mod engine_host;
 mod export;
 mod i18n;
 mod locate;
-mod notifications;
 mod overlay;
+mod reminder;
 mod settings;
 mod shell;
 mod shortcuts;
@@ -42,7 +42,6 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--minimized"]),
@@ -125,7 +124,8 @@ pub fn run() {
             commands::write_history_workbook,
             commands::reveal_history_workbook,
             commands::hide_break_card,
-            commands::dismiss_countdown_notice,
+            commands::get_notice,
+            commands::dismiss_notice,
             commands::preview_notification_sound,
             commands::fit_break_card,
             commands::fit_overlay,

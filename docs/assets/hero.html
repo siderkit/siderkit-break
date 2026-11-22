@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Siderkit Break — hero</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        inline-size: 1280px;
+        block-size: 640px;
+        overflow: hidden;
+      }
+
+      body {
+        position: relative;
+        font-family:
+          'Segoe UI',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+        color: #17392c;
+        background:
+          radial-gradient(1100px 640px at 82% 12%, rgba(47, 125, 91, 0.16), transparent 62%),
+          radial-gradient(760px 520px at 10% 90%, rgba(214, 168, 96, 0.16), transparent 64%),
+          linear-gradient(135deg, #fbf8f0 0%, #f3f7ef 52%, #e7f0e6 100%);
+      }
+
+      .grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.22;
+        background-image: radial-gradient(rgba(23, 57, 44, 0.18) 0.6px, transparent 0.6px);
+        background-size: 5px 5px;
+        mask-image: linear-gradient(180deg, #000 0%, transparent 82%);
+      }
+
+      .copy {
+        position: absolute;
+        inset-block-start: 92px;
+        inset-inline-start: 76px;
+        inline-size: 520px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border: 1px solid rgba(47, 125, 91, 0.28);
+        border-radius: 999px;
+        color: #2f7d5b;
+        background: rgba(255, 255, 255, 0.56);
+        font-size: 14px;
+        font-weight: 650;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow span {
+        inline-size: 8px;
+        block-size: 8px;
+        border-radius: 999px;
+        background: #2f7d5b;
+        box-shadow: 0 0 0 4px rgba(47, 125, 91, 0.14);
+      }
+
+      h1 {
+        margin: 26px 0 0;
+        font-size: 68px;
+        font-weight: 650;
+        letter-spacing: -0.045em;
+        line-height: 1.02;
+      }
+
+      .lede {
+        margin: 24px 0 0;
+        max-inline-size: 470px;
+        color: #4d6458;
+        font-size: 20px;
+        line-height: 1.55;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        max-inline-size: 430px;
+        margin-block-start: 30px;
+      }
+
+      .chip {
+        padding: 8px 12px;
+        border: 1px solid rgba(23, 57, 44, 0.14);
+        border-radius: 999px;
+        color: #365247;
+        background: rgba(255, 255, 255, 0.62);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .stage {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        inline-size: 690px;
+        block-size: 640px;
+      }
+
+      .glow {
+        position: absolute;
+        inset-block-start: 70px;
+        inset-inline-end: 70px;
+        inline-size: 420px;
+        block-size: 480px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(47, 125, 91, 0.26) 0%, transparent 68%);
+        filter: blur(28px);
+      }
+
+      .window {
+        position: absolute;
+        inset-block-start: 44px;
+        inset-inline-end: 66px;
+        inline-size: 330px;
+        border-radius: 18px;
+        box-shadow:
+          0 36px 70px -30px rgba(17, 54, 41, 0.5),
+          0 12px 28px -14px rgba(17, 54, 41, 0.3);
+      }
+
+      .card {
+        position: absolute;
+        inset-block-end: 62px;
+        inset-inline-start: -40px;
+        inline-size: 330px;
+        transform: rotate(-2.4deg);
+        filter: drop-shadow(0 30px 32px rgba(17, 54, 41, 0.24));
+      }
+
+      .caption {
+        position: absolute;
+        inset-block-end: 34px;
+        inset-inline-start: 76px;
+        color: #5d7367;
+        font-size: 13px;
+        letter-spacing: 0.02em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grain"></div>
+
+    <div class="copy">
+      <div class="eyebrow"><span></span>Siderkit Break 1.0</div>
+      <h1>A little room<br />to breathe.</h1>
+      <p class="lede">
+        A calm focus timer that stays out of your way. Start a round, step away when it ends, and
+        come back to a clear head.
+      </p>
+      <div class="chips">
+        <span class="chip">Focus &amp; break cycles</span>
+        <span class="chip">Floating countdown</span>
+        <span class="chip">30 languages</span>
+        <span class="chip">Local-first</span>
+      </div>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <div class="glow"></div>
+      <img class="window" src="./main-focus.png" alt="" />
+      <img class="card" src="./break-running.png" alt="" />
+    </div>
+
+    <div class="caption">Windows · macOS · Linux · No account required</div>
+  </body>
+</html>

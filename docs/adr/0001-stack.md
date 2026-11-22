@@ -1,6 +1,6 @@
 # ADR-0001: Desktop stack (Tauri, Rust timer, Svelte UI)
 
-- Status: accepted
+- Status: accepted; the native-notification part of the stack was superseded by [ADR-0004](0004-in-app-reminders.md).
 - Date: 2026-11-20
 - Deciders: project owner
 

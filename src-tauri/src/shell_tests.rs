@@ -1,4 +1,5 @@
 use super::*;
+use crate::timer::Phase;
 
 #[test]
 fn the_break_card_height_stays_inside_the_usable_range() {
@@ -6,6 +7,17 @@ fn the_break_card_height_stays_inside_the_usable_range() {
     assert_eq!(clamp_break_height(187.4), 188.0);
     assert_eq!(clamp_break_height(40.0), 96.0);
     assert_eq!(clamp_break_height(900.0), 480.0);
+}
+
+#[test]
+fn the_reminder_card_follows_the_toggle_and_the_phase() {
+    assert!(show_reminder_card(true, Phase::ShortBreak, false, false));
+    assert!(show_reminder_card(true, Phase::Idle, true, false));
+    assert!(show_reminder_card(true, Phase::Focus, true, false));
+    assert!(!show_reminder_card(false, Phase::ShortBreak, false, false));
+    assert!(!show_reminder_card(false, Phase::Idle, true, false));
+    assert!(!show_reminder_card(true, Phase::Idle, true, true));
+    assert!(!show_reminder_card(true, Phase::Idle, false, false));
 }
 
 #[test]

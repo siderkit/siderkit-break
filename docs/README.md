@@ -1,18 +1,22 @@
 # Documentation
 
-| Document                                | Purpose                                                        |
-| --------------------------------------- | -------------------------------------------------------------- |
-| [Product brief](product-brief.md)       | Problem, users, 1.0 scope, non-goals, success metrics          |
-| [Core flows](core-flows.md)             | First run, focus, break, sleep, quit, platform degradation     |
-| [Acceptance](acceptance.md)             | P0/P1 criteria, platform matrix, definition of done            |
-| [Technical design](tech-design.md)      | Architecture, timer, windows, persistence, IPC, platform notes |
-| [Code quality](code-quality.md)         | Clean-code rules, thresholds, gates, exceptions                |
-| [ADR-0001](adr/0001-stack.md)           | Tauri + Rust timer + Svelte UI                                 |
-| [ADR-0002](adr/0002-taskbar-overlay.md) | Tray + docked overlay, no in-taskbar text                      |
+| Document                                 | Purpose                                                        |
+| ---------------------------------------- | -------------------------------------------------------------- |
+| [Product brief](product-brief.md)        | Problem, users, 1.0 scope, non-goals, success metrics          |
+| [Core flows](core-flows.md)              | First run, focus, break, sleep, quit, platform degradation     |
+| [Acceptance](acceptance.md)              | P0/P1 criteria, platform matrix, definition of done            |
+| [Technical design](tech-design.md)       | Architecture, timer, windows, persistence, IPC, platform notes |
+| [Code quality](code-quality.md)          | Clean-code rules, thresholds, gates, exceptions                |
+| [ADR-0001](adr/0001-stack.md)            | Tauri + Rust timer + Svelte UI                                 |
+| [ADR-0002](adr/0002-taskbar-overlay.md)  | Tray + docked overlay, no in-taskbar text                      |
+| [ADR-0003](adr/0003-reminder-sound.md)   | Bundled reminder chime, one sound on every platform            |
+| [ADR-0004](adr/0004-in-app-reminders.md) | In-app reminder cards instead of system notifications          |
+| [Translations](i18n/README.md)           | 30 language READMEs and the shared language index              |
+| [README assets](assets/README.md)        | Screenshot sources, sizes, and capture rules                   |
 
 ## Status
 
-All product documents are drafts for review. The stack and taskbar ADRs are accepted.
+All product documents are drafts for review. The ADRs are accepted; ADR-0004 supersedes the notification surface in ADR-0003.
 
 ## Review order
 

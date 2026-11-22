@@ -59,6 +59,20 @@ The full rules are in [docs/code-quality.md](docs/code-quality.md).
 - Add or update tests with behavior changes.
 - Update the relevant document when a flow or acceptance criterion changes.
 
+## Translations
+
+English is the source locale. The app ships 30 message catalogs in `messages/`, and each locale has a short README under `docs/i18n/<code>/`.
+
+- Keep message keys and placeholders unchanged.
+- Run `pnpm check:i18n` after editing a catalog.
+- Arabic, Persian, and Urdu are right-to-left; check the layout, not only the strings.
+- The English README is the source of truth. Keep the flat language index in every localized README.
+- Do not add referral links, download mirrors, or third-party product names.
+
+## Screenshots
+
+README images live in `docs/assets/`. See [docs/assets/README.md](docs/assets/README.md) for the capture sizes and rules. Screenshots must come from the running app; do not redraw controls or edit UI copy.
+
 ## Commits
 
 Use Conventional Commits:

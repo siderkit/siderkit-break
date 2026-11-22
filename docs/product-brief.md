@@ -56,9 +56,9 @@ The 1.0 product is not for teams, managers, or people who need cross-device sync
 - Main window: timer, phase, today's completed rounds and focus minutes, settings.
 - Transparent always-on-top overlay: 128×32 countdown and a tiny 22×22 idle droplet, click-through by default.
 - Overlay starts in the bottom-left corner, then remembers its position per monitor; hide in fullscreen where the platform allows.
-- Native notification and system sound at phase boundaries.
-- Optional break card with postpone and skip.
-- Defaults follow the Pomodoro protocol: 25-minute focus, 5-minute break, and a 15-minute long break every 4 rounds. Every length stays editable, and Settings → Restore defaults returns to this baseline.
+- In-app reminder cards at every phase boundary and a built-in reminder chime; no operating-system notifications.
+- A break card with postpone, skip, and hide, plus focus-complete and break-complete cards.
+- Defaults follow the classic 25/5/15 focus rhythm: 25-minute focus, 5-minute break, and a 15-minute long break every 4 rounds. Every length stays editable, and Settings → Restore defaults returns to this baseline.
 - Local SQLite persistence for every focus, break, and countdown session.
 - 30 UI languages with system-language detection and true RTL; light, dark, and system themes; eight color styles.
 - Global shortcuts for start/pause, skip, and overlay toggle.
@@ -106,7 +106,7 @@ There is no telemetry in 1.0. The metrics above are verified locally and through
 
 ## Open questions
 
-1. Should the default break experience be a notification plus a small card, or a full-screen rest screen? The current plan defaults to the gentle option.
+1. Should the default break experience be a reminder card, or a full-screen rest screen? The current plan defaults to the gentle option.
 2. Should the overlay be click-through by default, or interactive by default? The current plan defaults to click-through with a hotkey to interact.
 3. Is Linux a first-class 1.0 target or best-effort? The current plan is best-effort.
 4. Should the first public release include automatic updates, or wait for 1.1? The current plan waits.

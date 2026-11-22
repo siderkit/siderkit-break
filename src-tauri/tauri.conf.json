@@ -101,7 +101,8 @@
         "type": "embedBootstrapper"
       },
       "nsis": {
-        "installMode": "currentUser"
+        "installMode": "currentUser",
+        "template": "nsis/installer.nsi"
       }
     },
     "macOS": {

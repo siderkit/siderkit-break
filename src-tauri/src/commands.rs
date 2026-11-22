@@ -95,12 +95,17 @@ pub fn open_project_page() -> Result<(), String> {
 
 #[tauri::command]
 pub fn preview_notification_sound(app: AppHandle) -> Result<(), String> {
-    crate::notifications::preview(&app)
+    crate::reminder::preview(&app)
 }
 
 #[tauri::command]
-pub fn dismiss_countdown_notice(app: AppHandle) -> Result<(), String> {
-    engine_host::dismiss_countdown_notice(&app)
+pub fn get_notice(app: AppHandle) -> Option<crate::reminder::TimerNotice> {
+    engine_host::notice(&app)
+}
+
+#[tauri::command]
+pub fn dismiss_notice(app: AppHandle) -> Result<(), String> {
+    engine_host::dismiss_notice(&app)
 }
 
 #[tauri::command]

@@ -27,7 +27,8 @@ Siderkit Break 1.0 is local-first:
 - no server;
 - no network requests;
 - no telemetry;
-- no remote content.
+- no remote content;
+- no operating-system notification permission; reminders are in-app cards.
 
 Security issues of interest include:
 
@@ -36,7 +37,7 @@ Security issues of interest include:
 - overlay or window behavior that captures input unexpectedly;
 - local data exposure;
 - dependency vulnerabilities;
-- notification or autostart behavior that persists after uninstall.
+- autostart behavior that persists after uninstall.
 
 ## Disclosure
 

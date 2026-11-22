@@ -1,6 +1,6 @@
 # ADR-0003: Bundled reminder sound
 
-- Status: accepted
+- Status: accepted; the chime decision still stands. The notification surface was superseded by [ADR-0004](0004-in-app-reminders.md).
 - Date: 2026-11-21
 - Deciders: project owner
 

@@ -18,7 +18,7 @@
 
 - it shows the main window with default durations (25 / 5 / 15, long break every 4);
 - it explains the tray, overlay, and shortcut;
-- it does not request notification permission until the first session starts;
+- it never asks for operating-system notification permission;
 - it creates a local database and writes a schema version;
 - it does not make a network request.
 
@@ -32,7 +32,9 @@
 
 - the session is written as `Completed` exactly once;
 - the app enters the configured break phase;
-- a native notification is emitted if permission is granted;
+- when reminders are on and the break starts automatically, the running break card appears;
+- when the break waits for the user, the focus-complete card offers Start break and Close;
+- no operating-system notification is posted;
 - the break card is shown unless quiet mode is active;
 - the break card fits its text and action buttons in every supported locale, with no clipped or overlapping lines;
 - the overlay changes to the break color.
@@ -74,9 +76,9 @@
 
 **P1.** On Windows and macOS, taskbar or Dock progress is available as an optional setting; it is off by default.
 
-### A-08 Notifications
+### A-08 Reminder cards
 
-**P0.** Given notification permission is granted, when a phase ends, then a native notification appears within 1 second. When "Play a sound" is on, the built-in reminder chime plays at the same time. Given permission is denied, the in-app break card still appears and the timer continues.
+**P0.** Given "Show reminder cards" is on, when a phase ends, then an in-app card appears within 1 second and no operating-system notification is posted. A completed focus offers Start break when the break did not auto-start, a completed break offers Start focus when the timer is idle, and a completed countdown shows its length with Got it and Run again. When "Play a sound" is on, the built-in reminder chime plays with the card. Given reminders are off, no card and no chime appear, but the timer, overlay, and tray continue. Given the sound is off, cards still appear silently.
 
 **P1.** Given the user opens Settings → Reminders and chooses Preview, then the built-in reminder chime plays so it can be judged before the "Play a sound" toggle is enabled. The preview uses the same chime and playback path as a real reminder and sends no notification. When the audio output is unavailable, the settings row shows an inline explanation instead.
 
@@ -84,7 +86,7 @@
 
 **P0.** Given the machine sleeps for 10 minutes during focus, when it resumes, then:
 
-- the app does not emit a burst of notifications;
+- the app does not open a burst of reminder cards;
 - the timer state is correct;
 - a “welcome back” card is shown if the deadline passed;
 - no duplicate session is written.
@@ -99,12 +101,12 @@
 
 ### A-12 Local data
 
-**P0.** Given the user completes, skips, and resets focus, break, and countdown sessions, then each outcome is stored in SQLite with a UUIDv7 id, timestamps, planned and actual durations, and device id. History exposes a styled Excel (`.xlsx`) export with a summary sheet and a session sheet. Every date in the report includes the year, and every session start time includes hours, minutes, and seconds.
+**P0.** Given the user completes, skips, and resets focus, break, and countdown sessions, then each outcome is stored in SQLite with a UUIDv7 id, timestamps, planned and actual durations, and device id. History exposes a styled spreadsheet (`.xlsx`) export with a summary sheet and a session sheet. Every date in the report includes the year, and every session start time includes hours, minutes, and seconds.
 
 **P0.** Given the history dialog is open, then exporting:
 
 - shows a preparing state on the export button before any dialog appears;
-- opens the native save dialog with a date-stamped `.xlsx` file name and an Excel filter;
+- opens the native save dialog with a date-stamped `.xlsx` file name and a spreadsheet filter;
 - does nothing and reports no error when the user cancels;
 - writes the workbook to the chosen path and confirms with the file name;
 - offers "Show in folder" for the saved file;
@@ -140,21 +142,21 @@ If the memory budget is missed, the team must either reduce the overlay to a nat
 
 **P0.** The following matrix passes:
 
-| Platform                                   | Level | Checks                                                                         |
-| ------------------------------------------ | ----- | ------------------------------------------------------------------------------ |
-| Windows 10 1809+ x64                       | P0    | tray, overlay, click-through, notification, autostart, sleep, DPI 100/150/200% |
-| Windows 11 x64                             | P0    | same as Windows 10, plus virtual desktop behavior documented                   |
-| macOS 10.15.7+ Intel / 11.0+ Apple Silicon | P1    | tray, overlay, notification, autostart, Spaces, signed build                   |
-| Ubuntu 22.04+ X11                          | P1    | tray with AppIndicator, overlay, notification, autostart                       |
-| Linux Wayland                              | P1    | documented degradation for positioning, click-through, and shortcuts           |
-| Android / iOS                              | P2    | technical spike only; no 1.0 release                                           |
+| Platform                                   | Level | Checks                                                                           |
+| ------------------------------------------ | ----- | -------------------------------------------------------------------------------- |
+| Windows 10 1809+ x64                       | P0    | tray, overlay, click-through, reminder cards, autostart, sleep, DPI 100/150/200% |
+| Windows 11 x64                             | P0    | same as Windows 10, plus virtual desktop behavior documented                     |
+| macOS 10.15.7+ Intel / 11.0+ Apple Silicon | P1    | tray, overlay, reminder cards, autostart, Spaces, signed build                   |
+| Ubuntu 22.04+ X11                          | P1    | tray with AppIndicator, overlay, reminder cards, autostart                       |
+| Linux Wayland                              | P1    | documented degradation for positioning, click-through, and shortcuts             |
+| Android / iOS                              | P2    | technical spike only; no 1.0 release                                             |
 
 **Verification status (2026-11-21):**
 
-- Windows 10 Pro 22H2 (19045.2965) VM: NSIS and MSI install/uninstall, shortcuts, autostart, reboot with `--minimized`, startup autostart self-heal, notification, one-minute countdown, break card, history, and overlay `Break` prefix passed. The current NSIS build was installed again and the active overlay measured 75×32 with the droplet-to-label gap matching the design. DPI 100% / 1024×768 only; transparency, always-on-top, and multi-monitor still need physical hardware.
+- Windows 10 Pro 22H2 (19045.2965) VM: NSIS and MSI install/uninstall, shortcuts, autostart, reboot with `--minimized`, startup autostart self-heal, one-minute countdown, break card, history, and overlay `Break` prefix passed. The current NSIS build was installed again and the active overlay measured 75×32 with the droplet-to-label gap matching the design. The in-app reminder round added: running break card at focus end, break-complete card with **Start focus**, focus-complete card with **Start break**, countdown card with **Got it** and **Run again**, 8-second self-close without focus steal when focus auto-starts, no card or chime with reminders off, live effect of turning reminders back on, and no Siderkit Break entry in Action Center or the notification sender registry. DPI 100% / 1024×768 only; transparency, always-on-top, and multi-monitor still need physical hardware.
 - Windows 11 x64: release executable built locally; NSIS and MSI packaged; installation on Windows 11 hardware is still pending.
 - macOS: universal DMG built in CI with a 10.15.7 deployment target; signing, notarization, and a real-machine smoke test are pending.
-- Ubuntu 22.04.5 X11: deb install, launch, global shortcuts, countdown, native notification, focus-to-break, overlay prefix, and tray locate hint passed. The current payload was launch-tested from the deb and the AppImage: idle 22×22, focus 90×32, break 136×32, break card 360×192, with a 6px layout gap between droplet and label. rpm is built but not installed.
+- Ubuntu 22.04.5 X11: deb install, launch, global shortcuts, countdown, reminder cards, focus-to-break, overlay prefix, and tray locate hint passed. The current payload was launch-tested from the deb and the AppImage: idle 22×22, focus 90×32, break 136×32, break card 360×192, with a 6px layout gap between droplet and label. rpm is built but not installed.
 - Linux Wayland: documented as degraded; not verified.
 
 ### A-18 Code quality
@@ -166,7 +168,7 @@ If the memory budget is missed, the team must either reduce the overlay to a nat
 **P0.** Given an independent countdown reaches zero, then:
 
 - the session is written as `Completed` exactly once and the phase returns to idle;
-- a native notification is emitted if permission is granted;
+- no operating-system notification is posted;
 - the in-app completion card opens above other windows and shows the countdown length;
 - the card offers dismiss and repeat; dismiss hides it, repeat starts the same length again;
 - skipping or resetting the countdown shows neither the card nor a completion notification;
@@ -189,7 +191,7 @@ If the memory budget is missed, the team must either reduce the overlay to a nat
 - No remote fonts, scripts, or images.
 - No secrets or tokens are stored.
 - Logs do not contain personal data beyond local file paths.
-- The app does not request accessibility or screen-recording permissions.
+- The app has no operating-system notification integration and requests no notification permission.
 
 ## Definition of done
 

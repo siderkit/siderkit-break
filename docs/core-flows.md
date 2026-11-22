@@ -26,12 +26,12 @@ Paused is a substate of the current phase. It stores the phase, the remaining ti
 1. The app starts in the tray, with the main window visible.
 2. Defaults: focus 25 minutes, short break 5 minutes, long break 15 minutes, long break every 4 focus rounds.
 3. The onboarding card explains the tray, the overlay, and the shortcut.
-4. The app requests notification permission when the user starts the first session, not at launch.
+4. The app never asks for operating-system notification permission; every reminder is an in-app card.
 5. The user can start immediately with the default configuration.
 
 **Exceptions:**
 
-- Notification permission denied: the app still shows the in-app break card and overlay; the settings page explains how to enable notifications later.
+- Reminders are turned off: the app still shows the overlay and timer; settings explains how to turn reminder cards back on.
 - Tray unavailable: the app keeps the main window available and shows a warning; the timer still works.
 - Database cannot be created: show a blocking error with the data directory path and a retry action.
 
@@ -79,15 +79,15 @@ Paused is a substate of the current phase. It stores the phase, the remaining ti
 
 1. The core marks the focus session `Completed` and writes it to SQLite.
 2. It selects ShortBreak or LongBreak using the completed focus count.
-3. It starts the break automatically if `auto_start_breaks` is on; otherwise it enters Idle and shows “Start break”.
-4. It emits a native notification, plays the system sound, and shows the break card.
+3. It starts the break automatically if `auto_start_breaks` is on; otherwise it enters Idle and waits with the break pending.
+4. When reminders are on, it plays the built-in chime if sound is on and shows the reminder card: the running break card after an automatic start, or the focus-complete card with Start break when the break is waiting.
 5. The overlay switches to the break color.
 
 **Exceptions:**
 
 - The machine slept through the deadline: see F-08.
-- The user is in a fullscreen app and `quiet_in_fullscreen` is on: suppress the notification and the break card, keep the state transition, and show a quiet badge in the tray.
-- The notification fails: the break card is still shown; the failure is logged locally.
+- The user is in a fullscreen app and `quiet_in_fullscreen` is on: suppress the reminder card, keep the state transition, and show a quiet badge in the tray.
+- The chime cannot start: the reminder card is still shown; the failure is logged locally.
 
 ## F-05 Complete a break
 
@@ -96,8 +96,8 @@ Paused is a substate of the current phase. It stores the phase, the remaining ti
 **Main path:**
 
 1. The core marks the break `Completed`.
-2. It enters Idle.
-3. It emits a notification: “Break over. Ready to focus?”
+2. It enters Idle, or starts focus automatically when `auto_start_focus` is on.
+3. When reminders are on, it shows the break-complete card: “Break over. Ready to focus?” with Start focus when idle. When focus already started, the card does not take keyboard focus and closes itself after 8 seconds.
 4. It does not start the next focus automatically by default.
 5. The overlay shows the idle state or hides, depending on settings.
 
@@ -150,7 +150,7 @@ All outcomes are persisted. A session is never silently discarded.
 
 1. The core compares the wall-clock deadline with the current time.
 2. If the deadline has not passed, it continues normally.
-3. If the deadline passed during sleep, it does **not** emit a burst of notifications.
+3. If the deadline passed during sleep, it does **not** open a burst of reminder cards.
 4. It shows a “Welcome back” card: “Focus ended while you were away.”
 5. The user can start the break or reset, which discards the queued break.
 
@@ -184,12 +184,13 @@ All outcomes are persisted. A session is never silently discarded.
 - Autostart never starts a focus session automatically.
 - Disabling autostart removes the OS login item; it does not delete user data.
 
-## F-11 Notification permission denied
+## F-11 Reminders turned off
 
-- The app checks permission when the first session starts.
-- If denied, the break card and overlay remain the primary reminder.
-- The settings page shows the current permission state and a platform-specific hint.
-- The app never blocks the timer because notifications are unavailable.
+- “Show reminder cards” gates every phase boundary card and the chime.
+- With reminders off, the overlay, tray, timer, and main window keep working; no card opens and no chime plays.
+- The Preview button is disabled while reminders are off, because a preview would be the only sound the app makes.
+- Turning reminders back on affects the next boundary; a card that was open is hidden immediately when the toggle goes off.
+- The app never blocks the timer because reminders are unavailable.
 
 ## F-12 Platform degradation
 
@@ -199,7 +200,7 @@ All outcomes are persisted. A session is never silently discarded.
 | Click-through unavailable (Wayland)        | Keep the overlay interactive; explain the limitation         |
 | Absolute positioning unavailable (Wayland) | Use compositor placement; do not fight the compositor        |
 | Transparency unavailable                   | Fall back to a solid compact countdown; keep the same layout |
-| Notification service unavailable           | Use the in-app break card; log the failure                   |
+| Chime output unavailable                   | Show the reminder card silently; log the failure             |
 | Fullscreen detection unavailable           | Rely on the manual quiet mode and shortcut                   |
 
 ## F-13 Independent countdown
@@ -211,16 +212,16 @@ All outcomes are persisted. A session is never silently discarded.
 1. The core enters `Countdown` with the chosen length and persists the runtime state.
 2. The overlay, main window, and tray show the remaining time.
 3. At zero the session is written as `Completed` and the phase returns to idle.
-4. A native notification is emitted, and the in-app completion card opens above other windows with the length, a dismiss action, and a repeat action.
+4. The in-app completion card opens above other windows with the length, a dismiss action, and a repeat action; no operating-system notification is posted.
 5. Dismissing hides the card; repeating starts the same length again.
 
 **Exceptions:**
 
-- The user skips or resets the countdown: no completion card and no completion notification.
-- The deadline passed while the machine slept: the welcome notification replaces the completion card.
+- The user skips or resets the countdown: no completion card and no completion chime.
+- The deadline passed while the machine slept: the welcome-back dialog replaces the completion card.
 - Another phase starts while the card is open: the card closes and stays closed.
 
-## F-14 Notification preview
+## F-14 Reminder preview
 
 - Settings → Reminders → Preview plays the built-in reminder chime and sends no notification.
 - The preview uses the same chime and playback path as a session-end reminder, so the user hears exactly what a reminder will sound like.
@@ -233,5 +234,5 @@ All outcomes are persisted. A session is never silently discarded.
 - **No history permission:** not applicable; all data is local.
 - **Database error:** blocking card with retry and “open data folder”.
 - **Overlay cannot open:** keep the tray; show a one-time error with a link to logs.
-- **Notification denied:** non-blocking banner in settings.
+- **Reminders off:** non-blocking note in settings explaining what is paused.
 - **Unsupported platform:** explicit unsupported screen; do not pretend the app works.

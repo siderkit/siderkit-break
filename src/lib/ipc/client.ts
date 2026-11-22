@@ -6,6 +6,7 @@ import type {
   HistoryRangeSummary,
   HistoryWindow,
   Settings,
+  TimerNotice,
   TimerSnapshot,
   TodaySummary,
 } from './types';
@@ -174,19 +175,24 @@ export function hideBreakCard(): Promise<void> {
   return invoke<void>('hide_break_card');
 }
 
-/** Plays the built-in reminder chime without sending a notification. */
+/** Plays the built-in reminder chime without showing a system notification. */
 export function previewNotificationSound(): Promise<void> {
   return invoke<void>('preview_notification_sound');
 }
 
-/** Clears the countdown completion card and hides the HUD window. */
-export function dismissCountdownNotice(): Promise<void> {
-  return invoke<void>('dismiss_countdown_notice');
+/** Reads the reminder card Rust has open, so a late window load still shows it. */
+export function getNotice(): Promise<TimerNotice | null> {
+  return invoke<TimerNotice | null>('get_notice');
 }
 
-/** Fires when an independent countdown completes and its card opens. */
-export function onCountdownFinished(handler: (minutes: number) => void): Promise<UnlistenFn> {
-  return listen<number>('countdown:finished', (event) => handler(event.payload));
+/** Dismisses the current reminder card and hides the HUD window. */
+export function dismissNotice(): Promise<void> {
+  return invoke<void>('dismiss_notice');
+}
+
+/** Fires when a phase boundary opens or clears the reminder card. */
+export function onTimerNotice(handler: (notice: TimerNotice | null) => void): Promise<UnlistenFn> {
+  return listen<TimerNotice | null>('timer:notice', (event) => handler(event.payload));
 }
 
 /** Resizes the break card window to the height its content needs. */

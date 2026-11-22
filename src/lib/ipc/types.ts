@@ -6,6 +6,10 @@ export type Palette = 'Forest' | 'Ocean' | 'Ember' | 'Plum' | 'Slate' | 'Rose' |
 export type SessionKind = 'Focus' | 'ShortBreak' | 'LongBreak' | 'Countdown';
 export type SessionOutcome = 'Completed' | 'Skipped' | 'Reset' | 'Interrupted';
 
+/** In-app reminder card selected by Rust at a phase boundary. */
+export type TimerNotice =
+  { kind: 'FocusDone' } | { kind: 'BreakDone' } | { kind: 'CountdownDone'; minutes: number };
+
 export interface TimerSnapshot {
   phase: Phase;
   isPaused: boolean;

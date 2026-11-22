@@ -6,13 +6,10 @@ use log::{error, warn};
 use tauri::{AppHandle, Emitter, Manager};
 
 use crate::db::{now_ms, Store, TodaySummary};
-use crate::notifications;
+use crate::reminder::{self, TimerNotice};
 use crate::settings::{OverlayPosition, Settings};
 use crate::shell;
-use crate::timer::{
-    Phase, SessionKind, SessionOutcome, SessionRecord, TimerEngine, TimerError, TimerSnapshot,
-    Transition,
-};
+use crate::timer::{Phase, TimerEngine, TimerError, TimerSnapshot, Transition};
 use crate::tray;
 
 pub struct AppState {
@@ -20,8 +17,8 @@ pub struct AppState {
     pub store: Mutex<Store>,
     pub settings: Mutex<Settings>,
     pub break_due_at_ms: Mutex<Option<i64>>,
-    /// Minutes of the countdown whose in-app card is still open.
-    pub countdown_notice: Mutex<Option<u32>>,
+    /// Reminder card that is currently open, if any.
+    pub notice: Mutex<Option<TimerNotice>>,
 }
 
 impl AppState {
@@ -39,7 +36,7 @@ impl AppState {
             store: Mutex::new(store),
             settings: Mutex::new(settings),
             break_due_at_ms: Mutex::new(None),
-            countdown_notice: Mutex::new(None),
+            notice: Mutex::new(None),
         })
     }
 }
@@ -97,6 +94,7 @@ pub fn start_countdown(app: &AppHandle, minutes: u32) -> Result<TimerSnapshot, S
         }
         engine.start_countdown(minutes, now)
     };
+    clear_notice(app, &state)?;
     commit(app, &state, transition)
 }
 
@@ -151,6 +149,7 @@ pub fn postpone_break(app: &AppHandle, minutes: u32) -> Result<TimerSnapshot, St
         }
         engine.postpone(now)
     };
+    clear_notice(app, &state)?;
     let snapshot = commit(app, &state, transition)?;
     let due = now.saturating_add(i64::from(minutes.clamp(1, 30)) * 60_000);
     *lock_break_due(&state)? = Some(due);
@@ -176,7 +175,9 @@ pub fn update_settings(app: &AppHandle, settings: Settings) -> Result<Settings, 
     *lock_settings(&state)? = settings.clone();
     shell::apply_settings(app, &settings)?;
     apply_autostart(app, settings.general.launch_at_login)?;
-    notifications::ensure_permission(app);
+    if !settings.notifications.enabled {
+        clear_notice(app, &state)?;
+    }
     if previous.general.locale != settings.general.locale {
         let _ = app.emit("locale:changed", settings.general.locale.clone());
     }
@@ -253,11 +254,8 @@ fn run(
         let mut engine = lock_engine(&state)?;
         action(&mut engine, now).map_err(|error| error.to_string())?
     };
-    let snapshot = commit(app, &state, transition)?;
-    if snapshot.phase.is_active() {
-        notifications::ensure_permission(app);
-    }
-    Ok(snapshot)
+    clear_notice(app, &state)?;
+    commit(app, &state, transition)
 }
 
 fn commit(
@@ -289,62 +287,56 @@ fn commit(
     if transition.missed_deadline {
         let _ = app.emit("timer:missed", snapshot.clone());
     }
-    let finished_countdown = finished_countdown_minutes(
+    let settings = lock_settings(state)?.clone();
+    if reminder::should_chime(
+        &settings,
         transition.ended_session.as_ref(),
         transition.missed_deadline,
-    );
-    if let Ok(mut notice) = lock_notice(state) {
-        if finished_countdown.is_some() {
-            *notice = finished_countdown;
-        } else if snapshot.phase.is_active() || transition.missed_deadline {
-            *notice = None;
-        }
+    ) {
+        crate::sound::play_notification_in_background();
     }
-    if let Some(minutes) = finished_countdown {
-        let _ = app.emit("countdown:finished", minutes);
-    }
-    tray::update(app, &snapshot);
-    notifications::announce(
-        app,
+    let next_notice = reminder::notice_for(
+        &settings,
         &snapshot,
         transition.ended_session.as_ref(),
         transition.missed_deadline,
     );
+    set_notice(app, state, next_notice)?;
+    tray::update(app, &snapshot);
     shell::sync_windows(app, &snapshot, transition.missed_deadline);
     Ok(snapshot)
 }
 
-/// Minutes of the countdown whose completion card is open, if any.
-pub fn countdown_notice(app: &AppHandle) -> Option<u32> {
+/// Reminder card that is currently open, if any.
+pub fn notice(app: &AppHandle) -> Option<TimerNotice> {
     app.state::<AppState>()
-        .countdown_notice
+        .notice
         .lock()
-        .map(|notice| *notice)
+        .map(|notice| notice.clone())
         .unwrap_or(None)
 }
 
-pub fn dismiss_countdown_notice(app: &AppHandle) -> Result<(), String> {
+pub fn dismiss_notice(app: &AppHandle) -> Result<(), String> {
     let state = app.state::<AppState>();
-    *lock_notice(&state)? = None;
+    set_notice(app, &state, None)?;
     let snapshot = get_state(app)?;
     shell::sync_windows(app, &snapshot, false);
     Ok(())
 }
 
-/// Only a live completed countdown earns the in-app card; skipped, reset, or
-/// sleep-missed countdowns keep the system notification alone.
-fn finished_countdown_minutes(
-    ended_session: Option<&SessionRecord>,
-    missed_deadline: bool,
-) -> Option<u32> {
-    if missed_deadline {
-        return None;
+fn set_notice(app: &AppHandle, state: &AppState, next: Option<TimerNotice>) -> Result<(), String> {
+    let mut notice = lock_notice(state)?;
+    if *notice == next {
+        return Ok(());
     }
-    let session = ended_session?;
-    if session.kind != SessionKind::Countdown || session.outcome != SessionOutcome::Completed {
-        return None;
-    }
-    Some((session.planned_ms / 60_000).max(1) as u32)
+    *notice = next.clone();
+    drop(notice);
+    let _ = app.emit("timer:notice", next);
+    Ok(())
+}
+
+fn clear_notice(app: &AppHandle, state: &AppState) -> Result<(), String> {
+    set_notice(app, state, None)
 }
 
 pub fn spawn_ticker(app: AppHandle) {
@@ -443,11 +435,11 @@ fn lock_settings(state: &AppState) -> Result<MutexGuard<'_, Settings>, String> {
         .map_err(|_| "settings are unavailable".to_owned())
 }
 
-fn lock_notice(state: &AppState) -> Result<MutexGuard<'_, Option<u32>>, String> {
+fn lock_notice(state: &AppState) -> Result<MutexGuard<'_, Option<TimerNotice>>, String> {
     state
-        .countdown_notice
+        .notice
         .lock()
-        .map_err(|_| "countdown notice is unavailable".to_owned())
+        .map_err(|_| "reminder card state is unavailable".to_owned())
 }
 
 fn lock_break_due(state: &AppState) -> Result<MutexGuard<'_, Option<i64>>, String> {
@@ -455,44 +447,4 @@ fn lock_break_due(state: &AppState) -> Result<MutexGuard<'_, Option<i64>>, Strin
         .break_due_at_ms
         .lock()
         .map_err(|_| "break schedule is unavailable".to_owned())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::timer::{SessionKind, SessionOutcome, SessionRecord};
-
-    fn session(kind: SessionKind, outcome: SessionOutcome, planned_ms: u64) -> SessionRecord {
-        SessionRecord {
-            id: "test".to_owned(),
-            kind,
-            started_at_ms: 0,
-            ended_at_ms: planned_ms as i64,
-            planned_ms,
-            actual_ms: planned_ms,
-            outcome,
-            interruptions: 0,
-        }
-    }
-
-    #[test]
-    fn a_completed_countdown_opens_the_card_with_its_length() {
-        let record = session(
-            SessionKind::Countdown,
-            SessionOutcome::Completed,
-            25 * 60_000,
-        );
-        assert_eq!(finished_countdown_minutes(Some(&record), false), Some(25));
-    }
-
-    #[test]
-    fn other_outcomes_and_kinds_keep_only_the_notification() {
-        let skipped = session(SessionKind::Countdown, SessionOutcome::Skipped, 60_000);
-        assert_eq!(finished_countdown_minutes(Some(&skipped), false), None);
-        let completed = session(SessionKind::Countdown, SessionOutcome::Completed, 60_000);
-        assert_eq!(finished_countdown_minutes(Some(&completed), true), None);
-        let focus = session(SessionKind::Focus, SessionOutcome::Completed, 25 * 60_000);
-        assert_eq!(finished_countdown_minutes(Some(&focus), false), None);
-        assert_eq!(finished_countdown_minutes(None, false), None);
-    }
 }

@@ -98,7 +98,7 @@ fn detect_system_locale() -> Option<String> {
             .find_map(|name| std::env::var(name).ok())
             .map(|value| {
                 value
-                    .split(|character| character == '.' || character == '@')
+                    .split(['.', '@'])
                     .next()
                     .unwrap_or(value.as_str())
                     .to_owned()

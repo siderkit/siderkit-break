@@ -31,7 +31,9 @@ jobs:
       matrix:
         os:
           - windows-latest
-          - macos-latest
+          # Intel image: the arm64 pool (macos-latest) can stall for long
+          # periods. Release builds still cover arm64 via the universal DMG.
+          - macos-15-intel
           - ubuntu-22.04
     steps:
       - uses: actions/checkout@v4

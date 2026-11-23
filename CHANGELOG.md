@@ -16,7 +16,7 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 - Windows NSIS (per-user) installer with a language selector; Linux deb, rpm, and AppImage bundles; a universal macOS DMG build.
 - Signed Windows auto-updates: a 6-hour background check, a non-modal update banner, manual download with progress and cancel, restart-to-install, skip-this-version, and a 24-hour snooze. Settings and About share one version/status block, and the Help icon shows a badge while an update is ready to act on. macOS and Linux remain manual downloads.
 - Optional anonymous install and update counts: a random local ID, one install beacon, and a header on update checks. The setting can be turned off, and the ID can be reset.
-- A Cloudflare Worker download host (`dl.siderkit.com`) with R2 storage and an Analytics Engine counter, plus R2-primary and GitHub-fallback update manifests.
+- A Cloudflare Worker download host (`dl.siderkit.com`) that proxies GitHub Releases, with branded and GitHub-fallback update manifests.
 - Product documentation, acceptance criteria, technical design, ADRs, a privacy notice, and a release guide.
 
 ### Changed

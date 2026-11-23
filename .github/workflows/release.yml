@@ -1,8 +1,10 @@
 name: Release
 
-# Builds every installer for a tag, creates a draft GitHub release, and uploads
-# versioned binaries to R2. The R2 manifest is NOT replaced here: publishing the
-# GitHub release triggers promote.yml, which flips dl.siderkit.com/latest.json.
+# Builds every installer for a tag and attaches them to a draft GitHub release.
+# GitHub Releases is the only binary store: the dl.siderkit.com Worker proxies
+# `releases/download/...`, and its /latest.json reads the latest published
+# release's `latest-r2.json`. Publishing the release is therefore the switch
+# that ships the update; no extra promotion job is needed.
 on:
   push:
     tags:
@@ -112,7 +114,7 @@ jobs:
             src-tauri/target/release/bundle/appimage/*.AppImage
 
   publish:
-    name: Draft release and R2 upload
+    name: Draft release
     needs: [windows, macos, linux]
     runs-on: ubuntu-latest
     env:
@@ -133,7 +135,6 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p out
-          version="$VERSION"
           exe="$(find dist -name '*-setup.exe' -type f | head -n 1)"
           sig="$(find dist -name '*-setup.exe.sig' -type f | head -n 1)"
           dmg="$(find dist -name '*.dmg' -type f | head -n 1)"
@@ -142,27 +143,22 @@ jobs:
           appimage="$(find dist -name '*.AppImage' -type f | head -n 1)"
           test -n "$exe" && test -n "$sig" && test -n "$dmg"
           test -n "$deb" && test -n "$rpm" && test -n "$appimage"
+          # Asset names stay version-free: the tag already carries the version,
+          # so `dl.siderkit.com/releases/<version>/<file>` maps onto them.
           cp "$exe" "out/Siderkit-Break_windows_x64-setup.exe"
           cp "$sig" "out/Siderkit-Break_windows_x64-setup.exe.sig"
           cp "$dmg" "out/Siderkit-Break_macos_universal.dmg"
           cp "$deb" "out/Siderkit-Break_linux_amd64.deb"
           cp "$rpm" "out/Siderkit-Break_linux_x86_64.rpm"
           cp "$appimage" "out/Siderkit-Break_linux_amd64.AppImage"
-          mkdir -p "out/releases/$version"
-          cp "$exe" "out/releases/$version/Siderkit-Break_${version}_windows_x64-setup.exe"
-          cp "$sig" "out/releases/$version/Siderkit-Break_${version}_windows_x64-setup.exe.sig"
-          cp "$dmg" "out/releases/$version/Siderkit-Break_${version}_macos_universal.dmg"
-          cp "$deb" "out/releases/$version/Siderkit-Break_${version}_linux_amd64.deb"
-          cp "$rpm" "out/releases/$version/Siderkit-Break_${version}_linux_x86_64.rpm"
-          cp "$appimage" "out/releases/$version/Siderkit-Break_${version}_linux_amd64.AppImage"
           (cd out && sha256sum Siderkit-Break_* > SHA256SUMS.txt)
-      - name: Build the R2 manifest
+      - name: Build the branded manifest
         run: |
           node scripts/make-latest-json.mjs \
             --version "$VERSION" \
             --installer "out/Siderkit-Break_windows_x64-setup.exe" \
             --signature "out/Siderkit-Break_windows_x64-setup.exe.sig" \
-            --url "https://dl.siderkit.com/releases/$VERSION/Siderkit-Break_${VERSION}_windows_x64-setup.exe" \
+            --url "https://dl.siderkit.com/releases/$VERSION/Siderkit-Break_windows_x64-setup.exe" \
             --out out/latest-r2.json
       - name: Build the GitHub fallback manifest
         run: |
@@ -172,23 +168,6 @@ jobs:
             --signature "out/Siderkit-Break_windows_x64-setup.exe.sig" \
             --url "https://github.com/${{ github.repository }}/releases/download/$TAG/Siderkit-Break_windows_x64-setup.exe" \
             --out out/latest.json
-      - name: Upload versioned binaries to R2
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: auto
-          R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
-          R2_BUCKET: ${{ vars.R2_BUCKET }}
-        run: |
-          set -euo pipefail
-          test -n "$R2_BUCKET"
-          aws s3 cp "out/releases/$VERSION" "s3://$R2_BUCKET/releases/$VERSION" \
-            --recursive --endpoint-url "$R2_ENDPOINT" \
-            --cache-control "public, max-age=31536000, immutable"
-          aws s3 cp "out/SHA256SUMS.txt" "s3://$R2_BUCKET/releases/$VERSION/SHA256SUMS.txt" \
-            --endpoint-url "$R2_ENDPOINT" \
-            --cache-control "public, max-age=31536000, immutable" \
-            --content-type "text/plain; charset=utf-8"
       - name: Create or update the draft release
         run: |
           set -euo pipefail

@@ -386,7 +386,7 @@ Validate on load; fall back to defaults and log the invalid key. Never crash on 
 - Windows uses the embedded WebView2 bootstrapper and a per-user NSIS install to `%LOCALAPPDATA%\Programs\Siderkit Break` without elevation; the custom template in `src-tauri/nsis/installer.nsi` sets that folder, adds the installer language selector, and skips the selector during silent, passive, and `/UPDATE` runs. The MSI was retired in 1.0.0-rc.1 because a managed Windows 11 machine refused it with Windows Installer 1625 while the NSIS package installed normally.
 - macOS sets a 10.15.7 minimum system version. Transparency requires the private API, so distribution is direct only.
 - Linux artifacts are built on Ubuntu 22.04 for a glibc 2.35 baseline.
-- Windows auto-updates use minisign-signed NSIS installers and a static `latest.json`. The public key lives in `tauri.conf.json`; the private key is a CI secret. The release workflow builds a draft GitHub release and uploads versioned binaries to R2; publishing the release promotes the R2 manifest. macOS and Linux remain manual downloads.
+- Windows auto-updates use minisign-signed NSIS installers and a static `latest.json`. The public key lives in `tauri.conf.json`; the private key is a CI secret. The release workflow builds a draft GitHub release with every installer attached; publishing it is what makes the update live, because `dl.siderkit.com` proxies `releases/latest/download/latest-r2.json`. macOS and Linux remain manual downloads.
 - Windows Authenticode and Apple Developer signing are not configured yet. Unsigned Windows installers trigger SmartScreen and unsigned macOS builds trigger Gatekeeper. Signing is required before broad distribution.
 
 ## 14. Risks

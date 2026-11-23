@@ -1,8 +1,9 @@
-name: Promote update manifest
+name: Verify update manifest
 
-# Publishing a GitHub release is the human approval step for auto-updates.
-# This workflow copies the R2-flavoured manifest built by release.yml to
-# https://dl.siderkit.com/latest.json.
+# Publishing a GitHub release is the human approval step for auto-updates: the
+# dl.siderkit.com Worker serves `releases/latest/download/latest-r2.json` as
+# /latest.json, so the published release becomes live immediately. This job
+# only checks that the switch actually took effect.
 on:
   release:
     types: [published]
@@ -11,30 +12,25 @@ permissions:
   contents: read
 
 jobs:
-  promote:
-    name: Copy latest-r2.json to R2
+  verify:
+    name: Check dl.siderkit.com
     runs-on: ubuntu-latest
     env:
       TAG: ${{ github.ref_name }}
-      GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Download the R2 manifest from the release
-        run: gh release download "$TAG" --pattern latest-r2.json --dir .
-      - name: Check the manifest version matches the tag
-        run: |
-          node -e "const m=require('./latest-r2.json'); const tag=process.env.TAG.replace(/^v/, ''); if (m.version !== tag) { console.error('manifest is ' + m.version + ', tag is ' + tag); process.exit(1); }"
-      - name: Replace the live manifest
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: auto
-          R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
-          R2_BUCKET: ${{ vars.R2_BUCKET }}
+      - name: Wait for the release to become latest
+        run: sleep 30
+      - name: Check the live manifest matches the tag
         run: |
           set -euo pipefail
-          test -n "$R2_BUCKET"
-          aws s3 cp latest-r2.json "s3://$R2_BUCKET/latest.json" \
-            --endpoint-url "$R2_ENDPOINT" \
-            --content-type "application/json; charset=utf-8" \
-            --cache-control "no-store"
+          expected="${TAG#v}"
+          curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors \
+            https://dl.siderkit.com/latest.json -o latest.json
+          actual="$(node -p "require('./latest.json').version")"
+          if [ "$actual" != "$expected" ]; then
+            echo "live manifest is $actual, tag is $expected" >&2
+            exit 1
+          fi
+          url="$(node -p "Object.values(require('./latest.json').platforms)[0].url")"
+          echo "manifest $actual -> $url"
+          curl -fsSIL --retry 5 --retry-delay 10 --retry-all-errors "$url" | head -n 1

@@ -43,7 +43,7 @@ The app makes at most two kinds of request:
 
 ## Server-side counts
 
-The download host is a Cloudflare Worker in front of Cloudflare R2. For a
+The download host is a Cloudflare Worker in front of GitHub Releases. For a
 request that carries a valid anonymous ID, it writes one row to Cloudflare
 Analytics Engine:
 

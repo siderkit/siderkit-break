@@ -1,6 +1,20 @@
 # Release guide
 
-> Status: release candidate. Nothing in this guide has been published yet.
+> Status: `1.0.0-rc.1` is published on GitHub Releases and served through `https://dl.siderkit.com`.
+
+## Update host
+
+`dl.siderkit.com` is a Cloudflare Worker (`siderkit-dl`) that proxies GitHub Releases:
+
+| Path                         | Source                                                               |
+| ---------------------------- | -------------------------------------------------------------------- |
+| `/latest.json`               | `releases/latest/download/latest-r2.json`, rewritten to branded URLs |
+| `/releases/<version>/<file>` | `releases/download/v<version>/<file>`, streamed with Range support   |
+| `/`                          | redirects to `https://siderkit.com/apps/siderkit-break/`             |
+
+There is no object storage in the path. GitHub Releases is the only binary store, and publishing a release (not draft, not prerelease) flips `/latest.json` on the next request. `.github/workflows/release.yml` builds a draft release; publishing it is the switch that ships the update, and `.github/workflows/promote.yml` verifies the live manifest afterwards.
+
+The updater stays usable as long as the Worker and the GitHub release exist. Keep the `latest-r2.json` asset on every release: the Worker reads it by that exact name.
 
 ## Version
 
@@ -11,8 +25,6 @@ The release candidate keeps the manifest version identical in:
 - `src-tauri/tauri.conf.json`
 
 All three are `1.0.0-rc.1` while the updater, the counters, and the website are finished. The public `1.0.0` release moves all three together. The app reads the Tauri version at runtime for the About panel.
-
-The updater becomes usable only after the R2 bucket, the `dl.siderkit.com` Worker, and the CI signing secret exist. Until then, installers still build and run, but they cannot check for updates.
 
 ## Artifact matrix
 
@@ -156,20 +168,13 @@ Losing the private key ends the update path for existing installs; the only
 recovery is a manual reinstall. Rotate only while there are no installed users,
 or ship a build signed with the old key first.
 
-### Download host (R2 and Worker)
+### Download host (Worker)
 
-The release workflow uploads with the S3 API and needs:
-
-| Secret                 | Value                                        |
-| ---------------------- | -------------------------------------------- |
-| `R2_ACCOUNT_ID`        | Cloudflare account ID                        |
-| `R2_ACCESS_KEY_ID`     | R2 token access key                          |
-| `R2_SECRET_ACCESS_KEY` | R2 token secret                              |
-| `R2_BUCKET`            | bucket name, stored as a repository variable |
-
-Deploy the Worker once from `infra/metrics-worker` with `wrangler deploy`.
-`infra/metrics-worker/README.md` covers the bucket, Analytics Engine dataset,
-custom domain, object layout, and queries.
+No credential is needed for the download host. The release workflow talks to
+GitHub only; `dl.siderkit.com` is a Worker that proxies GitHub Releases. Deploy
+it once from `infra/metrics-worker` with `wrangler deploy`;
+`infra/metrics-worker/README.md` covers the custom domain, Analytics Engine
+dataset, routes, and local checks.
 
 ### Authenticode and Apple
 
@@ -211,7 +216,7 @@ Run on the target operating system before publishing:
 - On macOS, check Spaces, full-screen apps, and Gatekeeper behavior.
 - On Linux, check X11 first; record Wayland behavior separately.
 - Install the previous version and point it at a test `latest.json`; confirm the banner, snooze, skip, download, cancel, and restart-to-install.
-- Confirm `latest.json` returns `cache-control: no-store` and a binary under `releases/` returns a one-year immutable cache.
+- Confirm `latest.json` returns `cache-control: public, max-age=60` and a binary under `releases/` returns a one-year immutable cache.
 - With anonymous counts on, confirm one install event and one check event; turn counts off, check again, and confirm the Worker records nothing.
 - Reset the anonymous ID and confirm the UUID changes and one new install event arrives.
 
@@ -221,11 +226,11 @@ Record the operating-system build, DPI, and result for each row in `docs/accepta
 
 1. Update the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`; update `CHANGELOG.md`.
 2. Commit and tag `vX.Y.Z`; push the tag. `release.yml` builds Windows, macOS, and Linux.
-3. The workflow normalizes names, writes `latest-r2.json`, `latest.json`, and `SHA256SUMS.txt`, uploads versioned binaries to R2, and creates a **draft** GitHub release. It does not touch the live R2 `latest.json`.
+3. The workflow normalizes names, writes `latest-r2.json`, `latest.json`, and `SHA256SUMS.txt`, and creates a **draft** GitHub release with every installer attached. There is no object storage to upload to.
 4. Verify the draft assets, checksums, signatures, and the verification checklist.
-5. Publish the GitHub release. `promote.yml` copies `latest-r2.json` to `https://dl.siderkit.com/latest.json`.
-6. Run an update from the previous version against both the R2 and GitHub endpoints.
-7. If Actions is unavailable, run the same build and `scripts/make-latest-json.mjs` locally, upload with `aws s3 cp`, and create the draft with `gh release create`.
+5. Publish the GitHub release. `/latest.json` starts serving the new manifest immediately, because the Worker reads `releases/latest/download/latest-r2.json`; `promote.yml` verifies the live version and installer afterwards.
+6. Run an update from the previous version against `https://dl.siderkit.com/latest.json` and the GitHub fallback endpoint.
+7. If Actions is unavailable, run the same build and `scripts/make-latest-json.mjs` locally and create the release with `gh release create`.
 
 Do not attach debug builds or the raw `target/` directory. Do not hand-edit
 `latest.json`; regenerate it from the installer and `.sig` file.
@@ -244,8 +249,7 @@ Do not attach debug builds or the raw `target/` directory. Do not hand-edit
 
 ## Rollback
 
-If a release is defective, replace the R2 `latest.json` with the previous
-version's manifest and keep the previous binaries online. On GitHub, mark the
-bad release as a pre-release so `releases/latest` points back, or publish a
-higher patch version. Do not delete versioned binaries and never reuse a version
-number.
+If a release is defective, mark it as a pre-release on GitHub so
+`releases/latest` falls back to the previous release, or publish a higher patch
+version. The previous binaries stay online because every release keeps its own
+tag. Do not delete release assets and never reuse a version number.

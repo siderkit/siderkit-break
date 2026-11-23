@@ -2,12 +2,18 @@
 
 A single Cloudflare Worker serves `https://dl.siderkit.com`:
 
-| Route          | Response                                               | Counted        |
-| -------------- | ------------------------------------------------------ | -------------- |
-| `/latest.json` | updater manifest from R2, `no-store`                   | update check   |
-| `/i`           | empty `204`, no-store                                  | install beacon |
-| `/health`      | `ok`                                                   | no             |
-| `/<key>`       | R2 object; `releases/*` is immutable, others 5 minutes | no             |
+| Route                        | Response                                        | Counted        |
+| ---------------------------- | ----------------------------------------------- | -------------- |
+| `/latest.json`               | updater manifest from the latest GitHub release | update check   |
+| `/i`                         | empty `204`, `no-store`                         | install beacon |
+| `/releases/<version>/<file>` | release asset proxied from GitHub               | no             |
+| `/`                          | redirect to the product page                    | no             |
+| `/health`                    | `ok`                                            | no             |
+
+GitHub Releases is the only binary store. The Worker keeps one branded origin
+for the app, the website, and the updater, and it rewrites every asset URL in
+the manifest to that origin. Publishing a GitHub release (not draft, not
+prerelease) is what makes `/latest.json` point at the new version.
 
 The Worker never sees an account. It stores one row per counted request in
 Cloudflare Analytics Engine and writes no logs that contain an IP address.
@@ -27,97 +33,52 @@ the request is served but never counted.
 
 ## One-time setup
 
-1. Create the R2 bucket `siderkit-dl`.
-2. Create an Analytics Engine dataset named `siderkit_break_metrics`.
-3. Attach `dl.siderkit.com` as a custom domain to the Worker. The zone must be
+1. Attach `dl.siderkit.com` as a custom domain to the Worker. The zone must be
    on the same Cloudflare account.
-4. Deploy from this directory:
+2. Deploy from this directory:
 
    ```text
    pnpm dlx wrangler login
    pnpm dlx wrangler deploy
    ```
 
-   `wrangler.toml` already binds `BUCKET` and `METRICS`. Change the bucket or
-   dataset name there if the account uses different names.
+   `wrangler.toml` binds the custom domain.
 
-5. Create an R2 API token with object read/write access to the bucket. The
-   release workflow uses the S3 endpoint through these repository secrets:
+3. Optional: analytics. Enable Analytics Engine, create the dataset
+   `siderkit_break_metrics`, and uncomment the `METRICS` binding in
+   `wrangler.toml`. Without it `/i` still answers `204` and `record()` is a
+   no-op, so the app and the updater work unchanged; only the counters stay
+   empty. The Workers Free plan on this account does not expose Analytics
+   Engine, so the binding stays commented out.
 
-   | Secret                 | Value                                           |
-   | ---------------------- | ----------------------------------------------- |
-   | `R2_ACCOUNT_ID`        | Cloudflare account ID                           |
-   | `R2_ACCESS_KEY_ID`     | token access key ID                             |
-   | `R2_SECRET_ACCESS_KEY` | token secret                                    |
-   | `R2_BUCKET`            | `siderkit-dl` (repository variable, not secret) |
+No R2 bucket, S3 token, or repository secret is involved. The release workflow
+talks to GitHub only.
 
-## Object layout
+## Release assets
+
+The release workflow attaches version-free asset names, because the tag already
+carries the version:
 
 ```text
-latest.json                                      current updater manifest
-releases/1.0.0/Siderkit-Break_1.0.0_windows_x64-setup.exe
-releases/1.0.0/Siderkit-Break_1.0.0_macos_universal.dmg
-releases/1.0.0/Siderkit-Break_1.0.0_linux_amd64.deb
-releases/1.0.0/Siderkit-Break_1.0.0_linux_x86_64.rpm
-releases/1.0.0/Siderkit-Break_1.0.0_linux_amd64.AppImage
+Siderkit-Break_windows_x64-setup.exe
+Siderkit-Break_windows_x64-setup.exe.sig
+Siderkit-Break_macos_universal.dmg
+Siderkit-Break_linux_amd64.deb
+Siderkit-Break_linux_x86_64.rpm
+Siderkit-Break_linux_amd64.AppImage
+latest-r2.json     branded manifest (dl.siderkit.com URLs)
+latest.json        GitHub fallback manifest
+SHA256SUMS.txt
 ```
 
-`latest.json` is only replaced after a GitHub release is published. The release
-workflow uploads versioned binaries immediately but keeps the previous manifest
-in place, so a draft cannot push an update to users.
+`/releases/<version>/<file>` maps to
+`releases/download/v<version>/<file>`, so the same asset names work for every
+tag without versioned copies.
 
-## Queries
+## Local check
 
-Analytics Engine SQL, dataset `siderkit_break_metrics`:
-
-```sql
--- Events per day for the last week
-SELECT toDate(timestamp) AS day, blob1 AS event, SUM(double1) AS events
-FROM siderkit_break_metrics
-WHERE timestamp > NOW() - INTERVAL '7' DAY
-GROUP BY day, event
-ORDER BY day DESC;
-
--- New installs per day
-SELECT toDate(timestamp) AS day, COUNT() AS installs
-FROM siderkit_break_metrics
-WHERE blob1 = 'install' AND timestamp > NOW() - INTERVAL '30' DAY
-GROUP BY day
-ORDER BY day DESC;
-
--- Distinct installs that checked in on a given day
-SELECT toDate(timestamp) AS day, COUNT(DISTINCT blob2) AS installs
-FROM siderkit_break_metrics
-WHERE blob1 = 'check' AND timestamp > NOW() - INTERVAL '30' DAY
-GROUP BY day
-ORDER BY day DESC;
-
--- Version adoption
-SELECT blob3 AS version, COUNT(DISTINCT blob2) AS installs
-FROM siderkit_break_metrics
-WHERE blob1 = 'check' AND timestamp > NOW() - INTERVAL '7' DAY
-GROUP BY version
-ORDER BY installs DESC;
+```text
+curl -fsS https://dl.siderkit.com/health
+curl -fsS https://dl.siderkit.com/latest.json
+curl -fsSI https://dl.siderkit.com/releases/1.0.0-rc.1/Siderkit-Break_1.0.0-rc.1_windows_x64-setup.exe
 ```
-
-Column meanings:
-
-| Column    | Value                   |
-| --------- | ----------------------- |
-| `blob1`   | `install` or `check`    |
-| `blob2`   | anonymous install UUID  |
-| `blob3`   | app version (`1.0.0`)   |
-| `blob4`   | target (`windows`)      |
-| `blob5`   | architecture (`x86_64`) |
-| `blob6`   | bundle type (`nsis`)    |
-| `double1` | always `1`              |
-
-## Limits
-
-- An uninstall is not reported; only a new UUID counts as a new install.
-- A user who resets the anonymous ID is counted as a new install by design.
-- A reinstall from the same `metrics.json` backup keeps the old ID.
-- Analytics Engine retention applies; export or query long-term trends before
-  the retention window closes.
-- Cloudflare terminates TLS and therefore sees client IPs, but the Worker does
-  not read, log, or store them.

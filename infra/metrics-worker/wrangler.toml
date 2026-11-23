@@ -5,13 +5,14 @@ workers_dev = false
 
 routes = [{ pattern = "dl.siderkit.com", custom_domain = true }]
 
-[[r2_buckets]]
-binding = "BUCKET"
-bucket_name = "siderkit-dl"
-
-[[analytics_engine_datasets]]
-binding = "METRICS"
-dataset = "siderkit_break_metrics"
+# Anonymous counters need Analytics Engine, which this account cannot enable on
+# the Workers Free plan. The beacon still answers 204 and `record()` is a no-op
+# while the binding is absent, so downloads and updates are unaffected. Add the
+# block below after upgrading to Workers Paid:
+#
+# [[analytics_engine_datasets]]
+# binding = "METRICS"
+# dataset = "siderkit_break_metrics"
 
 [observability]
 enabled = true

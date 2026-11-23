@@ -20,7 +20,7 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            bundles: nsis,msi
+            bundles: nsis
             artifact: windows
             target: ''
           - os: macos-latest

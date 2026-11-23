@@ -40,4 +40,4 @@ La matrice complète des plateformes et les commandes de paquetage se trouvent d
 
 ## Licence
 
-MIT OR Apache-2.0. See [LICENSE](../../../LICENSE), [LICENSE-MIT](../../../LICENSE-MIT), and [LICENSE-APACHE](../../../LICENSE-APACHE).
+Apache-2.0. See [LICENSE](../../../LICENSE) and [NOTICE](../../../NOTICE).

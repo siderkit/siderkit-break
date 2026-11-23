@@ -379,7 +379,7 @@ fn overlay_visible(app: &AppHandle) -> bool {
         .unwrap_or(true)
 }
 
-fn current_locale(app: &AppHandle) -> String {
+pub(crate) fn current_locale(app: &AppHandle) -> String {
     engine_host::get_settings(app)
         .map(|settings| active_locale(settings.general.locale.as_deref()))
         .unwrap_or_else(|_| active_locale(None))

@@ -165,6 +165,11 @@ export function showOverlayMenu(): Promise<void> {
   return invoke<void>('show_overlay_menu');
 }
 
+/** Opens the native app menu; `editable` adds edit verbs for a text field. */
+export function showContextMenu(editable: boolean): Promise<void> {
+  return invoke<void>('show_context_menu', { editable });
+}
+
 /** Brings the existing main window to the front. */
 export function showMainWindow(): Promise<void> {
   return invoke<void>('show_main_window');

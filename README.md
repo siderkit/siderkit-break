@@ -52,12 +52,12 @@ The screenshots are captured from the running app. The break card is a native wi
 
 ## Platform support
 
-| Platform                                   | Minimum                                 | Artifacts           | Status                                                 |
-| ------------------------------------------ | --------------------------------------- | ------------------- | ------------------------------------------------------ |
-| Windows 10 / 11 x64                        | Windows 10 1809 (build 17763)           | NSIS installer, MSI | Windows 10 22H2 VM verified; Windows 11 built locally  |
-| macOS Intel                                | macOS 10.15.7 with Safari 15.4 or newer | Universal DMG       | CI build; signing pending                              |
-| macOS Apple Silicon                        | macOS 11.0                              | Universal DMG       | CI build; signing pending                              |
-| Ubuntu 22.04+ and compatible distributions | webkit2gtk 4.1, X11                     | deb, rpm, AppImage  | Ubuntu 22.04.5 X11 VM verified; Wayland is best-effort |
+| Platform                                   | Minimum                                 | Artifacts          | Status                                                 |
+| ------------------------------------------ | --------------------------------------- | ------------------ | ------------------------------------------------------ |
+| Windows 10 / 11 x64                        | Windows 10 1809 (build 17763)           | NSIS installer     | Windows 10 22H2 VM verified; Windows 11 built locally  |
+| macOS Intel                                | macOS 10.15.7 with Safari 15.4 or newer | Universal DMG      | CI build; signing pending                              |
+| macOS Apple Silicon                        | macOS 11.0                              | Universal DMG      | CI build; signing pending                              |
+| Ubuntu 22.04+ and compatible distributions | webkit2gtk 4.1, X11                     | deb, rpm, AppImage | Ubuntu 22.04.5 X11 VM verified; Wayland is best-effort |
 
 Windows 10 1809–21H2 are supported targets but have not been verified on physical hardware. Windows 10 reached end of support in October 2025; the app still runs there, but the operating system no longer receives updates.
 
@@ -81,8 +81,8 @@ pnpm tauri build
 Or choose the bundle formats explicitly:
 
 ```bash
-# Windows: NSIS (per-user) and MSI (all users)
-pnpm tauri build --bundles nsis,msi
+# Windows: NSIS (per-user)
+pnpm tauri build --bundles nsis
 
 # macOS: one universal DMG
 pnpm tauri build --target universal-apple-darwin --bundles dmg
@@ -130,4 +130,4 @@ Bug reports, translations, and focused pull requests are welcome. Read [CONTRIBU
 
 ## License
 
-MIT OR Apache-2.0. See [LICENSE](LICENSE), [LICENSE-MIT](LICENSE-MIT), and [LICENSE-APACHE](LICENSE-APACHE).
+Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).

@@ -1,4 +1,5 @@
 mod commands;
+mod context_menu;
 mod db;
 mod engine_host;
 mod export;
@@ -60,7 +61,14 @@ pub fn run() {
                 .with_denylist(&["break", "overlay", "locate"])
                 .build(),
         )
-        .on_menu_event(|app, event| tray::handle_overlay_menu(app, event.id().as_ref()))
+        .on_menu_event(|app, event| {
+            let id = event.id().as_ref();
+            if context_menu::owns(id) {
+                context_menu::handle(app, id);
+            } else {
+                tray::handle_overlay_menu(app, id);
+            }
+        })
         .setup(|app| {
             let handle = app.handle().clone();
             let state = engine_host::AppState::initialize(&handle)?;
@@ -112,6 +120,7 @@ pub fn run() {
             commands::begin_overlay_drag,
             commands::end_overlay_drag,
             commands::show_overlay_menu,
+            commands::show_context_menu,
             commands::open_project_page,
             commands::show_main_window,
             commands::get_today_summary,

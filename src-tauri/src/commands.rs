@@ -88,6 +88,13 @@ pub fn show_overlay_menu(app: AppHandle) -> Result<(), String> {
     crate::tray::show_overlay_menu(&app)
 }
 
+/// Shows the app menu where the pointer is. `editable` adds the edit verbs
+/// when the pointer is over a text field.
+#[tauri::command]
+pub fn show_context_menu(window: tauri::WebviewWindow, editable: bool) -> Result<(), String> {
+    crate::context_menu::show(&window, editable)
+}
+
 #[tauri::command]
 pub fn open_project_page() -> Result<(), String> {
     crate::shell::open_project_page()

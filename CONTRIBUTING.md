@@ -24,7 +24,7 @@ pnpm tauri dev
 
 ```bash
 # Windows
-pnpm tauri build --bundles nsis,msi
+pnpm tauri build --bundles nsis
 
 # macOS (universal)
 rustup target add aarch64-apple-darwin x86_64-apple-darwin

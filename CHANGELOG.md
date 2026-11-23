@@ -13,11 +13,16 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 - Thirty UI languages with system-language detection and right-to-left layouts for Arabic, Persian, and Urdu.
 - Light, dark, and system themes with eight color styles.
 - Global shortcuts, launch at login, start minimized, and close-to-tray.
-- Windows NSIS (per-user) and MSI (all-users) installers; Linux deb, rpm, and AppImage bundles; a universal macOS DMG build.
+- Windows NSIS (per-user) installer with a language selector; Linux deb, rpm, and AppImage bundles; a universal macOS DMG build.
 - Product documentation, acceptance criteria, technical design, ADRs, and a release guide.
 
 ### Changed
 
+- The right-click menu is now a native app menu on every window instead of the WebView menu, with the standard edit verbs kept in text fields.
+- The project is licensed under Apache-2.0 only; the previous MIT/Apache-2.0 dual license and its two license files are gone, and the attribution moved to `NOTICE`.
+- Windows ships only the per-user NSIS installer; the all-users MSI was retired after a managed Windows 11 machine rejected it with Windows Installer error 1625.
+- The NSIS installer ships 23 languages, preselects the OS language, and offers a language selector that never appears during silent, passive, or update runs.
+- Manifests are at `1.0.0-rc.1`; the public `1.0.0` version follows the updater and the website.
 - Phase boundaries now use in-app cards instead of operating-system notifications, so reminders work without a notification permission.
 - The Windows NSIS installer defaults to a per-user folder and remembers a custom install location across upgrades.
 - The overlay ignores input until the pointer is over it, so it does not block work underneath.

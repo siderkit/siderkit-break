@@ -182,6 +182,28 @@ Quit
 - Windows/Linux: use the icon and tooltip; taskbar progress is optional.
 - Global shortcuts: `Ctrl+Alt+P` start/pause, `Ctrl+Alt+S` skip, `Ctrl+Alt+O` toggle overlay. On macOS, `Cmd+Option` equivalents. Shortcut conflicts are reported in settings.
 
+### 5.1 Context menu
+
+Every window replaces the WebView context menu with a native menu built by `src-tauri/src/context_menu.rs`. The WebView menu exposes reload, print, save as, and inspect, which do not belong in a desktop app.
+
+```text
+Focus · 24:59     (disabled status row)
+──────────────
+Start focus / Pause / Resume
+End current phase          (hidden while idle)
+Hide this reminder         (break card only)
+──────────────
+Open main window           (hidden on the main window)
+Settings
+Help
+──────────────
+Quit
+```
+
+When the pointer is over an `input`, `textarea`, or `contenteditable` element, the renderer marks the request as editable and the menu shows Undo, Redo, Cut, Copy, Paste, and Select all instead. Those rows are native predefined items, so the operating system runs them against the focused field. GTK needs the optional `libxdo` dependency for predefined edit rows, and the AppImage does not carry it, so on Linux an editable field keeps the WebView's own edit menu. Development builds keep the WebView menu for Inspect and Reload; Shift+right-click still opens the native menu.
+
+Menu IDs use the `ctx-` prefix. The global `on_menu_event` handler routes that prefix to the context-menu module and everything else to the overlay menu handler, so the tray rows keep their existing path.
+
 ## 6. Persistence
 
 SQLite, WAL mode, migrations forward-only.
@@ -338,9 +360,9 @@ Validate on load; fall back to defaults and log the invalid key. Never crash on 
 
 ## 13. Build and release
 
-- Tauri bundles: NSIS and MSI on Windows, a universal DMG on macOS, and deb/rpm/AppImage on Linux.
+- Tauri bundles: NSIS on Windows, a universal DMG on macOS, and deb/rpm/AppImage on Linux. `bundle.targets` lists these five formats, so a bare `pnpm tauri build` never produces an MSI.
 - `pnpm tauri build --bundles …` builds locally. `.github/workflows/build.yml` builds all three platforms on demand and uploads artifacts without creating a release.
-- Windows uses the embedded WebView2 bootstrapper and a per-user NSIS install to `%LOCALAPPDATA%\Programs\Siderkit Break` without elevation; the custom template in `src-tauri/nsis/installer.nsi` sets that folder. The per-machine MSI installs to `C:\Program Files\Siderkit Break` with UAC and remains available for managed deployments.
+- Windows uses the embedded WebView2 bootstrapper and a per-user NSIS install to `%LOCALAPPDATA%\Programs\Siderkit Break` without elevation; the custom template in `src-tauri/nsis/installer.nsi` sets that folder, adds the installer language selector, and skips the selector during silent, passive, and `/UPDATE` runs. The MSI was retired in 1.0.0-rc.1 because a managed Windows 11 machine refused it with Windows Installer 1625 while the NSIS package installed normally.
 - macOS sets a 10.15.7 minimum system version. Transparency requires the private API, so distribution is direct only.
 - Linux artifacts are built on Ubuntu 22.04 for a glibc 2.35 baseline.
 - Signing is not configured yet. Unsigned Windows installers trigger SmartScreen and unsigned macOS builds trigger Gatekeeper. Signing is required before broad distribution.

@@ -4,23 +4,35 @@
 
 ## Version
 
-The 1.0.0 release keeps the manifest version identical in:
+The release candidate keeps the manifest version identical in:
 
 - `package.json`
 - `src-tauri/Cargo.toml`
 - `src-tauri/tauri.conf.json`
 
-Change all three together. The app reads the Tauri version at runtime for the About panel.
+All three are `1.0.0-rc.1` while the updater and the website are finished. The public `1.0.0` release moves all three together. The app reads the Tauri version at runtime for the About panel.
 
 ## Artifact matrix
 
 | Platform                  | Command                                                          | Artifacts                      |
 | ------------------------- | ---------------------------------------------------------------- | ------------------------------ |
-| Windows 10 1809+ / 11 x64 | `pnpm tauri build --bundles nsis,msi`                            | `*-setup.exe`, `*.msi`         |
+| Windows 10 1809+ / 11 x64 | `pnpm tauri build --bundles nsis`                                | `*-setup.exe`                  |
 | macOS 10.15.7+ / 11.0+    | `pnpm tauri build --target universal-apple-darwin --bundles dmg` | one universal `*.dmg`          |
 | Ubuntu 22.04+ (X11)       | `pnpm tauri build --bundles deb,rpm,appimage`                    | `*.deb`, `*.rpm`, `*.AppImage` |
 
+`bundle.targets` in `src-tauri/tauri.conf.json` lists exactly these five formats; Tauri drops the ones that do not belong to the host platform. Windows therefore builds NSIS and nothing else, including a bare `pnpm tauri build`. The MSI was retired in `1.0.0-rc.1`: a managed Windows 11 machine rejected it with Windows Installer error 1625 while the NSIS package installed and uninstalled normally.
+
 The build workflow in `.github/workflows/build.yml` runs the same commands and uploads the bundles as workflow artifacts. It does not create a GitHub release.
+
+## Local build record (2026-11-23)
+
+`1.0.0-rc.1` was rebuilt after the license, installer-language, and context-menu changes:
+
+| Artifact                                                          | Size     | SHA-256                                                            |
+| ----------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| `Siderkit Break_1.0.0-rc.1_x64-setup.exe` (NSIS, 23 UI languages) | 5.29 MiB | `bd2c8783114f748b34cea19f32c3dbaa3d1a925da46246998cfefa15b4da97da` |
+
+No MSI was produced. The build log listed six languages whose Tauri-specific installer strings are still English (Hindi, Indonesian, Thai, Malay, Polish, Romanian); the standard NSIS pages are localized. The installer language selector and the `/S`, `/P`, `/UPDATE` skip path still need a run on the Windows VM.
 
 ## Local build record (2026-11-22)
 
@@ -34,6 +46,8 @@ Windows NSIS package keeps the per-user install folder.
 | `Siderkit Break_1.0.0_x64_en-US.msi` (WiX)       | 6.80 MiB  | `9d13b55cb45b297a6b3bef1b29a4c3abd67d5e853abb71a52e95932da16b67d3` |
 | `Siderkit Break_1.0.0_amd64.deb` (Debian)        | 6.55 MiB  | `f62968c2049acf3c02a54d7cd158745dcf2d4baefffa57cdb1e0bc95f26ddd13` |
 | `Siderkit Break_1.0.0_amd64.AppImage` (AppImage) | 82.81 MiB | `de2b1046b1d5b59d287d1aa27452123f43d32730ad91eb674779cf5b50c03619` |
+
+The MSI rows in the two build records below are kept as history. MSI is no longer built, signed, or published.
 
 The AppImage was packaged with a locally supplied `runtime-x86_64`: the
 continuous `appimagetool` build downloads its runtime while packaging, and this
@@ -64,16 +78,17 @@ Artifacts produced from the previous 1.0.0 release binary:
 
 These artifacts were rebuilt after the locate hint change: the hint is now a rounded frame around the droplet with a closer `I'm here` label and entry, glow, and echo motion. On X11 the hint window is override-redirect, so the window manager no longer pushes it away from a droplet that touches the screen edge. The AppImage was built with `APPIMAGE_EXTRACT_AND_RUN=1` because this build VM has no `libfuse2`; the AppImage itself still needs FUSE (or the same variable) on the target host. The RPM was not rebuilt this round because the build VM has no `rpmbuild` and no non-interactive sudo. The NSIS installer was rebuilt again for the per-user default folder described below; the other artifacts did not change.
 
-### Which Windows installer
+### Windows installer
 
-The two installers follow the usual split used by desktop applications:
+The Windows build ships one installer:
 
 | Installer            | Scope        | Default folder                           | Elevation |
 | -------------------- | ------------ | ---------------------------------------- | --------- |
 | `*-setup.exe` (NSIS) | Current user | `%LOCALAPPDATA%\Programs\Siderkit Break` | None      |
-| `*.msi` (WiX)        | All users    | `C:\Program Files\Siderkit Break`        | UAC       |
 
-The NSIS package is the default download for individual users: it never prompts for administrator rights, and every user gets a separate copy. The MSI is for managed deployments and installers that must place the app in `Program Files`.
+It never prompts for administrator rights, so every user gets a separate copy without a UAC prompt. An all-users MSI is not offered; a managed deployment can still install the NSIS package per user or repackage the binary with its own tooling.
+
+The installer carries 23 NSIS languages and shows the language selector before the first page. The OS language is preselected; a language outside the list falls back to English. The selector never appears during a silent (`/S`), passive (`/P`), or silent update (`/UPDATE`) run, so updates keep the language already stored in `HKCU\Software\Siderkit\Siderkit Break` and cannot block on a dialog. The seven UI languages without an NSIS translation (Bengali, Urdu, Swahili, Marathi, Telugu, Tamil, Filipino) use the English installer while the app itself stays fully translated. Six of the 23 (Hindi, Indonesian, Thai, Malay, Polish, Romanian) have no Tauri-specific message translation yet, so only the installer's own custom strings (reinstall, downgrade, WebView2 errors) fall back to English; the standard NSIS pages stay localized.
 
 The NSIS installer records its install folder in `HKCU\Software\Siderkit\Siderkit Break`. Reinstalling restores that folder, so an existing per-user install under `%LOCALAPPDATA%\Siderkit Break` is upgraded in place instead of creating a second copy. Remove the old version first if you want the new default folder.
 
@@ -91,9 +106,9 @@ On Linux the data path follows `$XDG_DATA_HOME` when it is set. The webview cach
 
 Uninstall keeps the database and logs by default. The uninstaller deletes both only when the **Delete app data** checkbox is selected. On Windows the autostart entry is removed from `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
 
-The Windows installers are below the 10 MB budget. The MSI build used the WiX 3.14 tool cache; the tools are not committed.
+The Windows installer is below the 10 MB budget.
 
-Verified on a Windows 10 Pro 22H2 (19045.2965) VM: NSIS install, launch, shortcuts, uninstall, autostart, reboot with `--minimized`, reminder cards, countdown, break card, history, and the startup autostart self-heal. WebView2 157.0.4341.60 was installed by the NSIS bootstrapper. The MSI was verified with the wizard, per-machine install under `C:\Program Files`, UAC, and maintenance-mode removal. Both installers were removed cleanly. The NSIS build keeps the 75×32 active countdown overlay and the droplet-to-label gap matching the design. The final NSIS build was installed again after the Linux-only card-placement fix and showed the break-complete card with **Start focus**.
+Verified on a Windows 10 Pro 22H2 (19045.2965) VM: NSIS install, launch, shortcuts, uninstall, autostart, reboot with `--minimized`, reminder cards, countdown, break card, history, and the startup autostart self-heal. WebView2 157.0.4341.60 was installed by the NSIS bootstrapper. The NSIS build keeps the 75×32 active countdown overlay and the droplet-to-label gap matching the design. The final NSIS build was installed again after the Linux-only card-placement fix and showed the break-complete card with **Start focus**. An MSI was verified in the same round before it was retired; both installers were removed cleanly.
 
 The current NSIS installer was re-verified on the same VM as a standard (non-administrator) user: no UAC prompt, default folder `%LOCALAPPDATA%\Programs\Siderkit Break`, install, launch, and uninstall. Uninstall removed the program files, shortcuts, and the uninstall entry; the database and logs stayed in place because **Delete app data** was left unchecked.
 
@@ -103,7 +118,7 @@ Idle memory on the Windows VM with the main window hidden and the overlay visibl
 
 ## Platform settings
 
-- Windows: `bundle.windows.webviewInstallMode` is `embedBootstrapper`, so the installer carries the small WebView2 bootstrapper. A machine that has never installed WebView2 still needs network access for the runtime itself. The NSIS installer uses `currentUser` and installs to `%LOCALAPPDATA%\Programs\Siderkit Break` without elevation; `src-tauri/nsis/installer.nsi` is a custom template derived from tauri-cli 2.12.6 whose only change is that default folder, so refresh it when the Tauri CLI minor version changes. The MSI stays `perMachine` and installs to `C:\Program Files\Siderkit Break` with UAC.
+- Windows: `bundle.windows.webviewInstallMode` is `embedBootstrapper`, so the installer carries the small WebView2 bootstrapper. A machine that has never installed WebView2 still needs network access for the runtime itself. The NSIS installer uses `currentUser` and installs to `%LOCALAPPDATA%\Programs\Siderkit Break` without elevation; `src-tauri/nsis/installer.nsi` is a custom template derived from tauri-cli 2.12.6. Its changes are the default folder, the language selector guard for silent/passive/update runs, and nothing else, so refresh it when the Tauri CLI minor version changes. `bundle.targets` omits `msi`, so no MSI is produced.
 - macOS: `bundle.macOS.minimumSystemVersion` is `10.15.7`. The frontend needs Safari 15.4 features (`<dialog>`, `structuredClone`), so a stock Catalina install with an old Safari shows an update message instead of the app.
 - Linux: build on Ubuntu 22.04 to keep the glibc 2.35 baseline. AppImage does not bundle WebKitGTK; the host needs `libwebkit2gtk-4.1`. The AppImage also needs FUSE 2 or `APPIMAGE_EXTRACT_AND_RUN=1`; a build host without `libfuse2` must set that variable for `tauri build` too.
 
@@ -137,6 +152,7 @@ APPLE_TEAM_ID
 Run on the target operating system before publishing:
 
 - Install, launch, and confirm the first-run window.
+- Run an interactive install and confirm the language selector appears with the OS language preselected; run `/S`, `/P`, and `/UPDATE` and confirm no selector appears.
 - Start, pause, resume, skip, and reset a focus session.
 - Confirm the overlay appears, stays on top, and is click-through outside the droplet.
 - Confirm tray labels and the locate hint.

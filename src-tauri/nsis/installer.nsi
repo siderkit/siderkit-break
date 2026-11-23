@@ -529,7 +529,15 @@ Function .onInit
   ${EndIf}
 
   !if "${DISPLAYLANGUAGESELECTOR}" == "true"
-    !insertmacro MUI_LANGDLL_DISPLAY
+    ; An update, a passive install, and a silent install must never wait for
+    ; the language dialog. They keep the OS language and continue.
+    ${If} ${Silent}
+    ${OrIf} $PassiveMode = 1
+    ${OrIf} $UpdateMode = 1
+      ; Intentionally no dialog.
+    ${Else}
+      !insertmacro MUI_LANGDLL_DISPLAY
+    ${EndIf}
   !endif
 
   !insertmacro SetContext

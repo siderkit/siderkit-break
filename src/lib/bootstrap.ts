@@ -1,4 +1,5 @@
 import { getSettings, isTauri, onLocaleChanged } from './ipc/client';
+import { installContextMenu } from './context-menu';
 import {
   applyDocumentLocale,
   normalizeLocale,
@@ -34,6 +35,10 @@ export async function prepareWindow(name: WindowName): Promise<void> {
   await prepareLocale(locale);
   applyDocumentLocale(locale);
   if (isTauri) {
+    // The overlay owns a richer native menu with its own placement rules.
+    if (name !== 'overlay') {
+      installContextMenu();
+    }
     try {
       await onLocaleChanged(() => {
         window.location.reload();

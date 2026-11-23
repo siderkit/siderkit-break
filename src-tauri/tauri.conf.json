@@ -83,7 +83,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY5OTdBMEIwQjZBMjgzRDgKUldUWWc2SzJzS0NYK1cwMVgxK2JOOVloSit3am1yaEgwdktTNHU4VTFDeWtLMUdVNGhlNllPRXAK",
       "endpoints": [
-        "https://dl.siderkit.com/latest.json?cv={{current_version}}&t={{target}}&a={{arch}}&b={{bundle_type}}",
+        "https://dl.siderkit.com/siderkit-break/latest.json?cv={{current_version}}&t={{target}}&a={{arch}}&b={{bundle_type}}",
         "https://github.com/siderkit/siderkit-break/releases/latest/download/latest.json?cv={{current_version}}&t={{target}}&a={{arch}}&b={{bundle_type}}"
       ]
     }

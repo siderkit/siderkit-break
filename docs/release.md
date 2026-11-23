@@ -4,17 +4,35 @@
 
 ## Update host
 
-`dl.siderkit.com` is a Cloudflare Worker (`siderkit-dl`) that proxies GitHub Releases:
+`dl.siderkit.com` is a Cloudflare Worker (`siderkit-dl`) that proxies GitHub Releases for every Siderkit product. The first path segment is always the product slug:
 
-| Path                         | Source                                                               |
-| ---------------------------- | -------------------------------------------------------------------- |
-| `/latest.json`               | `releases/latest/download/latest-r2.json`, rewritten to branded URLs |
-| `/releases/<version>/<file>` | `releases/download/v<version>/<file>`, streamed with Range support   |
-| `/`                          | redirects to `https://siderkit.com/apps/siderkit-break/`             |
+| Path                                        | Source                                                               |
+| ------------------------------------------- | -------------------------------------------------------------------- |
+| `/health`                                   | liveness probe                                                       |
+| `/`                                         | redirects to `https://siderkit.com/`                                 |
+| `/siderkit-break/`                          | redirects to the product page                                        |
+| `/siderkit-break/latest.json`               | `releases/latest/download/latest-dl.json`, rewritten to branded URLs |
+| `/siderkit-break/i`                         | install beacon, empty `204`                                          |
+| `/siderkit-break/releases/<version>/<file>` | `releases/download/v<version>/<file>`, streamed with Range support   |
 
-There is no object storage in the path. GitHub Releases is the only binary store, and publishing a release (not draft, not prerelease) flips `/latest.json` on the next request. `.github/workflows/release.yml` builds a draft release; publishing it is the switch that ships the update, and `.github/workflows/promote.yml` verifies the live manifest afterwards.
+The Worker keeps a product registry; adding a product is one entry, not a new Worker.
 
-The updater stays usable as long as the Worker and the GitHub release exist. Keep the `latest-r2.json` asset on every release: the Worker reads it by that exact name.
+### URL contract
+
+Every download, update, and beacon URL must carry the product slug immediately after the host:
+
+```text
+https://dl.siderkit.com/<product>/...
+https://dl.siderkit.com/<product>/latest.json
+https://dl.siderkit.com/<product>/i
+https://dl.siderkit.com/<product>/releases/<version>/<file>
+```
+
+Product-less paths are forbidden in new code. The only exceptions are the legacy aliases kept for builds shipped before the namespace existed: `/latest.json`, `/i`, and `/releases/<version>/<file>` answer with a redirect (or `204` for the beacon) and point at `siderkit-break`. Never link to them from the site, the app, or CI.
+
+There is no object storage in the path. GitHub Releases is the only binary store, and publishing a release (not draft, not prerelease) flips `/siderkit-break/latest.json` on the next request. `.github/workflows/release.yml` builds a draft release; publishing it is the switch that ships the update, and `.github/workflows/promote.yml` verifies the live manifest afterwards.
+
+The updater stays usable as long as the Worker and the GitHub release exist. Keep the `latest-dl.json` asset on every release: the Worker reads it by that exact name, then falls back to `latest-r2.json` and `latest.json`.
 
 ## Version
 
@@ -216,7 +234,7 @@ Run on the target operating system before publishing:
 - On macOS, check Spaces, full-screen apps, and Gatekeeper behavior.
 - On Linux, check X11 first; record Wayland behavior separately.
 - Install the previous version and point it at a test `latest.json`; confirm the banner, snooze, skip, download, cancel, and restart-to-install.
-- Confirm `latest.json` returns `cache-control: public, max-age=60` and a binary under `releases/` returns a one-year immutable cache.
+- Confirm `latest.json` returns `cache-control: public, max-age=60` and a binary under `<product>/releases/` returns a one-year immutable cache.
 - With anonymous counts on, confirm one install event and one check event; turn counts off, check again, and confirm the Worker records nothing.
 - Reset the anonymous ID and confirm the UUID changes and one new install event arrives.
 
@@ -226,10 +244,10 @@ Record the operating-system build, DPI, and result for each row in `docs/accepta
 
 1. Update the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`; update `CHANGELOG.md`.
 2. Commit and tag `vX.Y.Z`; push the tag. `release.yml` builds Windows, macOS, and Linux.
-3. The workflow normalizes names, writes `latest-r2.json`, `latest.json`, and `SHA256SUMS.txt`, and creates a **draft** GitHub release with every installer attached. There is no object storage to upload to.
+3. The workflow normalizes names, writes `latest-dl.json`, `latest.json`, and `SHA256SUMS.txt`, and creates a **draft** GitHub release with every installer attached. There is no object storage to upload to.
 4. Verify the draft assets, checksums, signatures, and the verification checklist.
-5. Publish the GitHub release. `/latest.json` starts serving the new manifest immediately, because the Worker reads `releases/latest/download/latest-r2.json`; `promote.yml` verifies the live version and installer afterwards.
-6. Run an update from the previous version against `https://dl.siderkit.com/latest.json` and the GitHub fallback endpoint.
+5. Publish the GitHub release. `/siderkit-break/latest.json` starts serving the new manifest immediately, because the Worker reads `releases/latest/download/latest-dl.json`; `promote.yml` verifies the live version and installer afterwards.
+6. Run an update from the previous version against `https://dl.siderkit.com/siderkit-break/latest.json` and the GitHub fallback endpoint.
 7. If Actions is unavailable, run the same build and `scripts/make-latest-json.mjs` locally and create the release with `gh release create`.
 
 Do not attach debug builds or the raw `target/` directory. Do not hand-edit

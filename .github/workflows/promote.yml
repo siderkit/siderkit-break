@@ -1,9 +1,9 @@
 name: Verify update manifest
 
 # Publishing a GitHub release is the human approval step for auto-updates: the
-# dl.siderkit.com Worker serves `releases/latest/download/latest-r2.json` as
-# /latest.json, so the published release becomes live immediately. This job
-# only checks that the switch actually took effect.
+# dl.siderkit.com Worker serves `releases/latest/download/latest-dl.json` as
+# `/siderkit-break/latest.json`, so the published release becomes live
+# immediately. This job only checks that the switch actually took effect.
 on:
   release:
     types: [published]
@@ -25,7 +25,7 @@ jobs:
           set -euo pipefail
           expected="${TAG#v}"
           curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors \
-            https://dl.siderkit.com/latest.json -o latest.json
+            https://dl.siderkit.com/siderkit-break/latest.json -o latest.json
           actual="$(node -p "require('./latest.json').version")"
           if [ "$actual" != "$expected" ]; then
             echo "live manifest is $actual, tag is $expected" >&2

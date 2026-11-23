@@ -1,35 +1,51 @@
 # Download host and anonymous counters
 
-A single Cloudflare Worker serves `https://dl.siderkit.com`:
+A single Cloudflare Worker serves `https://dl.siderkit.com` for every Siderkit
+product. The first path segment is always the product slug:
 
-| Route                        | Response                                        | Counted        |
-| ---------------------------- | ----------------------------------------------- | -------------- |
-| `/latest.json`               | updater manifest from the latest GitHub release | update check   |
-| `/i`                         | empty `204`, `no-store`                         | install beacon |
-| `/releases/<version>/<file>` | release asset proxied from GitHub               | no             |
-| `/`                          | redirect to the product page                    | no             |
-| `/health`                    | `ok`                                            | no             |
+| Route                                  | Response                                        | Counted        |
+| -------------------------------------- | ----------------------------------------------- | -------------- |
+| `/health`                              | `ok`                                            | no             |
+| `/`                                    | redirect to the site                            | no             |
+| `/<product>/`                          | redirect to the product page                    | no             |
+| `/<product>/latest.json`               | updater manifest from the latest GitHub release | update check   |
+| `/<product>/i`                         | empty `204`, `no-store`                         | install beacon |
+| `/<product>/releases/<version>/<file>` | release asset proxied from GitHub               | no             |
+
+Adding a product means adding one entry to `PRODUCTS` in `src/index.js`; there
+is one Worker for the whole host, not one per product.
+
+Legacy aliases keep builds shipped before the namespace existed working. They
+point at `siderkit-break` and must never be linked from new code:
+
+| Legacy path                  | Behaviour                              |
+| ---------------------------- | -------------------------------------- |
+| `/latest.json`               | `302` → `/siderkit-break/latest.json`  |
+| `/i`                         | `204`, counted as `siderkit-break`     |
+| `/releases/<version>/<file>` | `302` → `/siderkit-break/releases/...` |
 
 GitHub Releases is the only binary store. The Worker keeps one branded origin
 for the app, the website, and the updater, and it rewrites every asset URL in
-the manifest to that origin. Publishing a GitHub release (not draft, not
-prerelease) is what makes `/latest.json` point at the new version.
+the manifest to `/<product>/releases/...`. Publishing a GitHub release (not
+draft, not prerelease) is what makes `/<product>/latest.json` point at the new
+version.
 
 The Worker never sees an account. It stores one row per counted request in
 Cloudflare Analytics Engine and writes no logs that contain an IP address.
 
 ## Why two counters
 
-- **Install beacon**: the app sends `GET /i` once, guarded by a flag in its local
-  `metrics.json`. Reinstalling the app or resetting the anonymous ID creates a
-  new UUID and therefore a new install event.
+- **Install beacon**: the app sends `GET /<product>/i` once, guarded by a flag
+  in its local `metrics.json`. Reinstalling the app or resetting the anonymous
+  ID creates a new UUID and therefore a new install event.
 - **Update check**: every check carries the same UUID. A running app checks at
   most every six hours, so distinct IDs per day estimate active installs, and
   the version dimension shows how quickly installs move to a release.
 
 Both counters are skipped unless `X-Siderkit-Install` is a valid UUID. Turning
 off **Share anonymous install counts** in the app makes it omit the header, so
-the request is served but never counted.
+the request is served but never counted. Each data point carries the product
+slug as its first blob, so products never mix.
 
 ## One-time setup
 
@@ -66,19 +82,22 @@ Siderkit-Break_macos_universal.dmg
 Siderkit-Break_linux_amd64.deb
 Siderkit-Break_linux_x86_64.rpm
 Siderkit-Break_linux_amd64.AppImage
-latest-r2.json     branded manifest (dl.siderkit.com URLs)
+latest-dl.json     branded manifest (dl.siderkit.com/<product>/ URLs)
 latest.json        GitHub fallback manifest
 SHA256SUMS.txt
 ```
 
-`/releases/<version>/<file>` maps to
+`/<product>/releases/<version>/<file>` maps to
 `releases/download/v<version>/<file>`, so the same asset names work for every
-tag without versioned copies.
+tag without versioned copies. The Worker reads `latest-dl.json` first, then
+falls back to `latest-r2.json` and `latest.json` for releases published before
+the rename.
 
 ## Local check
 
 ```text
 curl -fsS https://dl.siderkit.com/health
-curl -fsS https://dl.siderkit.com/latest.json
-curl -fsSI https://dl.siderkit.com/releases/1.0.0-rc.1/Siderkit-Break_1.0.0-rc.1_windows_x64-setup.exe
+curl -fsS https://dl.siderkit.com/siderkit-break/latest.json
+curl -fsSI https://dl.siderkit.com/siderkit-break/releases/1.0.0-rc.1/Siderkit-Break_1.0.0-rc.1_windows_x64-setup.exe
+curl -fsSI https://dl.siderkit.com/latest.json            # legacy, 302
 ```

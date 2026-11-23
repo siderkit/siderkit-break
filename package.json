@@ -27,8 +27,9 @@
     "check:duplicates": "jscpd src src-tauri/src",
     "check:todo": "node scripts/check-todo.mjs",
     "check:file-size": "node scripts/check-file-size.mjs",
+    "check:download-urls": "node scripts/check-download-urls.mjs",
     "check:rust": "cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --all-features -- -D warnings && cargo test --manifest-path src-tauri/Cargo.toml",
-    "check:web": "pnpm check:css && pnpm check:tokens && pnpm lint && pnpm test:unit && pnpm check:types && pnpm check:boundaries && pnpm check:duplicates && pnpm check:todo && pnpm check:file-size",
+    "check:web": "pnpm check:css && pnpm check:tokens && pnpm lint && pnpm test:unit && pnpm check:types && pnpm check:boundaries && pnpm check:duplicates && pnpm check:todo && pnpm check:file-size && pnpm check:download-urls",
     "check:clean": "pnpm check:web && pnpm check:rust",
     "check": "pnpm format:check && pnpm check:clean",
     "check:i18n": "inlang check --project ./project.inlang"

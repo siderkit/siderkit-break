@@ -17,7 +17,7 @@ use uuid::Uuid;
 
 pub const INSTALL_HEADER: &str = "X-Siderkit-Install";
 const IDENTITY_FILE: &str = "metrics.json";
-const BEACON_URL: &str = "https://dl.siderkit.com/i";
+const BEACON_URL: &str = "https://dl.siderkit.com/siderkit-break/i";
 const BEACON_TIMEOUT: Duration = Duration::from_secs(10);
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -225,7 +225,7 @@ mod tests {
     #[test]
     fn the_beacon_url_carries_the_version_and_platform() {
         let url = beacon_url("1.0.0-rc.1", "windows", "x86_64");
-        assert!(url.starts_with("https://dl.siderkit.com/i?"));
+        assert!(url.starts_with("https://dl.siderkit.com/siderkit-break/i?"));
         assert!(url.contains("v=1.0.0-rc.1"));
         assert!(url.contains("os=windows"));
         assert!(url.contains("a=x86_64"));

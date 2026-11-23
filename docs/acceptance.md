@@ -124,7 +124,7 @@
 - **Reset anonymous ID** replaces the stored UUID and sends one new beacon while counts are enabled;
 - no third-party analytics SDK, advertising ID, IP hash, or device fingerprint is used.
 
-**P0.** Given a response from the download host, then `latest.json` is served with `cache-control: no-store` and versioned binaries under `releases/` are immutable.
+**P0.** Given a response from the download host, then `/siderkit-break/latest.json` is served with `cache-control: public, max-age=60` and versioned binaries under `/siderkit-break/releases/` are immutable.
 
 ### A-14 Performance and size
 

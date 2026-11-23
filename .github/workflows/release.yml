@@ -2,9 +2,10 @@ name: Release
 
 # Builds every installer for a tag and attaches them to a draft GitHub release.
 # GitHub Releases is the only binary store: the dl.siderkit.com Worker proxies
-# `releases/download/...`, and its /latest.json reads the latest published
-# release's `latest-r2.json`. Publishing the release is therefore the switch
-# that ships the update; no extra promotion job is needed.
+# `releases/download/...` under `/<product>/`, and `/<product>/latest.json`
+# reads the latest published release's `latest-dl.json`. Publishing the release
+# is therefore the switch that ships the update; no extra promotion job is
+# needed.
 on:
   push:
     tags:
@@ -144,7 +145,8 @@ jobs:
           test -n "$exe" && test -n "$sig" && test -n "$dmg"
           test -n "$deb" && test -n "$rpm" && test -n "$appimage"
           # Asset names stay version-free: the tag already carries the version,
-          # so `dl.siderkit.com/releases/<version>/<file>` maps onto them.
+          # so `dl.siderkit.com/<product>/releases/<version>/<file>` maps onto
+          # them.
           cp "$exe" "out/Siderkit-Break_windows_x64-setup.exe"
           cp "$sig" "out/Siderkit-Break_windows_x64-setup.exe.sig"
           cp "$dmg" "out/Siderkit-Break_macos_universal.dmg"
@@ -158,8 +160,8 @@ jobs:
             --version "$VERSION" \
             --installer "out/Siderkit-Break_windows_x64-setup.exe" \
             --signature "out/Siderkit-Break_windows_x64-setup.exe.sig" \
-            --url "https://dl.siderkit.com/releases/$VERSION/Siderkit-Break_windows_x64-setup.exe" \
-            --out out/latest-r2.json
+            --url "https://dl.siderkit.com/siderkit-break/releases/$VERSION/Siderkit-Break_windows_x64-setup.exe" \
+            --out out/latest-dl.json
       - name: Build the GitHub fallback manifest
         run: |
           node scripts/make-latest-json.mjs \
@@ -177,9 +179,9 @@ jobs:
               echo "release $TAG is already published; refusing to replace its assets" >&2
               exit 1
             fi
-            gh release upload "$TAG" out/latest.json out/latest-r2.json out/SHA256SUMS.txt out/Siderkit-Break_* --clobber
+            gh release upload "$TAG" out/latest.json out/latest-dl.json out/SHA256SUMS.txt out/Siderkit-Break_* --clobber
           else
-            gh release create "$TAG" out/latest.json out/latest-r2.json out/SHA256SUMS.txt out/Siderkit-Break_* \
+            gh release create "$TAG" out/latest.json out/latest-dl.json out/SHA256SUMS.txt out/Siderkit-Break_* \
               --draft \
               --title "Siderkit Break $VERSION" \
               --generate-notes

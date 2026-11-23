@@ -26,10 +26,10 @@ The app makes at most two kinds of request:
 | Update check   | 30 seconds after launch, then every 6 hours, or when you press **Check now** | `X-Siderkit-Install: <random UUID>`, app version, target, architecture, bundle type |
 | Install beacon | Once after a new install, or after you reset the anonymous ID                | `X-Siderkit-Install: <random UUID>`, app version, OS, architecture                  |
 
-- The update check fetches `https://dl.siderkit.com/latest.json`; if that host
-  fails, it falls back to the GitHub release mirror.
-- The install beacon goes to `https://dl.siderkit.com/i` and returns an empty
-  response.
+- The update check fetches `https://dl.siderkit.com/siderkit-break/latest.json`;
+  if that host fails, it falls back to the GitHub release mirror.
+- The install beacon goes to `https://dl.siderkit.com/siderkit-break/i` and
+  returns an empty response.
 - The anonymous ID is a random UUID created on the device. It is not derived
   from hardware, the network, an account, or the install path.
 - Turning off **Share anonymous install counts** in Settings stops both the ID

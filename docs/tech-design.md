@@ -331,7 +331,7 @@ Validate on load; fall back to defaults and log the invalid key. Never crash on 
 
 - `tauri-plugin-updater` runs behind Rust. The WebView has no `updater:default` permission and only reads a status snapshot.
 - `src-tauri/src/updates.rs` owns the state machine, the 30-second startup delay, the 6-hour scheduler, download cancellation, disk cache, and the tray label.
-- Endpoints are ordered: `https://dl.siderkit.com/latest.json`, then the GitHub release mirror. Each endpoint returns a manifest whose binary URL points at the same host.
+- Endpoints are ordered: `https://dl.siderkit.com/siderkit-break/latest.json`, then the GitHub release mirror. Each endpoint returns a manifest whose binary URL points at the product-scoped host.
 - The manifest carries a minisign signature over the NSIS installer. The plugin verifies the signature before returning downloaded bytes and again before install.
 - On Windows, `Update::install` launches the installer with `/P /UPDATE /R` and exits the app. The NSIS template skips the language selector, reinstall page, and finish-page interaction for `/S`, `/P`, and `/UPDATE`.
 - The first failed check sets `lastError` but no modal; the next scheduled check retries.
@@ -339,9 +339,9 @@ Validate on load; fall back to defaults and log the invalid key. Never crash on 
 ### 9.2 Anonymous counts
 
 - `src-tauri/src/metrics.rs` creates a random UUID v4 once and stores it in `metrics.json` beside the database.
-- The first enabled start sends `GET https://dl.siderkit.com/i` with `X-Siderkit-Install`; a success flag prevents repeats.
+- The first enabled start sends `GET https://dl.siderkit.com/siderkit-break/i` with `X-Siderkit-Install`; a success flag prevents repeats.
 - Every update check sends the same header. Turning the setting off omits the header and the beacon; resetting issues a new UUID.
-- The Worker accepts only valid UUIDs, writes `event / UUID / version / target / arch / bundle` to Analytics Engine, and never writes the client IP.
+- The Worker accepts only valid UUIDs, writes `product / event / UUID / version / target / arch / bundle` to Analytics Engine, and never writes the client IP.
 - No timer activity, history, window title, or usage event leaves the device. See `PRIVACY.md`.
 
 ## 10. Platform behavior
@@ -386,7 +386,7 @@ Validate on load; fall back to defaults and log the invalid key. Never crash on 
 - Windows uses the embedded WebView2 bootstrapper and a per-user NSIS install to `%LOCALAPPDATA%\Programs\Siderkit Break` without elevation; the custom template in `src-tauri/nsis/installer.nsi` sets that folder, adds the installer language selector, and skips the selector during silent, passive, and `/UPDATE` runs. The MSI was retired in 1.0.0-rc.1 because a managed Windows 11 machine refused it with Windows Installer 1625 while the NSIS package installed normally.
 - macOS sets a 10.15.7 minimum system version. Transparency requires the private API, so distribution is direct only.
 - Linux artifacts are built on Ubuntu 22.04 for a glibc 2.35 baseline.
-- Windows auto-updates use minisign-signed NSIS installers and a static `latest.json`. The public key lives in `tauri.conf.json`; the private key is a CI secret. The release workflow builds a draft GitHub release with every installer attached; publishing it is what makes the update live, because `dl.siderkit.com` proxies `releases/latest/download/latest-r2.json`. macOS and Linux remain manual downloads.
+- Windows auto-updates use minisign-signed NSIS installers and a static `latest.json`. The public key lives in `tauri.conf.json`; the private key is a CI secret. The release workflow builds a draft GitHub release with every installer attached; publishing it is what makes the update live, because `dl.siderkit.com/siderkit-break/latest.json` reads `releases/latest/download/latest-dl.json`. macOS and Linux remain manual downloads.
 - Windows Authenticode and Apple Developer signing are not configured yet. Unsigned Windows installers trigger SmartScreen and unsigned macOS builds trigger Gatekeeper. Signing is required before broad distribution.
 
 ## 14. Risks

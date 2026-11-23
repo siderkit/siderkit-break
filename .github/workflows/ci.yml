@@ -60,4 +60,7 @@ jobs:
         with:
           workspaces: src-tauri
       - run: pnpm install --frozen-lockfile
+      # tauri::generate_context!() reads tauri.conf.json and requires the
+      # frontendDist directory to exist, so the web build must run first.
+      - run: pnpm build
       - run: pnpm check:rust

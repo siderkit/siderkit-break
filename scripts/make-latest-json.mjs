@@ -15,7 +15,7 @@ const USAGE = `Usage:
     --version 1.0.0 \\
     --installer path/to/installer.exe \\
     --signature path/to/installer.exe.sig \\
-    --url https://dl.siderkit.com/releases/1.0.0/installer.exe \\
+    --url https://dl.siderkit.com/siderkit-break/releases/1.0.0/installer.exe \\
     [--platform windows-x86_64] [--notes text | --notes-file file] \\
     [--pub-date 2026-11-23T12:00:00Z] [--out latest.json]`;
 

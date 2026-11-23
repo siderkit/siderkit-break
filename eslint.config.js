@@ -92,6 +92,13 @@ export default tseslint.config(
     },
   },
   {
+    // The download host runs in the Workers runtime, not the browser.
+    files: ['infra/**/*.js'],
+    languageOptions: {
+      globals: { ...globals.worker },
+    },
+  },
+  {
     // Gate scripts report findings to a terminal; console output is their API.
     files: ['scripts/**/*.mjs'],
     languageOptions: {

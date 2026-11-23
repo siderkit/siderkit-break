@@ -33,14 +33,14 @@ The 1.0 product is not for teams, managers, or people who need cross-device sync
 
 ## Product principles
 
-| Principle   | Meaning                                                      |
-| ----------- | ------------------------------------------------------------ |
-| Calm        | No flashing, no guilt, no streak pressure.                   |
-| Unobtrusive | The overlay is small, quiet, and optionally click-through.   |
-| Local-first | No account, no network, no telemetry in 1.0.                 |
-| Dependable  | The Rust timer is authoritative and deadline-based.          |
-| Small       | Few dependencies, small installer, fast startup.             |
-| Honest      | If a platform cannot support a behavior, say so and degrade. |
+| Principle   | Meaning                                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| Calm        | No flashing, no guilt, no streak pressure.                                                                          |
+| Unobtrusive | The overlay is small, quiet, and optionally click-through.                                                          |
+| Local-first | No account; session data never leaves the device. Only update checks and optional anonymous counts use the network. |
+| Dependable  | The Rust timer is authoritative and deadline-based.                                                                 |
+| Small       | Few dependencies, small installer, fast startup.                                                                    |
+| Honest      | If a platform cannot support a behavior, say so and degrade.                                                        |
 
 ## 1.0 scope
 
@@ -62,7 +62,8 @@ The 1.0 product is not for teams, managers, or people who need cross-device sync
 - Local SQLite persistence for every focus, break, and countdown session.
 - 30 UI languages with system-language detection and true RTL; light, dark, and system themes; eight color styles.
 - Global shortcuts for start/pause, skip, and overlay toggle.
-- No network access.
+- Windows auto-update with signed NSIS installers; macOS and Linux get manual downloads.
+- Optional anonymous install and update counts, off-switch and reset included. No session data leaves the device.
 
 ### Should have
 
@@ -91,10 +92,10 @@ The first release is successful when:
 - idle memory with the overlay is at most 120 MB;
 - idle CPU is below 0.5%;
 - a new user can start the first focus session in under one minute;
-- no network request is made by the app;
+- session data never leaves the device; the only outbound requests are update checks and the optional install beacon;
 - the code quality gate passes on every pull request.
 
-There is no telemetry in 1.0. The metrics above are verified locally and through manual dogfooding.
+There is no behavioral telemetry. Anonymous install and update counts can be disabled in Settings; see [PRIVACY.md](../PRIVACY.md). The metrics above are verified locally and through manual dogfooding.
 
 ## Constraints
 

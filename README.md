@@ -12,7 +12,7 @@ A calm, local-first focus timer for Windows, macOS, and Linux. It keeps a quiet 
 
 > **Status:** 1.0 release candidate. Windows and Linux artifacts are built and verified on test machines; the macOS build is unsigned. No public binaries have been published yet. [Build from source](#build-from-source) to try it now.
 
-Siderkit Break is an experimental project from Siderkit. The 1.0 release is intentionally small: a local-first focus timer with a tray presence, a transparent floating countdown, and in-app reminder cards. It needs no account, no server, and no network connection.
+Siderkit Break is an experimental project from Siderkit. The 1.0 release is intentionally small: a local-first focus timer with a tray presence, a transparent floating countdown, and in-app reminder cards. It needs no account and no server for your data. On Windows it can check for updates; anonymous install counts are optional and can be turned off.
 
 ## At a glance
 
@@ -23,7 +23,7 @@ Siderkit Break is an experimental project from Siderkit. The 1.0 release is inte
 | **Reminders**      | In-app cards at every phase boundary, with postpone, skip, and a built-in chime.                      |
 | **History**        | Every session stored locally in SQLite, with a styled spreadsheet (`.xlsx`) export.                   |
 | **Languages**      | 30 UI languages, system-language detection, and true right-to-left layouts.                           |
-| **Your data**      | Local only. No account, no sync, no telemetry.                                                        |
+| **Your data**      | Local only. No account, no sync; optional anonymous install counts.                                   |
 
 ## A closer look
 
@@ -39,15 +39,16 @@ The screenshots are captured from the running app. The break card is a native wi
 - **Out of your way.** The floating countdown stays on top, labels break phases, and ignores clicks until you point at it. The tray menu can start a phase, show or hide the ball, locate it on screen, or open the main window.
 - **Reminders you can act on.** Every phase boundary opens a small card with the next action. Start the break, postpone it for five minutes, skip it, or close the card. Reminders and the built-in chime can be turned off independently.
 - **A record that stays yours.** Completed, skipped, reset, and interrupted sessions are stored locally. Review them by day or export a formatted spreadsheet with summary, daily, and session sheets.
+- **Updates without the busywork.** On Windows the app checks for signed updates in the background, downloads only when you ask, and installs on restart. macOS and Linux builds are downloaded manually.
 - **Yours in your language.** Choose from 30 languages or follow the system language. Arabic, Persian, and Urdu switch the whole layout to right-to-left. Light, dark, and system themes come with eight color styles.
 - **Small conveniences.** Global shortcuts, launch at login, start minimized, and close-to-tray.
 
 ## What it does not do
 
 - No todo lists, notes, or project management.
-- No accounts, sync, teams, cloud services, or telemetry.
+- No accounts, sync, teams, or cloud services. The only network requests are update checks and the optional anonymous install beacon.
 - No mobile apps or home-screen widgets.
-- No plugins, AI features, or auto-update in 1.0.
+- No plugins, AI features, or task management.
 - No true in-taskbar text embedding; the floating countdown is a separate always-on-top window.
 
 ## Platform support
@@ -105,7 +106,7 @@ pnpm check
 
 ## Design principles
 
-- **Local-first by default.** The database lives on your machine. There is no account system and no network path for your session data.
+- **Local-first by default.** The database lives on your machine. There is no account system and no network path for your session data. Update checks and optional anonymous counts are the only outbound requests.
 - **The timer belongs to the core.** Rust owns time and state; the UI only renders and sends commands. The timer stays accurate when the window is hidden or the system is busy.
 - **Calm, not demanding.** No streaks, badges, guilt, or engagement loops. The app asks for a few minutes and then gets out of the way.
 - **One job, done well.** A focus timer should not grow into a task manager. The small surface is a feature.
@@ -118,6 +119,7 @@ pnpm check
 - [Acceptance criteria](docs/acceptance.md)
 - [Technical design](docs/tech-design.md)
 - [Release guide](docs/release.md)
+- [Privacy](PRIVACY.md)
 - [Code quality](docs/code-quality.md)
 - [ADR-0001: stack](docs/adr/0001-stack.md)
 - [ADR-0002: taskbar and overlay](docs/adr/0002-taskbar-overlay.md)

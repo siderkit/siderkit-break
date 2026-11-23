@@ -6,6 +6,7 @@ use crate::locate;
 use crate::settings::Settings;
 use crate::shell;
 use crate::timer::TimerSnapshot;
+use crate::updates::{self, UpdateStatus};
 
 #[tauri::command]
 pub fn get_state(app: AppHandle) -> Result<TimerSnapshot, String> {
@@ -20,6 +21,54 @@ pub fn get_settings(app: AppHandle) -> Result<Settings, String> {
 #[tauri::command]
 pub fn update_settings(app: AppHandle, settings: Settings) -> Result<Settings, String> {
     engine_host::update_settings(&app, settings)
+}
+
+#[tauri::command]
+pub fn get_update_status(app: AppHandle) -> UpdateStatus {
+    updates::status(&app)
+}
+
+#[tauri::command]
+pub async fn check_for_update(
+    app: AppHandle,
+    manual: Option<bool>,
+) -> Result<UpdateStatus, String> {
+    Ok(updates::check(&app, manual.unwrap_or(false)).await)
+}
+
+#[tauri::command]
+pub fn download_update(app: AppHandle) -> Result<UpdateStatus, String> {
+    updates::start_download(&app)
+}
+
+#[tauri::command]
+pub fn cancel_update_download(app: AppHandle) -> UpdateStatus {
+    updates::cancel_download(&app)
+}
+
+#[tauri::command]
+pub fn install_update(app: AppHandle) -> Result<(), String> {
+    updates::install(&app)
+}
+
+#[tauri::command]
+pub fn skip_update_version(app: AppHandle, version: String) -> Result<UpdateStatus, String> {
+    updates::skip_version(&app, Some(version))
+}
+
+#[tauri::command]
+pub fn clear_skipped_update(app: AppHandle) -> Result<UpdateStatus, String> {
+    updates::skip_version(&app, None)
+}
+
+#[tauri::command]
+pub fn snooze_update(app: AppHandle, hours: Option<u32>) -> Result<UpdateStatus, String> {
+    updates::snooze(&app, hours)
+}
+
+#[tauri::command]
+pub fn reset_metrics_id(app: AppHandle) -> Result<(), String> {
+    crate::metrics::reset(&app)
 }
 
 #[tauri::command]

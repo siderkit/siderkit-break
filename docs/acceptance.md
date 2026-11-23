@@ -20,7 +20,7 @@
 - it explains the tray, overlay, and shortcut;
 - it never asks for operating-system notification permission;
 - it creates a local database and writes a schema version;
-- it does not make a network request.
+- it sends at most one anonymous install beacon and one update check; no session data leaves the device.
 
 ### A-02 Start, pause, resume
 
@@ -112,9 +112,19 @@
 - offers "Show in folder" for the saved file;
 - shows an inline error and leaves the dialog usable when writing fails.
 
-### A-13 No network
+### A-13 Network, updates, and anonymous counts
 
-**P0.** Given a normal 1.0 run, then the app makes no outbound network requests. The desktop capability set does not include HTTP or shell access.
+**P0.** Given a normal run, then:
+
+- the only outbound requests are update checks and the one-time install beacon;
+- no timer activity, session history, window title, file path, or crash content is sent;
+- the WebView capability set still contains no HTTP, shell, or filesystem permission;
+- with **Share anonymous install counts** on, the first start sends one beacon and update checks carry `X-Siderkit-Install`;
+- with the setting off, update checks still succeed but carry no install header and no beacon is sent;
+- **Reset anonymous ID** replaces the stored UUID and sends one new beacon while counts are enabled;
+- no third-party analytics SDK, advertising ID, IP hash, or device fingerprint is used.
+
+**P0.** Given a response from the download host, then `latest.json` is served with `cache-control: no-store` and versioned binaries under `releases/` are immutable.
 
 ### A-14 Performance and size
 
@@ -174,6 +184,20 @@ If the memory budget is missed, the team must either reduce the overlay to a nat
 - skipping or resetting the countdown shows neither the card nor a completion notification;
 - the card disappears if another phase starts while it is open.
 
+### A-20 Windows auto-update
+
+**P0.** On Windows, given a signed manifest for a newer version, then:
+
+- the app checks 30 seconds after launch and every 6 hours, or immediately from Settings;
+- a non-modal banner names the version and offers Download, Later, Skip, and Dismiss;
+- Download shows monotonic progress and can be cancelled without leaving a partial package;
+- Restart and install verifies the minisign signature again, launches the NSIS installer with `/P /UPDATE /R`, and exits;
+- Skip silences that version and Snooze silences every version for 24 hours, both across restarts;
+- a failed check or download leaves the app usable and records the error in Settings;
+- Settings → Updates, Settings → About, and Help → About show the same version line, status, and primary action;
+- while an update is available or ready, the Help icon shows a red dot and an accessible update hint; dismissing the banner, snoozing, or skipping that version hides the dot too;
+- macOS and Linux do not show update controls beyond the manual-download note.
+
 ## Data integrity acceptance
 
 - A session id is unique and never reused.
@@ -186,7 +210,9 @@ If the memory budget is missed, the team must either reduce the overlay to a nat
 
 ## Security and privacy acceptance
 
-- No network permission in the Tauri capability set.
+- No network permission in the Tauri capability set; updater requests run in Rust.
+- Update and beacon requests carry no session data.
+- Turning off anonymous counts removes the install header and the beacon.
 - CSP allows only local assets.
 - No remote fonts, scripts, or images.
 - No secrets or tokens are stored.

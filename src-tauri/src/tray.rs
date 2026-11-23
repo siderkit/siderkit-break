@@ -19,11 +19,15 @@ struct TrayMenu {
     status: MenuItem<Wry>,
     toggle: MenuItem<Wry>,
     skip: MenuItem<Wry>,
+    update: Option<MenuItem<Wry>>,
+    check_update: Option<MenuItem<Wry>>,
     overlay: MenuItem<Wry>,
     open: MenuItem<Wry>,
     quit: MenuItem<Wry>,
     locale: String,
     overlay_visible: bool,
+    update_label: Option<String>,
+    check_supported: bool,
 }
 
 pub struct TrayMenuState(Mutex<Option<TrayMenu>>);
@@ -90,6 +94,23 @@ fn build_menu(
         true,
         None::<&str>,
     )?;
+    let update_label = crate::updates::tray_label(app, locale);
+    let update = match &update_label {
+        Some(text) => Some(MenuItem::with_id(app, "update", text, true, None::<&str>)?),
+        None => None,
+    };
+    let check_supported = cfg!(target_os = "windows");
+    let check_update = if check_supported {
+        Some(MenuItem::with_id(
+            app,
+            "check-update",
+            translate(locale, "update.tray.check"),
+            true,
+            None::<&str>,
+        )?)
+    } else {
+        None
+    };
     let overlay = MenuItem::with_id(
         app,
         "overlay",
@@ -125,6 +146,7 @@ fn build_menu(
     let first_separator = PredefinedMenuItem::separator(app)?;
     let second_separator = PredefinedMenuItem::separator(app)?;
     let third_separator = PredefinedMenuItem::separator(app)?;
+    let fourth_separator = PredefinedMenuItem::separator(app)?;
     let mut items: Vec<&dyn IsMenuItem<Wry>> = vec![
         &title,
         &status,
@@ -132,13 +154,22 @@ fn build_menu(
         &toggle,
         &skip,
         &second_separator,
-        &overlay,
     ];
+    if let Some(update) = &update {
+        items.push(update);
+    }
+    if let Some(check_update) = &check_update {
+        items.push(check_update);
+    }
+    if update.is_some() || check_update.is_some() {
+        items.push(&third_separator);
+    }
+    items.push(&overlay);
     if let Some(locate) = &locate {
         items.push(locate);
     }
     items.push(&open);
-    items.push(&third_separator);
+    items.push(&fourth_separator);
     items.push(&quit);
     let menu = Menu::with_items(app, &items)?;
     Ok((
@@ -147,11 +178,15 @@ fn build_menu(
             status,
             toggle,
             skip,
+            update,
+            check_update,
             overlay,
             open,
             quit,
             locale: locale.to_owned(),
             overlay_visible,
+            update_label,
+            check_supported,
         },
     ))
 }
@@ -270,6 +305,8 @@ pub fn handle_overlay_menu(app: &AppHandle, id: &str) {
 pub fn update(app: &AppHandle, snapshot: &TimerSnapshot) {
     let locale = current_locale(app);
     let overlay_visible = overlay_visible(app);
+    let update_label = crate::updates::tray_label(app, &locale);
+    let check_supported = cfg!(target_os = "windows");
     let needs_rebuild = {
         let Some(menu_state) = app.try_state::<TrayMenuState>() else {
             return;
@@ -279,7 +316,12 @@ pub fn update(app: &AppHandle, snapshot: &TimerSnapshot) {
             .lock()
             .unwrap_or_else(|poison| poison.into_inner());
         match guard.as_ref() {
-            Some(menu) => menu.locale != locale || menu.overlay_visible != overlay_visible,
+            Some(menu) => {
+                menu.locale != locale
+                    || menu.overlay_visible != overlay_visible
+                    || menu.update_label != update_label
+                    || menu.check_supported != check_supported
+            }
             None => true,
         }
     };
@@ -314,12 +356,15 @@ pub fn update(app: &AppHandle, snapshot: &TimerSnapshot) {
                 menu.toggle.clone(),
                 menu.overlay.clone(),
                 menu.skip.clone(),
+                menu.update.clone(),
+                menu.check_update.clone(),
                 menu.open.clone(),
                 menu.quit.clone(),
             )
         })
     };
-    let Some((status_item, toggle, overlay, skip, open, quit)) = handles else {
+    let Some((status_item, toggle, overlay, skip, update, check_update, open, quit)) = handles
+    else {
         return;
     };
     let status = status_text(&locale, snapshot);
@@ -327,12 +372,25 @@ pub fn update(app: &AppHandle, snapshot: &TimerSnapshot) {
     set_text(&toggle, toggle_text(&locale, snapshot));
     set_text(&overlay, overlay_toggle_text(&locale, overlay_visible));
     set_text(&skip, translate(&locale, "tray.skipPhase"));
+    if let (Some(item), Some(label)) = (update, update_label) {
+        set_text(&item, label);
+    }
+    if let Some(item) = check_update {
+        set_text(&item, translate(&locale, "update.tray.check"));
+    }
     set_text(&open, translate(&locale, "tray.open"));
     set_text(&quit, translate(&locale, "tray.quit"));
     if let Some(tray) = app.tray_by_id("main") {
         if let Err(error) = tray.set_tooltip(Some(status)) {
             warn!("failed to update tray tooltip: {error}");
         }
+    }
+}
+
+/// Rebuilds the tray from the current timer state after an update event.
+pub fn refresh(app: &AppHandle) {
+    if let Ok(snapshot) = engine_host::get_state(app) {
+        update(app, &snapshot);
     }
 }
 
@@ -351,6 +409,19 @@ fn handle_menu(app: &AppHandle, id: &str) {
     let result = match id {
         "toggle" => engine_host::toggle_start_pause(app).map(|_| ()),
         "skip" => engine_host::skip(app).map(|_| ()),
+        "update" => {
+            shell::show_main_window(app);
+            Ok(())
+        }
+        "check-update" => {
+            shell::show_main_window(app);
+            let _ = app.emit("navigate", "settings");
+            let handle = app.clone();
+            tauri::async_runtime::spawn(async move {
+                let _ = crate::updates::check(&handle, true).await;
+            });
+            Ok(())
+        }
         "overlay" => toggle_overlay(app),
         "locate" => locate::show(app),
         "settings" | "show" => {

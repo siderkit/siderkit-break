@@ -22,6 +22,7 @@
   --sk-color-countdown: 205 55% 38%;
   --sk-color-countdown-soft: 205 45% 91%;
   --sk-color-warning: 25 60% 44%;
+  --sk-color-alert: 0 72% 51%;
   --sk-color-swatch-forest: 150 62% 38%;
   --sk-color-swatch-ocean: 205 82% 46%;
   --sk-color-swatch-ember: 8 80% 52%;
@@ -106,6 +107,7 @@
   --sk-brand-mark-size: 32px;
   --sk-icon-button-size: 26px;
   --sk-icon-size: 16px;
+  --sk-badge-size: 6px;
   --sk-icon-stroke: 1.5px;
   --sk-shadow-icon-drop: 0 2px 5px hsl(var(--sk-color-brand-strong) / 0.3);
   --sk-overlay-blur: 6px;
@@ -195,6 +197,7 @@
   --sk-color-countdown: 200 60% 70%;
   --sk-color-countdown-soft: 205 25% 18%;
   --sk-color-warning: 24 67% 66%;
+  --sk-color-alert: 0 72% 62%;
   --sk-color-bg-app: 163 17% 8%;
   --sk-color-bg-surface: 162 16% 11%;
   --sk-color-bg-raised: 156 16% 14%;

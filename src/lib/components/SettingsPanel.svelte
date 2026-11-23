@@ -9,6 +9,7 @@
   import NotificationSettings from './settings/NotificationSettings.svelte';
   import OverlaySettings from './settings/OverlaySettings.svelte';
   import TimerSettings from './settings/TimerSettings.svelte';
+  import UpdateSettings from './settings/UpdateSettings.svelte';
   import SettingsGroup from './SettingsGroup.svelte';
   import Button from '../ui/Button.svelte';
 
@@ -34,6 +35,10 @@
 
   function patchNotifications(patch: Partial<Settings['notifications']>): void {
     void persist({ ...draft, notifications: { ...draft.notifications, ...patch } });
+  }
+
+  function patchUpdate(patch: Partial<Settings['update']>): void {
+    void persist({ ...draft, update: { ...draft.update, ...patch } });
   }
 
   function restoreDefaults(): void {
@@ -67,6 +72,7 @@
     <TimerSettings value={draft.timer} onchange={patchTimer} />
     <OverlaySettings value={draft.overlay} onchange={patchOverlay} />
     <NotificationSettings value={draft.notifications} onchange={patchNotifications} />
+    <UpdateSettings value={draft.update} onchange={patchUpdate} />
     <GeneralSettings value={draft.general} onchange={(patch) => void patchGeneral(patch)} />
     <SettingsGroup title={m['settings.about.title']()}>
       <AboutInfo />

@@ -162,6 +162,10 @@ pub fn update_settings(app: &AppHandle, settings: Settings) -> Result<Settings, 
     let previous = lock_settings(&state)?.clone();
     // The overlay owns its position; a UI draft must not reset it.
     settings.overlay.position = previous.overlay.position;
+    // Skipping a version and postponing an update are app decisions, so a
+    // settings draft may only change `autoCheck`.
+    settings.update.skipped_version = previous.update.skipped_version.clone();
+    settings.update.snooze_until_ms = previous.update.snooze_until_ms;
     {
         let mut engine = lock_engine(&state)?;
         engine.set_config(settings.timer);
@@ -185,7 +189,29 @@ pub fn update_settings(app: &AppHandle, settings: Settings) -> Result<Settings, 
         tray::update(app, &snapshot);
         shell::sync_windows(app, &snapshot, false);
     }
+    crate::updates::settings_changed(app, &previous.update, &settings.update);
     Ok(settings)
+}
+
+/// Persists the update preferences. The renderer may change `autoCheck`; the
+/// skip and snooze fields are written by the updater itself.
+pub fn set_update_settings(
+    app: &AppHandle,
+    update: crate::settings::UpdateSettings,
+) -> Result<crate::settings::UpdateSettings, String> {
+    let state = app.state::<AppState>();
+    let mut settings = lock_settings(&state)?.clone();
+    let previous = settings.update.clone();
+    settings.update = update;
+    {
+        let store = lock_store(&state)?;
+        store
+            .save_settings(&settings)
+            .map_err(|error| error.to_string())?;
+    }
+    *lock_settings(&state)? = settings.clone();
+    crate::updates::settings_changed(app, &previous, &settings.update);
+    Ok(settings.update)
 }
 
 pub fn set_overlay_visible(app: &AppHandle, visible: bool) -> Result<(), String> {

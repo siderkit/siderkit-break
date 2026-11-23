@@ -106,6 +106,31 @@ impl Default for GeneralSettings {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct UpdateSettings {
+    pub auto_check: bool,
+    /// Anonymous install and update counts. Off means no identifier is sent.
+    pub metrics: bool,
+    /// Set by the app when the user skips a version, never by the settings UI.
+    #[serde(skip_deserializing)]
+    pub skipped_version: Option<String>,
+    /// Set by the app when the user postpones an update, never by the UI.
+    #[serde(skip_deserializing)]
+    pub snooze_until_ms: Option<i64>,
+}
+
+impl Default for UpdateSettings {
+    fn default() -> Self {
+        Self {
+            auto_check: true,
+            metrics: true,
+            skipped_version: None,
+            snooze_until_ms: None,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Settings {
@@ -113,6 +138,7 @@ pub struct Settings {
     pub overlay: OverlaySettings,
     pub notifications: NotificationSettings,
     pub general: GeneralSettings,
+    pub update: UpdateSettings,
 }
 
 impl Settings {
@@ -185,6 +211,9 @@ mod tests {
         let settings = Settings::default();
         assert_eq!(settings.general.locale, None);
         assert_eq!(settings.general.palette, Palette::Forest);
+        assert!(settings.update.auto_check);
+        assert!(settings.update.metrics);
+        assert_eq!(settings.update.skipped_version, None);
     }
 
     #[test]
@@ -202,6 +231,25 @@ mod tests {
         assert_eq!(settings.general.palette, Palette::Forest);
         assert_eq!(settings.general.locale, None);
         assert!(settings.notifications.enabled);
+        assert!(settings.update.auto_check);
+        assert!(settings.update.metrics);
+    }
+
+    #[test]
+    fn ui_payloads_cannot_skip_a_version_or_postpone_an_update() {
+        let json = r#"{
+            "update": {
+                "autoCheck": false,
+                "metrics": false,
+                "skippedVersion": "9.9.9",
+                "snoozeUntilMs": 123
+            }
+        }"#;
+        let settings: Settings = serde_json::from_str(json).expect("update settings parse");
+        assert!(!settings.update.auto_check);
+        assert!(!settings.update.metrics);
+        assert_eq!(settings.update.skipped_version, None);
+        assert_eq!(settings.update.snooze_until_ms, None);
     }
 
     #[test]

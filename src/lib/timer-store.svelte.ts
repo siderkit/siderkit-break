@@ -62,6 +62,12 @@ const DEFAULT_SETTINGS: Settings = {
     palette: 'Forest',
     locale: null,
   },
+  update: {
+    autoCheck: true,
+    metrics: true,
+    skippedVersion: null,
+    snoozeUntilMs: null,
+  },
 };
 
 /** A fresh copy of the shipped settings, used at startup and by "restore defaults". */

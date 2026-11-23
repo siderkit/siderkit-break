@@ -249,7 +249,9 @@ impl TimerEngine {
 
     fn break_phase(&self) -> Phase {
         if self.completed_focus_count > 0
-            && self.completed_focus_count % self.config.long_break_every == 0
+            && self
+                .completed_focus_count
+                .is_multiple_of(self.config.long_break_every)
         {
             Phase::LongBreak
         } else {

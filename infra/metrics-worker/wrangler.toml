@@ -1,0 +1,17 @@
+name = "siderkit-dl"
+main = "src/index.js"
+compatibility_date = "2026-11-23"
+workers_dev = false
+
+routes = [{ pattern = "dl.siderkit.com", custom_domain = true }]
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "siderkit-dl"
+
+[[analytics_engine_datasets]]
+binding = "METRICS"
+dataset = "siderkit_break_metrics"
+
+[observability]
+enabled = true

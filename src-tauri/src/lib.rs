@@ -5,6 +5,7 @@ mod engine_host;
 mod export;
 mod i18n;
 mod locate;
+mod metrics;
 mod overlay;
 mod reminder;
 mod settings;
@@ -15,6 +16,7 @@ mod timer;
 mod topmost;
 mod tray;
 mod tray_text;
+mod updates;
 mod window_size;
 
 use tauri::Manager;
@@ -43,6 +45,7 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--minimized"]),
@@ -73,6 +76,8 @@ pub fn run() {
             let handle = app.handle().clone();
             let state = engine_host::AppState::initialize(&handle)?;
             app.manage(state);
+            metrics::initialize(&handle);
+            updates::initialize(&handle);
             // Keep the OS autostart entry in sync with the stored preference.
             if let Err(error) = engine_host::apply_startup_autostart(&handle) {
                 eprintln!("failed to apply startup autostart: {error}");
@@ -92,6 +97,8 @@ pub fn run() {
             shortcuts::register(&handle);
             engine_host::spawn_ticker(handle.clone());
             shell::spawn_overlay_hover_watch(handle.clone());
+            updates::spawn_scheduler(handle.clone());
+            metrics::report_install(&handle);
             shell::apply_startup_view(&handle);
             Ok(())
         })
@@ -107,6 +114,15 @@ pub fn run() {
             commands::get_state,
             commands::get_settings,
             commands::update_settings,
+            commands::get_update_status,
+            commands::check_for_update,
+            commands::download_update,
+            commands::cancel_update_download,
+            commands::install_update,
+            commands::skip_update_version,
+            commands::clear_skipped_update,
+            commands::snooze_update,
+            commands::reset_metrics_id,
             commands::start_focus,
             commands::start_countdown,
             commands::pause,

@@ -368,7 +368,7 @@ pub fn sync_windows(app: &AppHandle, snapshot: &TimerSnapshot, missed_deadline: 
     let notice = engine_host::notice(app);
     let reminders_on = settings
         .as_ref()
-        .map_or(true, |settings| settings.notifications.enabled);
+        .is_none_or(|settings| settings.notifications.enabled);
     if show_reminder_card(
         reminders_on,
         snapshot.phase,
@@ -442,7 +442,7 @@ fn sync_overlay_size(app: &AppHandle, snapshot: &TimerSnapshot) {
     } else {
         OVERLAY_ACTIVE_HEIGHT
     };
-    let needs_resize = before_logical.map_or(true, |(current, current_height)| {
+    let needs_resize = before_logical.is_none_or(|(current, current_height)| {
         (current - width).abs() > 0.5 || (current_height - height).abs() > 0.5
     });
     if needs_resize {

@@ -7,6 +7,8 @@
 | [Acceptance](acceptance.md)              | P0/P1 criteria, platform matrix, definition of done            |
 | [Technical design](tech-design.md)       | Architecture, timer, windows, persistence, IPC, platform notes |
 | [Code quality](code-quality.md)          | Clean-code rules, thresholds, gates, exceptions                |
+| [Privacy](../PRIVACY.md)                 | Local data, update requests, anonymous install counts          |
+| [Release guide](release.md)              | Updater signing, R2/GitHub publishing, verification, rollback  |
 | [ADR-0001](adr/0001-stack.md)            | Tauri + Rust timer + Svelte UI                                 |
 | [ADR-0002](adr/0002-taskbar-overlay.md)  | Tray + docked overlay, no in-taskbar text                      |
 | [ADR-0003](adr/0003-reminder-sound.md)   | Bundled reminder chime, one sound on every platform            |
@@ -16,7 +18,7 @@
 
 ## Status
 
-All product documents are drafts for review. The ADRs are accepted; ADR-0004 supersedes the notification surface in ADR-0003.
+All product documents describe the `1.0.0-rc.1` implementation. The ADRs are accepted; ADR-0004 supersedes the notification surface in ADR-0003.
 
 ## Review order
 

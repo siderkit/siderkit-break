@@ -5,18 +5,29 @@
   import HelpPanel from './components/HelpPanel.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
   import TimerPanel from './components/TimerPanel.svelte';
+  import UpdateBanner from './components/UpdateBanner.svelte';
   import WelcomeDialog from './components/WelcomeDialog.svelte';
   import DropletMark from './ui/DropletMark.svelte';
   import { isTauri, onNavigate } from './ipc/client';
   import { timerStore } from './timer-store.svelte';
+  import { updateStore } from './update-store.svelte';
   import { watchSystemTheme } from './theme';
 
   type View = 'timer' | 'settings' | 'help';
 
   let view = $state<View>('timer');
 
+  const helpLabel = $derived.by(() => {
+    const status = updateStore.status;
+    if (updateStore.badgeVisible && status?.version) {
+      return `${m['help.title']()} — ${m['update.tray.available']({ version: status.version })}`;
+    }
+    return m['help.title']();
+  });
+
   onMount(() => {
     void timerStore.init();
+    void updateStore.init();
     const stopThemeWatch = watchSystemTheme();
     let stopNavigate: (() => void) | undefined;
     if (isTauri) {
@@ -32,6 +43,7 @@
       stopThemeWatch();
       stopNavigate?.();
       timerStore.destroy();
+      updateStore.destroy();
     };
   });
 
@@ -66,7 +78,8 @@
         class="l-main-app__icon-button"
         class:is-active={view === 'help'}
         type="button"
-        aria-label={m['help.title']()}
+        aria-label={helpLabel}
+        title={helpLabel}
         aria-pressed={view === 'help'}
         onclick={toggleHelp}
       >
@@ -75,12 +88,19 @@
           <path d="M8.1 7.8a1.9 1.9 0 1 1 2.8 1.7c-.6.3-.9.7-.9 1.4v.3" />
           <circle class="l-main-app__help-dot" cx="10" cy="13.9" r="0.95" />
         </svg>
+        {#if updateStore.badgeVisible}
+          <span class="l-main-app__help-badge" aria-hidden="true"></span>
+        {/if}
       </button>
       <button class="l-main-app__settings-toggle" type="button" onclick={toggleSettings}>
         {view === 'settings' ? m['common.action.done']() : m['common.action.settings']()}
       </button>
     </div>
   </header>
+
+  {#if view !== 'settings'}
+    <UpdateBanner />
+  {/if}
 
   {#if timerStore.loading}
     <div class="l-main-app__loading" aria-busy="true"></div>
@@ -154,6 +174,7 @@
   }
 
   .l-main-app__icon-button {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -192,6 +213,17 @@
   .l-main-app__help-dot {
     fill: currentColor;
     stroke: none;
+  }
+
+  .l-main-app__help-badge {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inline-size: var(--sk-badge-size);
+    block-size: var(--sk-badge-size);
+    border-radius: var(--sk-radius-full);
+    background: hsl(var(--sk-color-alert));
+    box-shadow: 0 0 0 var(--sk-space-3xs) hsl(var(--sk-color-bg-app));
   }
 
   .l-main-app__settings-toggle {

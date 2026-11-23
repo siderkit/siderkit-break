@@ -2,11 +2,9 @@ name: Build installers
 
 # Builds the platform installers and keeps them as workflow artifacts.
 # It never creates a release; publishing stays a manual decision.
+# Tag pushes are handled by release.yml, so this workflow stays manual-only.
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
 
 permissions:
   contents: read

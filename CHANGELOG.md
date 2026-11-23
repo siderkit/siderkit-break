@@ -2,7 +2,7 @@
 
 All notable changes to Siderkit Break are recorded here. The project is at the 1.0 release-candidate stage; no public binaries have been published yet.
 
-## [1.0.0-rc.1] - 2026-11-22
+## [1.0.0-rc.1] - 2026-11-23
 
 ### Added
 
@@ -14,7 +14,10 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 - Light, dark, and system themes with eight color styles.
 - Global shortcuts, launch at login, start minimized, and close-to-tray.
 - Windows NSIS (per-user) installer with a language selector; Linux deb, rpm, and AppImage bundles; a universal macOS DMG build.
-- Product documentation, acceptance criteria, technical design, ADRs, and a release guide.
+- Signed Windows auto-updates: a 6-hour background check, a non-modal update banner, manual download with progress and cancel, restart-to-install, skip-this-version, and a 24-hour snooze. Settings and About share one version/status block, and the Help icon shows a badge while an update is ready to act on. macOS and Linux remain manual downloads.
+- Optional anonymous install and update counts: a random local ID, one install beacon, and a header on update checks. The setting can be turned off, and the ID can be reset.
+- A Cloudflare Worker download host (`dl.siderkit.com`) with R2 storage and an Analytics Engine counter, plus R2-primary and GitHub-fallback update manifests.
+- Product documentation, acceptance criteria, technical design, ADRs, a privacy notice, and a release guide.
 
 ### Changed
 
@@ -23,6 +26,7 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 - Windows ships only the per-user NSIS installer; the all-users MSI was retired after a managed Windows 11 machine rejected it with Windows Installer error 1625.
 - The NSIS installer ships 23 languages, preselects the OS language, and offers a language selector that never appears during silent, passive, or update runs.
 - Manifests are at `1.0.0-rc.1`; the public `1.0.0` version follows the updater and the website.
+- The updater plugin is driven from Rust; the WebView has no updater permission and never receives an installer byte.
 - Phase boundaries now use in-app cards instead of operating-system notifications, so reminders work without a notification permission.
 - The Windows NSIS installer defaults to a per-user folder and remembers a custom install location across upgrades.
 - The overlay ignores input until the pointer is over it, so it does not block work underneath.
@@ -36,7 +40,7 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 
 ### Security
 
-- Local-first by default: no account, no server, no network requests, no telemetry, and no remote content.
+- Local-first by default: no account, no sync, and no server for session data. The only outbound requests are signed update checks and the optional anonymous install beacon.
 - Reminder cards do not require an operating-system notification permission.
 
 ### Known limitations
@@ -44,5 +48,6 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 - macOS builds are unsigned until a Developer ID is configured; Gatekeeper will warn on first launch.
 - Windows installers are unsigned until a code-signing certificate is configured; SmartScreen may warn.
 - Linux Wayland sessions cannot position a top-level window reliably, so the floating countdown and global shortcuts are best-effort there.
-- There is no auto-update in 1.0.
+- Auto-update is Windows-only. macOS and Linux users download new builds manually.
+- Update checks count anonymous installs by default; the setting can be turned off or reset.
 - True in-taskbar text embedding is not implemented; the floating countdown is a separate window.

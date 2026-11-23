@@ -24,9 +24,8 @@ Include:
 Siderkit Break 1.0 is local-first:
 
 - no account;
-- no server;
-- no network requests;
-- no telemetry;
+- no server for session data;
+- no behavioral telemetry; update checks and the optional anonymous install beacon are the only network requests;
 - no remote content;
 - no operating-system notification permission; reminders are in-app cards.
 

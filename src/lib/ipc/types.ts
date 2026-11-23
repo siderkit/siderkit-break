@@ -49,11 +49,46 @@ export interface GeneralSettings {
   locale: string | null;
 }
 
+export interface UpdateSettings {
+  autoCheck: boolean;
+  metrics: boolean;
+  skippedVersion: string | null;
+  snoozeUntilMs: number | null;
+}
+
+/** Wire values mirror the Rust updater state machine. */
+export type UpdatePhase =
+  | 'Idle'
+  | 'Checking'
+  | 'Available'
+  | 'Downloading'
+  | 'Ready'
+  | 'Installing'
+  | 'UpToDate'
+  | 'Failed';
+
+export interface UpdateStatus {
+  supported: boolean;
+  phase: UpdatePhase;
+  version: string | null;
+  notes: string | null;
+  pubDate: string | null;
+  downloaded: number;
+  total: number | null;
+  lastCheckedMs: number | null;
+  lastError: string | null;
+  prompt: boolean;
+  autoCheck: boolean;
+  skippedVersion: string | null;
+  snoozeUntilMs: number | null;
+}
+
 export interface Settings {
   timer: TimerConfig;
   overlay: OverlaySettings;
   notifications: NotificationSettings;
   general: GeneralSettings;
+  update: UpdateSettings;
 }
 
 export interface TodaySummary {

@@ -9,6 +9,7 @@ import type {
   TimerNotice,
   TimerSnapshot,
   TodaySummary,
+  UpdateStatus,
 } from './types';
 import { PROJECT_URL } from '../project';
 
@@ -39,6 +40,51 @@ export function getSettings(): Promise<Settings> {
 /** Persists settings and returns the normalized copy applied by Rust. */
 export function updateSettings(settings: Settings): Promise<Settings> {
   return invoke<Settings>('update_settings', { settings });
+}
+
+/** Reads the current update state without starting a request. */
+export function getUpdateStatus(): Promise<UpdateStatus> {
+  return invoke<UpdateStatus>('get_update_status');
+}
+
+/** Runs a check; `manual` only changes logging on the Rust side. */
+export function checkForUpdate(manual = true): Promise<UpdateStatus> {
+  return invoke<UpdateStatus>('check_for_update', { manual });
+}
+
+/** Starts downloading the available update in the background. */
+export function downloadUpdate(): Promise<UpdateStatus> {
+  return invoke<UpdateStatus>('download_update');
+}
+
+/** Aborts an in-flight download and discards its partial bytes. */
+export function cancelUpdateDownload(): Promise<UpdateStatus> {
+  return invoke<UpdateStatus>('cancel_update_download');
+}
+
+/** Hands the verified installer to the OS; Windows restarts into it. */
+export function installUpdate(): Promise<void> {
+  return invoke<void>('install_update');
+}
+
+/** Hides the banner for this version until a newer one appears. */
+export function skipUpdateVersion(version: string): Promise<UpdateStatus> {
+  return invoke<UpdateStatus>('skip_update_version', { version });
+}
+
+/** Clears a skipped version so it prompts again. */
+export function clearSkippedUpdate(): Promise<UpdateStatus> {
+  return invoke<UpdateStatus>('clear_skipped_update');
+}
+
+/** Hides the banner for the given number of hours. */
+export function snoozeUpdate(hours = 24): Promise<UpdateStatus> {
+  return invoke<UpdateStatus>('snooze_update', { hours });
+}
+
+/** Issues a fresh anonymous install ID and reports it again. */
+export function resetMetricsId(): Promise<void> {
+  return invoke<void>('reset_metrics_id');
 }
 
 /** Returns the completed focus count and focus time for the local day. */
@@ -213,6 +259,11 @@ export function fitOverlay(width: number): Promise<void> {
 /** Subscribes to the once-per-second countdown tick. */
 export function onTimerTick(handler: (snapshot: TimerSnapshot) => void): Promise<UnlistenFn> {
   return listen<TimerSnapshot>('timer:tick', (event) => handler(event.payload));
+}
+
+/** Subscribes to updater state changes. */
+export function onUpdateStatus(handler: (status: UpdateStatus) => void): Promise<UnlistenFn> {
+  return listen<UpdateStatus>('update:status', (event) => handler(event.payload));
 }
 
 /** Subscribes to command-driven state changes. */

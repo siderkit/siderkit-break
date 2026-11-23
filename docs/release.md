@@ -10,7 +10,9 @@ The release candidate keeps the manifest version identical in:
 - `src-tauri/Cargo.toml`
 - `src-tauri/tauri.conf.json`
 
-All three are `1.0.0-rc.1` while the updater and the website are finished. The public `1.0.0` release moves all three together. The app reads the Tauri version at runtime for the About panel.
+All three are `1.0.0-rc.1` while the updater, the counters, and the website are finished. The public `1.0.0` release moves all three together. The app reads the Tauri version at runtime for the About panel.
+
+The updater becomes usable only after the R2 bucket, the `dl.siderkit.com` Worker, and the CI signing secret exist. Until then, installers still build and run, but they cannot check for updates.
 
 ## Artifact matrix
 
@@ -22,17 +24,22 @@ All three are `1.0.0-rc.1` while the updater and the website are finished. The p
 
 `bundle.targets` in `src-tauri/tauri.conf.json` lists exactly these five formats; Tauri drops the ones that do not belong to the host platform. Windows therefore builds NSIS and nothing else, including a bare `pnpm tauri build`. The MSI was retired in `1.0.0-rc.1`: a managed Windows 11 machine rejected it with Windows Installer error 1625 while the NSIS package installed and uninstalled normally.
 
+A release build adds `--config src-tauri/tauri.release.conf.json` to Windows. That config sets `bundle.createUpdaterArtifacts` and makes Tauri emit the `.sig` file next to the NSIS installer; it requires `TAURI_SIGNING_PRIVATE_KEY`. Do not use it for a local smoke build unless the key is set.
+
 The build workflow in `.github/workflows/build.yml` runs the same commands and uploads the bundles as workflow artifacts. It does not create a GitHub release.
 
 ## Local build record (2026-11-23)
 
-`1.0.0-rc.1` was rebuilt after the license, installer-language, and context-menu changes:
+`1.0.0-rc.1` was rebuilt after the updater, anonymous-count, license, installer-language, and context-menu changes:
 
 | Artifact                                                          | Size     | SHA-256                                                            |
 | ----------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
-| `Siderkit Break_1.0.0-rc.1_x64-setup.exe` (NSIS, 23 UI languages) | 5.29 MiB | `bd2c8783114f748b34cea19f32c3dbaa3d1a925da46246998cfefa15b4da97da` |
+| `Siderkit Break_1.0.0-rc.1_x64-setup.exe` (NSIS, 23 UI languages) | 6.43 MiB | `08810660fe46c382264c8ba7577133390e3a0bf15f2c56343d1ef983df3dcc1c` |
+| `Siderkit Break_1.0.0-rc.1_x64-setup.exe.sig` (minisign)          | 460 B    | —                                                                  |
 
-No MSI was produced. The build log listed six languages whose Tauri-specific installer strings are still English (Hindi, Indonesian, Thai, Malay, Polish, Romanian); the standard NSIS pages are localized. The installer language selector and the `/S`, `/P`, `/UPDATE` skip path still need a run on the Windows VM.
+The updater build used `--config src-tauri/tauri.release.conf.json` and the minisign private key. `scripts/make-latest-json.mjs` produced a valid `windows-x86_64` manifest from the installer and `.sig` file. The installer grew from 5.29 MiB to 6.43 MiB after adding reqwest/rustls, still below the 10 MB budget. This rebuild also carries the shared update-check block used by Settings → Updates, Settings → About, and Help → About, and the Help-icon badge for an available update.
+
+No MSI was produced. The build log listed six languages whose Tauri-specific installer strings are still English (Hindi, Indonesian, Thai, Malay, Polish, Romanian); the standard NSIS pages are localized. The installer language selector and the `/P /UPDATE /R` skip path still need a run on the Windows VM.
 
 ## Local build record (2026-11-22)
 
@@ -96,11 +103,11 @@ The NSIS installer records its install folder in `HKCU\Software\Siderkit\Siderki
 
 The install scope does not change these paths. Every Windows user has a separate copy.
 
-| System  | Database (settings and history)                                           | Logs                                                        |
-| ------- | ------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Windows | `%APPDATA%\com.siderkit.break\siderkit-break.sqlite3`                     | `%LOCALAPPDATA%\com.siderkit.break\logs\Siderkit Break.log` |
-| macOS   | `~/Library/Application Support/com.siderkit.break/siderkit-break.sqlite3` | `~/Library/Logs/com.siderkit.break/Siderkit Break.log`      |
-| Linux   | `~/.local/share/com.siderkit.break/siderkit-break.sqlite3`                | `~/.local/share/com.siderkit.break/logs/Siderkit Break.log` |
+| System  | Database (settings and history)                                           | Anonymous ID                                                    | Logs                                                        |
+| ------- | ------------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- |
+| Windows | `%APPDATA%\com.siderkit.break\siderkit-break.sqlite3`                     | `%APPDATA%\com.siderkit.break\metrics.json`                     | `%LOCALAPPDATA%\com.siderkit.break\logs\Siderkit Break.log` |
+| macOS   | `~/Library/Application Support/com.siderkit.break/siderkit-break.sqlite3` | `~/Library/Application Support/com.siderkit.break/metrics.json` | `~/Library/Logs/com.siderkit.break/Siderkit Break.log`      |
+| Linux   | `~/.local/share/com.siderkit.break/siderkit-break.sqlite3`                | `~/.local/share/com.siderkit.break/metrics.json`                | `~/.local/share/com.siderkit.break/logs/Siderkit Break.log` |
 
 On Linux the data path follows `$XDG_DATA_HOME` when it is set. The webview cache lives beside the database (`%LOCALAPPDATA%\com.siderkit.break` on Windows, `~/.local/share/com.siderkit.break` on Linux, and normally `~/Library/WebKit/com.siderkit.break` on macOS); it can be deleted while the app is closed.
 
@@ -124,15 +131,50 @@ Idle memory on the Windows VM with the main window hidden and the overlay visibl
 
 ## Signing
 
-Signing is not configured yet. Unsigned artifacts are suitable for internal testing only.
+Three separate systems are involved. They do not replace each other.
 
-Windows, when a certificate is available:
+### Update signature (minisign)
+
+Every NSIS installer is signed for the updater. The public key lives in
+`src-tauri/tauri.conf.json` under `plugins.updater.pubkey`; the private key is
+never committed.
+
+Generate a key once and back it up offline in two places:
 
 ```text
-TAURI_SIGNING_PRIVATE_KEY          # only for the updater, not for Authenticode
+pnpm tauri signer generate -w <external-path>/siderkit-break-updater.key
 ```
 
-Authenticode signing uses the certificate configured in the Windows certificate store or a signing service. Verify the result with `signtool verify /pa <installer>`.
+Set these repository secrets:
+
+| Secret                               | Value                                                    |
+| ------------------------------------ | -------------------------------------------------------- |
+| `TAURI_SIGNING_PRIVATE_KEY`          | the private key file contents, or its path on the runner |
+| `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | the key passphrase, when one was set                     |
+
+Losing the private key ends the update path for existing installs; the only
+recovery is a manual reinstall. Rotate only while there are no installed users,
+or ship a build signed with the old key first.
+
+### Download host (R2 and Worker)
+
+The release workflow uploads with the S3 API and needs:
+
+| Secret                 | Value                                        |
+| ---------------------- | -------------------------------------------- |
+| `R2_ACCOUNT_ID`        | Cloudflare account ID                        |
+| `R2_ACCESS_KEY_ID`     | R2 token access key                          |
+| `R2_SECRET_ACCESS_KEY` | R2 token secret                              |
+| `R2_BUCKET`            | bucket name, stored as a repository variable |
+
+Deploy the Worker once from `infra/metrics-worker` with `wrangler deploy`.
+`infra/metrics-worker/README.md` covers the bucket, Analytics Engine dataset,
+custom domain, object layout, and queries.
+
+### Authenticode and Apple
+
+Authenticode signing uses the certificate configured in the Windows certificate
+store or a signing service. Verify with `signtool verify /pa <installer>`.
 
 macOS, when an Apple Developer account is available:
 
@@ -141,11 +183,13 @@ APPLE_CERTIFICATE                  # base64 .p12
 APPLE_CERTIFICATE_PASSWORD
 APPLE_SIGNING_IDENTITY             # Developer ID Application: ...
 APPLE_ID
-APPLE_PASSWORD                     # app-specific password
+APPLE_PASSWORD                     # an app-specific password from the Apple account
 APPLE_TEAM_ID
 ```
 
-`tauri build` signs and notarizes automatically when those variables are present. Without them the DMG is unsigned and Gatekeeper blocks it until the user allows it manually.
+`tauri build` signs and notarizes automatically when those variables are present.
+Without them the DMG is unsigned and Gatekeeper blocks it until the user allows
+it manually.
 
 ## Verification checklist
 
@@ -166,31 +210,42 @@ Run on the target operating system before publishing:
 - Check idle memory with the main window hidden and the overlay visible: target at most 120 MB.
 - On macOS, check Spaces, full-screen apps, and Gatekeeper behavior.
 - On Linux, check X11 first; record Wayland behavior separately.
+- Install the previous version and point it at a test `latest.json`; confirm the banner, snooze, skip, download, cancel, and restart-to-install.
+- Confirm `latest.json` returns `cache-control: no-store` and a binary under `releases/` returns a one-year immutable cache.
+- With anonymous counts on, confirm one install event and one check event; turn counts off, check again, and confirm the Worker records nothing.
+- Reset the anonymous ID and confirm the UUID changes and one new install event arrives.
 
 Record the operating-system build, DPI, and result for each row in `docs/acceptance.md`.
 
-## Publishing (manual, not executed)
+## Publishing
 
-1. Run the build workflow for the release commit and download every artifact.
-2. Generate checksums: `sha256sum * > SHA256SUMS.txt` (or `Get-FileHash` on Windows).
-3. Create a **draft** GitHub release tagged `v1.0.0`.
-4. Attach the Windows, macOS, and Linux artifacts plus `SHA256SUMS.txt`.
-5. Write release notes with the known limitations below.
-6. Publish only after the verification checklist passes on every P0 platform.
+1. Update the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`; update `CHANGELOG.md`.
+2. Commit and tag `vX.Y.Z`; push the tag. `release.yml` builds Windows, macOS, and Linux.
+3. The workflow normalizes names, writes `latest-r2.json`, `latest.json`, and `SHA256SUMS.txt`, uploads versioned binaries to R2, and creates a **draft** GitHub release. It does not touch the live R2 `latest.json`.
+4. Verify the draft assets, checksums, signatures, and the verification checklist.
+5. Publish the GitHub release. `promote.yml` copies `latest-r2.json` to `https://dl.siderkit.com/latest.json`.
+6. Run an update from the previous version against both the R2 and GitHub endpoints.
+7. If Actions is unavailable, run the same build and `scripts/make-latest-json.mjs` locally, upload with `aws s3 cp`, and create the draft with `gh release create`.
 
-Do not attach debug builds or the raw `target/` directory.
+Do not attach debug builds or the raw `target/` directory. Do not hand-edit
+`latest.json`; regenerate it from the installer and `.sig` file.
 
 ## Known limitations
 
+- Auto-update is Windows-only. macOS and Linux users download new builds manually.
 - macOS transparency uses a private API, so the app cannot ship on the Mac App Store.
 - Windows 10 1809–21H2 are supported but not yet verified on physical hardware.
 - Idle private memory on the Windows 10 VM is 164.5 MB, above the original 120 MB target; the budget needs revision or later optimization.
 - Linux Wayland cannot position the overlay or guarantee click-through and global shortcuts. Use X11.
 - GNOME needs an AppIndicator extension for the tray icon.
 - The app must be running to remind the user; quitting stops reminders. Reminders are in-app cards, not entries in the operating-system notification center.
-- There is no auto-update in 1.0.
+- Anonymous counts cannot measure uninstalls; reinstalling or resetting the ID counts as a new install.
 - Unsigned builds trigger SmartScreen on Windows and Gatekeeper on macOS.
 
 ## Rollback
 
-If a release is defective, mark the GitHub release as a pre-release or delete the draft, keep the previous artifact available, and publish a patch version. Never reuse a version number.
+If a release is defective, replace the R2 `latest.json` with the previous
+version's manifest and keep the previous binaries online. On GitHub, mark the
+bad release as a pre-release so `releases/latest` points back, or publish a
+higher patch version. Do not delete versioned binaries and never reuse a version
+number.

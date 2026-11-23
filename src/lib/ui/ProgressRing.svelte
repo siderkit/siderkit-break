@@ -136,4 +136,15 @@
       font-size: var(--sk-text-display-compact);
     }
   }
+
+  @media (max-height: 460px) {
+    .l-progress-ring {
+      inline-size: var(--sk-timer-ring-size-tight);
+      block-size: var(--sk-timer-ring-size-tight);
+    }
+
+    .l-progress-ring__time {
+      font-size: var(--sk-text-display-tight);
+    }
+  }
 </style>

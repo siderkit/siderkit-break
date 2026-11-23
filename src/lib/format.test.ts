@@ -1,13 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import {
-  formatClock,
-  formatDateHeading,
-  formatFullDate,
-  formatMinutes,
-  formatTimeWithSeconds,
-} from './format.ts';
+import { formatClock, formatDateHeading, formatFullDate, formatMinutes } from './format.ts';
 
 test('formatClock uses MM:SS below one hour', () => {
   assert.equal(formatClock(0), '00:00');
@@ -42,15 +36,11 @@ test('formatFullDate always keeps the year', () => {
   assert.equal(formatFullDate('2026-11-20', 'en'), 'November 20, 2026');
 });
 
-test('a day heading keeps the year, including today', () => {
+test('formatDateHeading keeps the year and today label', () => {
   const today = new Date();
   const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const heading = formatDateHeading(key, 'en');
   assert.equal(heading.includes('Today'), true);
   assert.equal(heading.includes(String(today.getFullYear())), true);
   assert.equal(formatDateHeading('2026-11-20', 'en').includes('2026'), true);
-});
-
-test('formatTimeWithSeconds keeps hours, minutes, and seconds', () => {
-  assert.match(formatTimeWithSeconds(0, 'en'), /\d{2}:\d{2}:\d{2}/);
 });

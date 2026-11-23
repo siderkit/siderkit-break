@@ -173,15 +173,6 @@ export function formatTime(timestampMs: number, locale: Locale): string {
   }).format(new Date(timestampMs));
 }
 
-/** Clock with seconds, used by the exported report. */
-export function formatTimeWithSeconds(timestampMs: number, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  }).format(new Date(timestampMs));
-}
-
 export function formatMinutesLabel(valueMs: number): string {
   return `${formatMinutes(valueMs)} ${m['common.unit.minutes']()}`;
 }

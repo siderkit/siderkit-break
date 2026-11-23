@@ -5,7 +5,7 @@ export const EXCEL_MIME = 'application/vnd.openxmlformats-officedocument.spreads
 
 /**
  * Builds a range-first, filesystem-safe name:
- * `siderkit-break-20261101-20261121-20261121143005.xlsx`.
+ * `siderkit-break-20261101-20261121-20261121-1430.xlsx`.
  */
 export function exportFilename(range: ExportRange, now = new Date()): string {
   const start = range.startDate.replace(/\D/g, '');
@@ -29,10 +29,10 @@ export function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-/** Returns the local calendar date and clock as YYYYMMDDHHmmss, not UTC. */
+/** Returns a compact local date-time key (for example 20261121-1430), not UTC. */
 export function localStampKey(date = new Date()): string {
   const pad = (value: number): string => String(value).padStart(2, '0');
-  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}-${pad(date.getHours())}${pad(date.getMinutes())}`;
 }
 
 /** Saves a binary export through the webview's download path. */

@@ -97,17 +97,15 @@
 
   .l-reminder-card__mark {
     display: grid;
-    place-items: center;
-    inline-size: var(--sk-brand-mark-size);
-    block-size: var(--sk-brand-mark-size);
-    border-radius: var(--sk-radius-full);
+    place-items: start;
+    inline-size: var(--sk-reminder-mark-size);
+    block-size: var(--sk-reminder-mark-size);
     color: hsl(var(--reminder-accent));
-    background: hsl(var(--reminder-wash));
   }
 
   .l-reminder-card__icon {
-    inline-size: var(--sk-icon-size);
-    block-size: var(--sk-icon-size);
+    inline-size: 100%;
+    block-size: 100%;
     stroke: currentColor;
     stroke-width: var(--sk-icon-stroke);
     stroke-linecap: round;

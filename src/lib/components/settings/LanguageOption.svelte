@@ -44,7 +44,6 @@
     inline-size: 100%;
     padding: var(--sk-space-sm) var(--sk-space-md);
     border: 0;
-    border-radius: var(--sk-radius-sm);
     color: hsl(var(--sk-color-text));
     background: transparent;
     text-align: start;

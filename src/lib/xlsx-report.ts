@@ -2,7 +2,7 @@ import type { History, HistoryDay, HistorySession, SessionOutcome } from './ipc/
 import {
   formatFullDate,
   formatMinutesLabel,
-  formatTimeWithSeconds,
+  formatTime,
   outcomeLabel,
   sessionKindLabel,
 } from './format.ts';
@@ -47,13 +47,15 @@ export function stylesXml(): string {
   const border = `<border><left/><right/><top/><bottom style="thin"><color rgb="${REPORT_COLORS.line}"/></bottom><diagonal/></border>`;
   const body = (font: number, fill: number) =>
     `<xf numFmtId="0" fontId="${font}" fillId="${fill}" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>`;
+  const numericBody = (font: number, fill: number) =>
+    `<xf numFmtId="0" fontId="${font}" fillId="${fill}" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="right" vertical="center"/></xf>`;
   const xfs = [
     '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>',
     '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="center"/></xf>',
     '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="center"/></xf>',
     `<xf numFmtId="0" fontId="3" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center"/></xf>`,
     `<xf numFmtId="0" fontId="5" fillId="4" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center"/></xf>`,
-    `<xf numFmtId="0" fontId="4" fillId="4" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center"/></xf>`,
+    `<xf numFmtId="0" fontId="4" fillId="4" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="right" vertical="center"/></xf>`,
     `<xf numFmtId="0" fontId="3" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>`,
     body(0, 5),
     body(0, 3),
@@ -67,6 +69,8 @@ export function stylesXml(): string {
     body(9, 3),
     '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>',
     '<xf numFmtId="0" fontId="10" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="center"/></xf>',
+    numericBody(0, 5),
+    numericBody(0, 3),
   ];
   return [
     XML_HEADER,
@@ -187,14 +191,15 @@ function sessionRow(
   locale: Locale,
 ): string {
   const base = alternate ? 8 : 7;
+  const numeric = alternate ? 20 : 19;
   const cells = [
     cell(`A${rowNumber}`, formatFullDate(session.date, locale), base),
-    cell(`B${rowNumber}`, formatTimeWithSeconds(session.startedAtMs, locale), base),
+    cell(`B${rowNumber}`, formatTime(session.startedAtMs, locale), base),
     cell(`C${rowNumber}`, sessionKindLabel(session.kind), base),
     cell(`D${rowNumber}`, outcomeLabel(session.outcome), outcomeStyle(session.outcome, alternate)),
-    cell(`E${rowNumber}`, formatMinutesLabel(session.plannedMs), base),
-    cell(`F${rowNumber}`, formatMinutesLabel(session.actualMs), base),
-    cell(`G${rowNumber}`, session.interruptions, base),
+    cell(`E${rowNumber}`, formatMinutesLabel(session.plannedMs), numeric),
+    cell(`F${rowNumber}`, formatMinutesLabel(session.actualMs), numeric),
+    cell(`G${rowNumber}`, session.interruptions, numeric),
   ];
   return `<row r="${rowNumber}" ht="20" customHeight="1">${cells.join('')}</row>`;
 }
@@ -235,22 +240,18 @@ export async function summarySheet(
   } else {
     history.days.forEach((day, index) => {
       const style = index % 2 === 0 ? 7 : 8;
-      rows.push(
-        row(
-          tableStart + index,
-          [
-            dayLabel(day, locale),
-            day.completedFocus,
-            formatMinutesLabel(day.focusMs),
-            day.breakCount,
-            day.completedCountdown,
-            formatMinutesLabel(day.countdownMs),
-          ],
-          style,
-          20,
-        ),
-      );
-      last = tableStart + index;
+      const numeric = index % 2 === 0 ? 19 : 20;
+      const rowNumber = tableStart + index;
+      const cells = [
+        cell(`A${rowNumber}`, dayLabel(day, locale), style),
+        cell(`B${rowNumber}`, day.completedFocus, numeric),
+        cell(`C${rowNumber}`, formatMinutesLabel(day.focusMs), numeric),
+        cell(`D${rowNumber}`, day.breakCount, numeric),
+        cell(`E${rowNumber}`, day.completedCountdown, numeric),
+        cell(`F${rowNumber}`, formatMinutesLabel(day.countdownMs), numeric),
+      ];
+      rows.push(`<row r="${rowNumber}" ht="20" customHeight="1">${cells.join('')}</row>`);
+      last = rowNumber;
     });
   }
 

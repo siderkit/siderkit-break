@@ -2,7 +2,7 @@
 
 | Document                                 | Purpose                                                        |
 | ---------------------------------------- | -------------------------------------------------------------- |
-| [Product brief](product-brief.md)        | Problem, users, 1.0 scope, non-goals, success metrics          |
+| [Product brief](product-brief.md)        | Problem, users, 1.0 scope, success metrics                     |
 | [Core flows](core-flows.md)              | First run, focus, break, sleep, quit, platform degradation     |
 | [Acceptance](acceptance.md)              | P0/P1 criteria, platform matrix, definition of done            |
 | [Technical design](tech-design.md)       | Architecture, timer, windows, persistence, IPC, platform notes |

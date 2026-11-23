@@ -9,7 +9,7 @@ test('exportFilename carries the range and the local timestamp', () => {
   assert.ok(range);
   assert.equal(
     exportFilename(range, new Date(2026, 10, 21, 14, 30, 5)),
-    'siderkit-break-20261101-20261121-20261121143005.xlsx',
+    'siderkit-break-20261101-20261121-20261121-1430.xlsx',
   );
 });
 
@@ -18,13 +18,13 @@ test('exportFilename keeps a single-day range explicit', () => {
   assert.ok(range);
   assert.equal(
     exportFilename(range, new Date(2026, 10, 21, 9, 7, 4)),
-    'siderkit-break-20261121-20261121-20261121090704.xlsx',
+    'siderkit-break-20261121-20261121-20261121-0907.xlsx',
   );
 });
 
-test('localStampKey uses local calendar fields down to the second', () => {
-  assert.equal(localStampKey(new Date(2026, 0, 2, 9, 7, 4)), '20260102090704');
-  assert.equal(localStampKey(new Date(2026, 10, 20, 23, 59, 59)), '20261120235959');
+test('localStampKey uses local calendar fields down to the minute', () => {
+  assert.equal(localStampKey(new Date(2026, 0, 2, 9, 7, 4)), '20260102-0907');
+  assert.equal(localStampKey(new Date(2026, 10, 20, 23, 59, 59)), '20261120-2359');
 });
 
 test('fileNameOf reads Windows and Unix paths', () => {

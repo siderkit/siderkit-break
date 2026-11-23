@@ -272,4 +272,26 @@
   .l-main-app__error span {
     color: hsl(var(--sk-color-text-muted));
   }
+
+  /* The utility window is often kept short on a remote desktop. Trim the
+     header before touching the timer itself so the main view never scrolls. */
+  @media (max-height: 520px) {
+    .l-main-app__header {
+      padding: var(--sk-space-md) var(--sk-space-lg) var(--sk-space-sm);
+    }
+  }
+
+  @media (max-height: 460px) {
+    .l-main-app__header {
+      padding: var(--sk-space-sm) var(--sk-space-lg);
+    }
+
+    .l-main-app__brand {
+      gap: var(--sk-space-xs);
+    }
+
+    .l-main-app__tagline {
+      display: none;
+    }
+  }
 </style>

@@ -83,6 +83,7 @@
   --sk-text-xl: 20px;
   --sk-text-display: 44px;
   --sk-text-display-compact: 34px;
+  --sk-text-display-tight: 28px;
   --sk-text-overlay: 20px;
   --sk-overlay-drop-size: 18px;
   --sk-text-clock-long: 26px;
@@ -102,9 +103,11 @@
   --sk-toggle-thumb-size: 18px;
   --sk-toggle-inset: 3px;
   --sk-number-field-width: 64px;
-  --sk-timer-ring-size: 180px;
-  --sk-timer-ring-size-compact: 136px;
+  --sk-timer-ring-size: 168px;
+  --sk-timer-ring-size-compact: 128px;
+  --sk-timer-ring-size-tight: 110px;
   --sk-brand-mark-size: 32px;
+  --sk-reminder-mark-size: 26px;
   --sk-icon-button-size: 26px;
   --sk-icon-size: 16px;
   --sk-badge-size: 6px;

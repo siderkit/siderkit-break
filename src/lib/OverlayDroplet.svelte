@@ -17,7 +17,7 @@
   class:is-idle={idle}
   aria-hidden="true"
 >
-  <svg class="l-overlay-droplet__shape" viewBox="0 0 32 32">
+  <svg class="l-overlay-droplet__shape" viewBox="0 0 32 35">
     <defs>
       <linearGradient id={bodyId} x1="12" y1="2" x2="22" y2="30" gradientUnits="userSpaceOnUse">
         <stop class="l-overlay-droplet__stop-top" offset="0" />

@@ -108,6 +108,11 @@ test('the workbook contains styled summary and session sheets', async () => {
   assert.equal(text.includes('Countdown'), true);
   assert.equal(text.includes('<autoFilter ref="A10:F11"/>'), true);
   assert.equal(text.includes('showGridLines="0"'), true);
+  // Summary metrics and table values share a right edge; labels stay left.
+  assert.equal(text.includes('<alignment horizontal="right" vertical="center"/>'), true);
+  assert.equal(text.includes('<c r="B6" s="5">'), true);
+  assert.equal(text.includes('<c r="B11" s="19"><v>2</v></c>'), true);
+  assert.equal(text.includes('<c r="C11" s="19"'), true);
   assert.equal(text.includes('<pane ySplit="4" topLeftCell="A5"'), true);
   assert.equal(text.includes('<pane ySplit="10" topLeftCell="A11"'), true);
   assert.equal(text.includes('<mergeCell ref="A1:F1"/>'), true);

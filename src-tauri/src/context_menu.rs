@@ -12,6 +12,7 @@ use tauri::{AppHandle, Emitter, Manager, WebviewWindow, Wry};
 
 use crate::engine_host;
 use crate::i18n::translate;
+use crate::locate;
 use crate::shell;
 use crate::timer::{Phase, TimerSnapshot};
 use crate::tray;
@@ -23,6 +24,7 @@ const ID_PREFIX: &str = "ctx-";
 const TOGGLE: &str = "ctx-toggle";
 const SKIP: &str = "ctx-skip";
 const COLLAPSE: &str = "ctx-collapse";
+const LOCATE: &str = "ctx-locate";
 const OPEN: &str = "ctx-open";
 const SETTINGS: &str = "ctx-settings";
 const HELP: &str = "ctx-help";
@@ -78,7 +80,12 @@ pub fn show(window: &WebviewWindow, editable: bool) -> Result<(), String> {
     let entries = if editable {
         edit_plan()
     } else {
-        app_plan(window.label(), &locale, &snapshot)
+        app_plan(
+            window.label(),
+            &locale,
+            &snapshot,
+            tray::overlay_visible(app),
+        )
     };
     let menu = build_menu(app, &locale, &entries).map_err(|error| error.to_string())?;
     let target = window.as_ref().window();
@@ -140,7 +147,12 @@ fn predefined_edit(
     PredefinedMenuItem::separator(app)
 }
 
-fn app_plan(window: &str, locale: &str, snapshot: &TimerSnapshot) -> Vec<Entry> {
+fn app_plan(
+    window: &str,
+    locale: &str,
+    snapshot: &TimerSnapshot,
+    overlay_visible: bool,
+) -> Vec<Entry> {
     let mut entries = vec![
         Entry::Label(status_text(locale, snapshot)),
         Entry::Separator,
@@ -158,6 +170,15 @@ fn app_plan(window: &str, locale: &str, snapshot: &TimerSnapshot) -> Vec<Entry> 
     entries.push(Entry::Separator);
     if window != "main" {
         entries.push(Entry::Action(OPEN, translate(locale, "tray.open")));
+    }
+    // The tray menu offers this row whenever the floating ball is on screen;
+    // the window menus must not hide it, or a lost ball cannot be found from
+    // the window the user is already looking at.
+    if overlay_visible {
+        entries.push(Entry::Action(
+            LOCATE,
+            translate(locale, "tray.locateOverlay"),
+        ));
     }
     entries.push(Entry::Action(
         SETTINGS,
@@ -199,6 +220,7 @@ pub fn handle(app: &AppHandle, id: &str) {
             shell::show_main_window(app);
             Ok(())
         }
+        LOCATE => locate::show(app),
         SETTINGS => {
             shell::show_main_window(app);
             let _ = app.emit("navigate", "settings");
@@ -242,7 +264,7 @@ mod tests {
         snapshot.phase = Phase::Focus;
         snapshot.remaining_ms = 60_000;
         snapshot.planned_ms = 1_500_000;
-        let entries = app_plan("main", "en", &snapshot);
+        let entries = app_plan("main", "en", &snapshot, true);
         assert!(matches!(entries[2], Entry::Action(TOGGLE, _)));
         assert!(entries
             .iter()
@@ -258,7 +280,7 @@ mod tests {
 
     #[test]
     fn an_idle_menu_hides_the_end_current_phase_row() {
-        let entries = app_plan("main", "en", &idle());
+        let entries = app_plan("main", "en", &idle(), true);
         assert!(!entries
             .iter()
             .any(|entry| matches!(entry, Entry::Action(SKIP, _))));
@@ -266,11 +288,11 @@ mod tests {
 
     #[test]
     fn only_the_break_card_offers_hiding_the_reminder() {
-        let break_entries = app_plan("break", "en", &idle());
+        let break_entries = app_plan("break", "en", &idle(), true);
         assert!(break_entries
             .iter()
             .any(|entry| matches!(entry, Entry::Action(COLLAPSE, _))));
-        let locate_entries = app_plan("locate", "en", &idle());
+        let locate_entries = app_plan("locate", "en", &idle(), true);
         assert!(!locate_entries
             .iter()
             .any(|entry| matches!(entry, Entry::Action(COLLAPSE, _))));
@@ -280,12 +302,24 @@ mod tests {
     }
 
     #[test]
+    fn the_window_menu_locates_the_floating_ball_while_it_is_visible() {
+        let visible = app_plan("main", "en", &idle(), true);
+        assert!(visible
+            .iter()
+            .any(|entry| matches!(entry, Entry::Action(LOCATE, _))));
+        let hidden = app_plan("main", "en", &idle(), false);
+        assert!(!hidden
+            .iter()
+            .any(|entry| matches!(entry, Entry::Action(LOCATE, _))));
+    }
+
+    #[test]
     fn the_menu_status_row_reports_the_remaining_time() {
         let mut snapshot = idle();
         snapshot.phase = Phase::Focus;
         snapshot.remaining_ms = 90_000;
         snapshot.planned_ms = 1_500_000;
-        let entries = app_plan("main", "en", &snapshot);
+        let entries = app_plan("main", "en", &snapshot, true);
         assert_eq!(entries[0], Entry::Label("Focus · 01:30".to_owned()));
     }
 

@@ -444,7 +444,7 @@ fn toggle_overlay(app: &AppHandle) -> Result<(), String> {
     engine_host::set_overlay_visible(app, !enabled)
 }
 
-fn overlay_visible(app: &AppHandle) -> bool {
+pub(crate) fn overlay_visible(app: &AppHandle) -> bool {
     engine_host::get_settings(app)
         .map(|settings| settings.overlay.enabled)
         .unwrap_or(true)

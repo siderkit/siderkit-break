@@ -252,7 +252,6 @@
   .l-language-picker__list {
     display: flex;
     flex-direction: column;
-    gap: var(--sk-space-3xs);
     max-block-size: var(--sk-language-list-height);
     overflow-y: auto;
   }

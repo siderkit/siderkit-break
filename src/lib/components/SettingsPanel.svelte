@@ -112,4 +112,10 @@
     padding: 0 var(--sk-space-lg) var(--sk-space-xl);
     overflow-y: auto;
   }
+
+  @media (max-height: 460px) {
+    .l-settings-panel__header {
+      padding: var(--sk-space-sm) var(--sk-space-lg);
+    }
+  }
 </style>

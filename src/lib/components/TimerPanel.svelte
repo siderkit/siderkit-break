@@ -150,6 +150,37 @@
     .l-timer-panel {
       gap: var(--sk-space-sm);
       padding: var(--sk-space-md) var(--sk-space-lg);
+      overflow-y: hidden;
+      scrollbar-width: none;
+    }
+
+    .l-timer-panel::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (max-height: 460px) {
+    .l-timer-panel {
+      gap: var(--sk-space-xs);
+      padding: var(--sk-space-sm) var(--sk-space-lg);
+    }
+
+    .l-timer-panel__summary {
+      padding: var(--sk-space-xs) var(--sk-space-sm);
+    }
+
+    .l-timer-panel__summary-title {
+      display: none;
+    }
+
+    .l-timer-panel__summary-values {
+      font-size: var(--sk-text-xs);
+    }
+  }
+
+  @media (max-height: 380px) {
+    .l-timer-panel__summary {
+      display: none;
     }
   }
 

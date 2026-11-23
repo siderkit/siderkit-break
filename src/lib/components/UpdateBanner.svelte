@@ -198,6 +198,18 @@
     font-size: var(--sk-text-xs);
   }
 
+  @media (max-height: 460px) {
+    .l-update-banner {
+      gap: var(--sk-space-xs);
+      margin: var(--sk-space-sm) var(--sk-space-lg) 0;
+      padding: var(--sk-space-sm);
+    }
+
+    .l-update-banner__notes {
+      display: none;
+    }
+  }
+
   .l-update-banner__actions {
     display: flex;
     flex-wrap: wrap;

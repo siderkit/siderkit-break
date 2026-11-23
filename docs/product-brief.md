@@ -70,17 +70,6 @@ The 1.0 product is not for teams, managers, or people who need cross-device sync
 - Full-screen “deep rest” mode, off by default.
 - Taskbar progress on platforms that support it.
 
-### Non-goals for 1.0
-
-- Todo lists, notes, or project management.
-- Accounts, sync, cloud, teams, or sharing.
-- Mobile app store releases.
-- Home-screen widgets or live activities.
-- Plugins, scripting, AI features, or integrations.
-- Telemetry, analytics, or crash upload.
-- True in-taskbar text embedding.
-- Automatic updates. The first release is a manual download.
-
 ## Success metrics
 
 The first release is successful when:

@@ -188,7 +188,7 @@ export async function buildWorkbook(
   const locale = currentLocale();
   const generated = new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
-    timeStyle: 'medium',
+    timeStyle: 'short',
   }).format(now);
   const created = now.toISOString();
   const rangeLabel = formatRangeLabel(range, locale);

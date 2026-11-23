@@ -2,6 +2,22 @@
 
 All notable changes to Siderkit Break are recorded here. The project is at the 1.0 release-candidate stage; no public binaries have been published yet.
 
+## [Unreleased]
+
+### Changed
+
+- Reminder copy now names a concrete act of care: step away from the screen, look into the distance, sip water, or roll your shoulders and neck. The break-over card welcomes people back gently instead of asking whether they are ready.
+- The main window is now 360×560 by default and can shrink to 320×400. Below 520 px the header, timer ring, and summary compress in stages, so the main view keeps every control without a scrollbar.
+- Excel exports use minute precision: the filename ends with a short local date-time stamp, and the session start column no longer shows seconds.
+- Language and other list options now highlight as square, full-width rows. Language names sit vertically centered instead of clinging to the top of the hover band.
+- The home timer ring is slightly smaller, and the phase label is a soft colored pill again instead of a dot plus text. Reminder cards use a larger, unframed icon aligned with the title.
+- Excel summary metrics and numeric table columns now align to the right; labels, dates, and types stay left-aligned.
+
+### Fixed
+
+- The main window's right-click menu now offers "Locate floating ball" while the floating ball is enabled, matching the tray menu, so a ball that drifted off-screen can be found from the window in hand.
+- The droplet mark and the floating-ball droplet now include their full rounded base; the 32×32 view box no longer clips the last few units of the logo.
+
 ## [1.0.0-rc.1] - 2026-11-23
 
 ### Added

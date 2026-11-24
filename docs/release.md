@@ -1,6 +1,6 @@
 # Release guide
 
-> Status: `1.0.0` is built and signed; publishing the GitHub release is the remaining step. `1.0.0-rc.1` stays online as the previous tag until that release is live.
+> Status: `1.0.0` is published on GitHub Releases and served through `https://dl.siderkit.com`. `1.0.0-rc.1` stays online as the previous tag.
 
 ## Update host
 
@@ -80,7 +80,7 @@ Source-level gates already pass:
 - `pnpm check:i18n`: no missing keys; all 40 catalogs match `en.json` at 343 keys.
 - Browser walkthrough at 360×560, 360×400, and 320×400: main view has no scrollbars, settings root and all seven detail pages render, Insights renders data and empty states, the finish card tag link expands and collapses, and the three floating-window size cards show real droplet previews.
 
-Not yet measured for 1.0.0: installer size, idle memory, cold start, and the on-VM matrix below. The rc.1 numbers stay in the records that follow until a 1.0.0 build replaces them.
+The 1.0.0 installer measures 6.81 MiB, below the 10 MB budget. Not yet measured for 1.0.0: idle memory, cold start, and the on-VM matrix below. The rc.1 numbers stay in the records that follow until a 1.0.0 run replaces them.
 
 ## Local build record (2026-11-23)
 

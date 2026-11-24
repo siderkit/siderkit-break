@@ -1,6 +1,6 @@
 use tauri::{AppHandle, Manager};
 
-use crate::db::{History, HistoryRangeSummary, HistoryWindow, TodaySummary};
+use crate::db::{History, HistoryRangeSummary, HistoryWindow, InsightsPayload, TodaySummary};
 use crate::engine_host;
 use crate::locate;
 use crate::settings::Settings;
@@ -146,12 +146,32 @@ pub fn show_context_menu(window: tauri::WebviewWindow, editable: bool) -> Result
 
 #[tauri::command]
 pub fn open_project_page() -> Result<(), String> {
-    crate::shell::open_project_page()
+    crate::links::open_project_page()
+}
+
+#[tauri::command]
+pub fn open_privacy_page() -> Result<(), String> {
+    crate::links::open_privacy_page()
+}
+
+#[tauri::command]
+pub fn reset_overlay_position(app: AppHandle) -> Result<(), String> {
+    crate::overlay::reset_overlay_position(&app)
 }
 
 #[tauri::command]
 pub fn preview_notification_sound(app: AppHandle) -> Result<(), String> {
-    crate::reminder::preview(&app)
+    crate::reminder::preview(&app, None, None)
+}
+
+/// Auditions one timbre from the sound list without changing the saved preset.
+#[tauri::command]
+pub fn preview_sound(
+    app: AppHandle,
+    preset: Option<crate::settings::SoundPreset>,
+    volume: Option<u8>,
+) -> Result<(), String> {
+    crate::reminder::preview(&app, preset, volume)
 }
 
 #[tauri::command]
@@ -237,6 +257,81 @@ pub fn get_history_range_summary(
 #[tauri::command]
 pub fn export_data(app: AppHandle) -> Result<String, String> {
     engine_host::export_data(&app)
+}
+
+/// Aggregates one Insights range in Rust so the UI never receives raw rows.
+#[tauri::command]
+pub fn get_insights(app: AppHandle, range: String) -> Result<InsightsPayload, String> {
+    let state = app.state::<engine_host::AppState>();
+    let store = engine_host::lock_store(&state)?;
+    store.insights(&range).map_err(|error| error.to_string())
+}
+
+/// Returns the most recently used tags, newest first.
+#[tauri::command]
+pub fn get_recent_tags(app: AppHandle, limit: Option<usize>) -> Result<Vec<String>, String> {
+    let state = app.state::<engine_host::AppState>();
+    let store = engine_host::lock_store(&state)?;
+    store
+        .recent_tags(limit.unwrap_or(3).clamp(1, 20))
+        .map_err(|error| error.to_string())
+}
+
+/// Saves or clears a session tag; blank input clears it.
+#[tauri::command]
+pub fn set_session_tag(
+    app: AppHandle,
+    session_id: String,
+    tag: Option<String>,
+) -> Result<bool, String> {
+    let state = app.state::<engine_host::AppState>();
+    let store = engine_host::lock_store(&state)?;
+    store
+        .set_session_tag(&session_id, tag.as_deref())
+        .map_err(|error| error.to_string())
+}
+
+/// Permanently deletes every session after the confirmation in Settings.
+#[tauri::command]
+pub fn clear_history(app: AppHandle) -> Result<u32, String> {
+    let state = app.state::<engine_host::AppState>();
+    let store = engine_host::lock_store(&state)?;
+    store.clear_history().map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn get_diagnostics(app: AppHandle) -> Result<crate::diagnostics::Diagnostics, String> {
+    crate::diagnostics::collect(&app)
+}
+
+#[tauri::command]
+pub fn clear_logs(app: AppHandle) -> Result<(), String> {
+    crate::diagnostics::clear_logs(&app)
+}
+
+#[tauri::command]
+pub fn open_log_dir(app: AppHandle) -> Result<(), String> {
+    crate::diagnostics::open_log_dir(&app)
+}
+
+/// Validates and imports a custom reminder sound, returning its stored path.
+#[tauri::command]
+pub async fn choose_custom_sound(app: AppHandle) -> Result<Option<String>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri_plugin_dialog::DialogExt;
+        let Some(file) = app
+            .dialog()
+            .file()
+            .add_filter("Audio", &["wav", "mp3", "ogg", "flac", "m4a"])
+            .blocking_pick_file()
+        else {
+            return Ok(None);
+        };
+        let path = file.into_path().map_err(|error| error.to_string())?;
+        crate::sound::import_custom(&app, &path).map(Some)
+    })
+    .await
+    .map_err(|error| error.to_string())?
 }
 
 /// Shows the save dialog before any workbook work starts.

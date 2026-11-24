@@ -177,6 +177,17 @@ export function formatMinutesLabel(valueMs: number): string {
   return `${formatMinutes(valueMs)} ${m['common.unit.minutes']()}`;
 }
 
+/** Compact duration for insight stats, e.g. `6h 20m` or `45m`. */
+export function formatCompactDuration(valueMs: number): string {
+  const totalMinutes = Math.max(0, Math.round(valueMs / 60_000));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0) {
+    return `${hours}h ${String(minutes).padStart(2, '0')}m`;
+  }
+  return `${minutes}m`;
+}
+
 function minutesForPhase(phase: Phase, timer: TimerConfig): number {
   switch (phase) {
     case 'Focus':

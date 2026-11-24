@@ -2,13 +2,30 @@
 export type Phase = 'Idle' | 'Focus' | 'ShortBreak' | 'LongBreak' | 'Countdown';
 
 export type Theme = 'System' | 'Light' | 'Dark';
-export type Palette = 'Forest' | 'Ocean' | 'Ember' | 'Plum' | 'Slate' | 'Rose' | 'Aurora' | 'Sand';
+export type Palette =
+  | 'Forest'
+  | 'Ocean'
+  | 'Ember'
+  | 'Plum'
+  | 'Slate'
+  | 'Rose'
+  | 'Aurora'
+  | 'Sand'
+  | 'Moss'
+  | 'Ink'
+  | 'Dusk'
+  | 'Clay';
+export type WindowMode = 'Standard' | 'Compact';
+export type OverlaySize = 'S' | 'M' | 'L';
+export type SoundPreset = 'Chime' | 'Soft' | 'Bell' | 'Custom' | 'Off';
 export type SessionKind = 'Focus' | 'ShortBreak' | 'LongBreak' | 'Countdown';
 export type SessionOutcome = 'Completed' | 'Skipped' | 'Reset' | 'Interrupted';
 
 /** In-app reminder card selected by Rust at a phase boundary. */
 export type TimerNotice =
-  { kind: 'FocusDone' } | { kind: 'BreakDone' } | { kind: 'CountdownDone'; minutes: number };
+  | { kind: 'FocusDone'; sessionId: string; minutes: number }
+  | { kind: 'BreakDone' }
+  | { kind: 'CountdownDone'; minutes: number };
 
 export interface TimerSnapshot {
   phase: Phase;
@@ -34,11 +51,19 @@ export interface TimerConfig {
 
 export interface OverlaySettings {
   enabled: boolean;
+  size: OverlaySize;
+  /** Content opacity in percent, 40-100. */
+  opacity: number;
 }
 
 export interface NotificationSettings {
   enabled: boolean;
   sound: boolean;
+  preset: SoundPreset;
+  /** Playback volume in percent, 0-100. */
+  volume: number;
+  customPath: string | null;
+  tick: boolean;
 }
 
 export interface GeneralSettings {
@@ -46,6 +71,8 @@ export interface GeneralSettings {
   startMinimized: boolean;
   theme: Theme;
   palette: Palette;
+  windowMode: WindowMode;
+  reduceMotion: boolean;
   locale: string | null;
 }
 
@@ -107,6 +134,8 @@ export interface HistorySession {
   actualMs: number;
   outcome: SessionOutcome;
   interruptions: number;
+  /** Normalized user tag, or null when the session has none. */
+  tag: string | null;
 }
 
 export interface HistoryDay {
@@ -137,4 +166,45 @@ export interface HistoryRangeSummary {
   focusMs: number;
   breakMs: number;
   countdownMs: number;
+}
+
+export type InsightsRange = 'today' | 'week' | 'month' | 'year';
+
+export interface InsightsTotals {
+  focusMs: number;
+  rounds: number;
+  streakDays: number;
+}
+
+export interface InsightsDay {
+  date: string;
+  focusMs: number;
+  rounds: number;
+}
+
+export interface InsightsTag {
+  tag: string;
+  focusMs: number;
+}
+
+export interface InsightsPayload {
+  range: InsightsRange;
+  totals: InsightsTotals;
+  days: InsightsDay[];
+  heatmap: InsightsDay[];
+  tags: InsightsTag[];
+}
+
+export interface Diagnostics {
+  version: string;
+  os: string;
+  arch: string;
+  webview: string;
+  locale: string;
+  theme: string;
+  palette: string;
+  windowMode: string;
+  logDir: string;
+  logSize: number;
+  recentLogs: string[];
 }

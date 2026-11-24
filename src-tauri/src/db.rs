@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
@@ -10,10 +11,15 @@ use thiserror::Error;
 use crate::settings::{OverlayPosition, Settings};
 use crate::timer::{SessionKind, SessionOutcome, SessionRecord, TimerSnapshot};
 
+mod insights;
 mod schema;
 #[cfg(test)]
 use schema::BASE_SCHEMA;
 use schema::SCHEMA_VERSION;
+
+#[cfg(test)]
+pub use insights::normalize_tag;
+pub use insights::InsightsPayload;
 
 #[derive(Debug, Error)]
 pub enum StoreError {
@@ -47,6 +53,8 @@ pub struct HistorySession {
     pub actual_ms: u64,
     pub outcome: SessionOutcome,
     pub interruptions: u32,
+    /// User-provided label for this session, normalized on write.
+    pub tag: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -262,7 +270,7 @@ impl Store {
     pub fn history_between(&self, from_ms: i64, to_ms: i64) -> Result<History, StoreError> {
         let mut statement = self.connection.prepare(
             "SELECT id, kind, started_at, ended_at, planned_ms, actual_ms, outcome,
-                    interruptions, date(started_at / 1000, 'unixepoch', 'localtime')
+                    interruptions, date(started_at / 1000, 'unixepoch', 'localtime'), tag
              FROM sessions
              WHERE deleted_at IS NULL AND started_at >= ?1 AND started_at < ?2
              ORDER BY started_at DESC",
@@ -280,6 +288,7 @@ impl Store {
                     actual_ms: row.get::<_, Option<i64>>(5)?.unwrap_or(0) as u64,
                     outcome: outcome_from_name(&row.get::<_, String>(6)?),
                     interruptions: row.get::<_, i64>(7)? as u32,
+                    tag: row.get::<_, Option<String>>(9)?,
                 },
             ))
         })?;
@@ -378,6 +387,7 @@ impl Store {
         })
     }
 
+    /// Exports settings and history as pretty JSON for diagnostics and backup.
     pub fn export_json(&self) -> Result<String, StoreError> {
         let history = self.history()?;
         let settings = self.load_settings().unwrap_or_else(|_| Settings::default());

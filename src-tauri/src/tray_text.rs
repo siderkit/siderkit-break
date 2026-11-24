@@ -114,19 +114,19 @@ mod tests {
 
     #[test]
     fn the_overlay_row_switches_between_hide_and_show() {
-        assert_eq!(overlay_toggle_text("en", true), "Hide floating ball");
-        assert_eq!(overlay_toggle_text("en", false), "Show floating ball");
-        assert_eq!(overlay_toggle_text("zh-CN", true), "关闭悬浮球");
-        assert_eq!(overlay_toggle_text("zh-CN", false), "开启悬浮球");
+        assert_eq!(overlay_toggle_text("en", true), "Hide floating window");
+        assert_eq!(overlay_toggle_text("en", false), "Show floating window");
+        assert_eq!(overlay_toggle_text("zh-CN", true), "关闭悬浮窗");
+        assert_eq!(overlay_toggle_text("zh-CN", false), "开启悬浮窗");
     }
 
     #[test]
     fn the_locate_row_is_localized() {
         assert_eq!(
             translate("en", "tray.locateOverlay"),
-            "Locate floating ball"
+            "Locate floating window"
         );
-        assert_eq!(translate("zh-CN", "tray.locateOverlay"), "定位悬浮球");
+        assert_eq!(translate("zh-CN", "tray.locateOverlay"), "定位悬浮窗");
         assert_eq!(translate("en", "overlay.locate"), "I'm here");
         assert_eq!(translate("zh-CN", "overlay.locate"), "我在这里");
     }

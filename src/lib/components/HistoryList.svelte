@@ -4,20 +4,23 @@
   import { m } from '../../paraglide/messages.js';
   import { buildHistoryLayout, spacerHeights, visibleItemRange } from '../history-page';
   import { HistoryListState } from '../history-list.svelte';
+  import type { HistorySession } from '../ipc/types';
   import { currentLocale } from '../locale';
   import Button from '../ui/Button.svelte';
   import HistoryRow from './HistoryRow.svelte';
+  import TagDialog from './TagDialog.svelte';
 
   let { covered = false }: { covered?: boolean } = $props();
 
   const DAY_HEIGHT = 46;
-  const SESSION_HEIGHT = 32;
+  const SESSION_HEIGHT = 50;
   const OVERSCAN = 120;
   const LOAD_MORE_DISTANCE = 240;
 
   let viewport = $state<HTMLDivElement>();
   let viewportHeight = $state(0);
   let scrollOffset = $state(0);
+  let editing = $state<HistorySession | null>(null);
   const list = new HistoryListState(() => viewport);
   const locale = currentLocale();
 
@@ -79,7 +82,7 @@
     {:else}
       <div class="l-history-list__spacer" style:block-size="{spacers.before}px"></div>
       {#each visible as item (item.key)}
-        <HistoryRow {item} {locale} />
+        <HistoryRow {item} {locale} ontagedit={(session) => (editing = session)} />
       {/each}
       <div class="l-history-list__spacer" style:block-size="{spacers.after}px"></div>
     {/if}
@@ -88,6 +91,16 @@
     {/if}
   </div>
 </div>
+
+{#if editing}
+  {@const session = editing}
+  <TagDialog
+    sessionId={session.id}
+    initial={session.tag}
+    onchange={(tag) => list.applyTag(session.id, tag)}
+    ondismiss={() => (editing = null)}
+  />
+{/if}
 
 <style>
   .l-history-list {

@@ -30,6 +30,7 @@ const sampleHistory: History = {
           actualMs: 25 * 60_000,
           outcome: 'Completed',
           interruptions: 0,
+          tag: 'Deep work',
         },
         {
           id: 'countdown-1',
@@ -40,6 +41,7 @@ const sampleHistory: History = {
           actualMs: 5 * 60_000,
           outcome: 'Completed',
           interruptions: 0,
+          tag: null,
         },
       ],
     },
@@ -107,6 +109,10 @@ test('the workbook contains styled summary and session sheets', async () => {
   assert.equal(text.includes('50 min'), true);
   assert.equal(text.includes('Countdown'), true);
   assert.equal(text.includes('<autoFilter ref="A10:F11"/>'), true);
+  assert.equal(text.includes('<autoFilter ref="A4:H6"/>'), true);
+  assert.equal(text.includes('<mergeCell ref="A1:H1"/>'), true);
+  assert.equal(text.includes('>Tag<'), true);
+  assert.equal(text.includes('Deep work'), true);
   assert.equal(text.includes('showGridLines="0"'), true);
   // Summary metrics and table values share a right edge; labels stay left.
   assert.equal(text.includes('<alignment horizontal="right" vertical="center"/>'), true);
@@ -133,4 +139,5 @@ test('an empty history still produces a readable workbook', async () => {
   const text = new TextDecoder().decode(workbook);
   assert.equal(text.includes('No sessions recorded yet.'), true);
   assert.equal(text.includes('<mergeCell ref="A11:F11"/>'), true);
+  assert.equal(text.includes('<mergeCell ref="A5:H5"/>'), true);
 });

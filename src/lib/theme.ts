@@ -21,6 +21,14 @@ export function applyPalette(palette: Palette): void {
   document.documentElement.dataset.palette = palette;
 }
 
+/** Disables non-essential transitions when the user asks for less motion. */
+export function applyMotion(reduce: boolean): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  document.documentElement.dataset.motion = reduce ? 'Reduced' : 'Full';
+}
+
 /** Keeps System theme changes live; the returned function removes the listener. */
 export function watchSystemTheme(): () => void {
   ensureSystemListener();

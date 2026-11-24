@@ -387,3 +387,6 @@ fn the_overlay_position_survives_a_store_round_trip() {
     assert_eq!(loaded.overlay.position, settings.overlay.position);
     assert_eq!(loaded.general.palette, settings.general.palette);
 }
+
+#[path = "db_insights_tests.rs"]
+mod insights;

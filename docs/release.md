@@ -1,6 +1,6 @@
 # Release guide
 
-> Status: `1.0.0-rc.1` is published on GitHub Releases and served through `https://dl.siderkit.com`.
+> Status: `1.0.0-rc.1` is published on GitHub Releases and served through `https://dl.siderkit.com`. The `1.0.0` implementation is complete in the repository but has not been built or published yet; the version fields and this guide are ready for that build.
 
 ## Update host
 
@@ -36,13 +36,13 @@ The updater stays usable as long as the Worker and the GitHub release exist. Kee
 
 ## Version
 
-The release candidate keeps the manifest version identical in:
+The release keeps the manifest version identical in:
 
 - `package.json`
 - `src-tauri/Cargo.toml`
 - `src-tauri/tauri.conf.json`
 
-All three are `1.0.0-rc.1` while the updater, the counters, and the website are finished. The public `1.0.0` release moves all three together. The app reads the Tauri version at runtime for the About panel.
+All three are now `1.0.0`, matching the implemented settings, Insights, tags, sound, and window work. `1.0.0-rc.1` remains the published baseline that existing installs update from. The app reads the Tauri version at runtime for the About panel.
 
 ## Artifact matrix
 
@@ -57,6 +57,19 @@ All three are `1.0.0-rc.1` while the updater, the counters, and the website are 
 A release build adds `--config src-tauri/tauri.release.conf.json` to Windows. That config sets `bundle.createUpdaterArtifacts` and makes Tauri emit the `.sig` file next to the NSIS installer; it requires `TAURI_SIGNING_PRIVATE_KEY`. Do not use it for a local smoke build unless the key is set.
 
 The build workflow in `.github/workflows/build.yml` runs the same commands and uploads the bundles as workflow artifacts. It does not create a GitHub release.
+
+## 1.0.0 implementation status (2026-11-24)
+
+The 1.0.0 feature set is implemented and verified in source, but no 1.0.0 installer exists yet. Before publishing, run a fresh build with the steps below and record the artifacts here.
+
+Source-level gates already pass:
+
+- `pnpm check:web`: CSS ownership, 183 tokens, ESLint, 65 unit tests, `svelte-check` with 0 errors and 0 warnings, dependency boundaries, duplicate scan, TODO scan, file size, download URLs.
+- `pnpm check:rust`: `cargo fmt --check`, `clippy -D warnings`, 100 tests.
+- `pnpm check:i18n`: no missing keys; all 30 catalogs match `en.json` at 350 keys.
+- Browser walkthrough at 360×560, 360×400, 320×400, and 320×200: main view has no scrollbars, compact mode fits, settings root and all seven detail pages render, Insights renders data and empty states, the finish card tag link expands and collapses, and the three floating-window size cards show real droplet previews.
+
+Not yet measured for 1.0.0: installer size, idle memory, cold start, and the on-VM matrix below. The rc.1 numbers stay in the records that follow until a 1.0.0 build replaces them.
 
 ## Local build record (2026-11-23)
 
@@ -224,6 +237,12 @@ Run on the target operating system before publishing:
 - Confirm the overlay appears, stays on top, and is click-through outside the droplet.
 - Confirm tray labels and the locate hint.
 - Confirm a reminder card at focus, break, and countdown boundaries, and that no operating-system notification appears.
+- Open settings and confirm the root screen shows seven entries with current values; enter each detail page, change one value, go back, and confirm the value persisted without a save step.
+- Confirm the finish card shows the tag link collapsed, expands to "Cancel tag" in the same position, saves on Enter, and collapses on Esc without writing an empty tag.
+- Confirm history shows the saved tag under the time, edits it in place, and the row updates without a reload.
+- Confirm the floating-window page offers S/M/L with real droplet previews, the opacity slider changes the window live, locate flashes a frame, and reset returns it to the corner.
+- Confirm Insights switches across all four ranges without layout jumps, shows the heatmap and tag bars with data, and shows the empty and error states without a stack trace.
+- Import a custom sound (≤ 5 s, ≤ 2 MB), confirm it previews on selection, and confirm a rejected file keeps the previous selection and shows a readable error.
 - Toggle launch at login, sign out, and sign back in.
 - Resize or move the window across 100%, 150%, and 200% DPI displays.
 - Sleep and resume; confirm the countdown catches up without drift.

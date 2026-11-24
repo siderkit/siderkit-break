@@ -19,7 +19,7 @@ import {
   updateSettings,
 } from './ipc/client';
 import type { Settings, TimerSnapshot, TodaySummary } from './ipc/types';
-import { applyPalette, applyTheme } from './theme';
+import { applyMotion, applyPalette, applyTheme } from './theme';
 import { m } from '../paraglide/messages.js';
 
 const emptySnapshot: TimerSnapshot = {
@@ -50,16 +50,24 @@ const DEFAULT_SETTINGS: Settings = {
   },
   overlay: {
     enabled: true,
+    size: 'M',
+    opacity: 100,
   },
   notifications: {
     enabled: true,
     sound: true,
+    preset: 'Chime',
+    volume: 70,
+    customPath: null,
+    tick: false,
   },
   general: {
     launchAtLogin: false,
     startMinimized: false,
     theme: 'System',
     palette: 'Forest',
+    windowMode: 'Standard',
+    reduceMotion: false,
     locale: null,
   },
   update: {
@@ -130,6 +138,7 @@ class TimerStore {
       this.summary = summary;
       applyTheme(settings.general.theme);
       applyPalette(settings.general.palette);
+      applyMotion(settings.general.reduceMotion);
     } catch (error) {
       this.error = messageFor(error);
     } finally {
@@ -183,12 +192,14 @@ class TimerStore {
       this.settings = next;
       applyTheme(next.general.theme);
       applyPalette(next.general.palette);
+      applyMotion(next.general.reduceMotion);
       return;
     }
     try {
       this.settings = await updateSettings(next);
       applyTheme(this.settings.general.theme);
       applyPalette(this.settings.general.palette);
+      applyMotion(this.settings.general.reduceMotion);
     } catch (error) {
       this.error = messageFor(error);
     }

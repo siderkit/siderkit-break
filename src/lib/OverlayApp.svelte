@@ -51,7 +51,18 @@
   const phase = $derived(
     snapshot.phase === 'Idle' && snapshot.pendingBreak ? snapshot.pendingBreak : snapshot.phase,
   );
+  const size = $derived(timerStore.settings.overlay.size);
+  const sizeClass = $derived(`is-size-${size.toLowerCase()}`);
   const label = $derived(formatClock(snapshot.remainingMs));
+
+  // Opacity is a content setting, not a window setting: the transparent area
+  // must stay fully transparent for the click-through shape to keep working.
+  $effect(() => {
+    document.documentElement.style.opacity = String(timerStore.settings.overlay.opacity / 100);
+    return () => {
+      document.documentElement.style.opacity = '';
+    };
+  });
   const breakPhase = $derived(phase === 'ShortBreak' || phase === 'LongBreak');
   const description = $derived(`${phaseLabel(phase)} ${label}`);
   const idleLabel = $derived(snapshot.pendingBreak ? m['overlay.breakReady']() : m['tray.open']());
@@ -152,7 +163,7 @@
   </div>
 {:else}
   <div
-    class="l-overlay-text {phaseClass(phase)}"
+    class="l-overlay-text {phaseClass(phase)} {sizeClass}"
     class:is-paused={snapshot.isPaused}
     use:fitOverlayWidth
     role="timer"
@@ -175,6 +186,7 @@
 
 <style>
   .l-overlay-drop {
+    --overlay-drop-size: var(--sk-overlay-drop-size-m);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -190,6 +202,8 @@
   }
 
   .l-overlay-text {
+    --overlay-drop-size: var(--sk-overlay-drop-size-m);
+    --overlay-text-size: var(--sk-text-overlay-m);
     position: relative;
     display: flex;
     align-items: center;
@@ -200,6 +214,16 @@
     overflow: hidden;
     background: transparent;
     cursor: grab;
+  }
+
+  .l-overlay-text.is-size-s {
+    --overlay-drop-size: var(--sk-overlay-drop-size-s);
+    --overlay-text-size: var(--sk-text-overlay-s);
+  }
+
+  .l-overlay-text.is-size-l {
+    --overlay-drop-size: var(--sk-overlay-drop-size-l);
+    --overlay-text-size: var(--sk-text-overlay-l);
   }
 
   .l-overlay-drop:active {
@@ -215,8 +239,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    inline-size: var(--sk-overlay-drop-size);
-    block-size: var(--sk-overlay-drop-size);
+    inline-size: var(--overlay-drop-size);
+    block-size: var(--overlay-drop-size);
     transform: translateY(-50%);
   }
 
@@ -228,10 +252,10 @@
     position: relative;
     z-index: 0;
     inline-size: max-content;
-    padding-left: calc(var(--sk-overlay-drop-size) + var(--sk-space-xs));
+    padding-left: calc(var(--overlay-drop-size) + var(--sk-space-xs));
     overflow: visible;
     color: hsl(var(--sk-color-text));
-    font-size: var(--sk-text-overlay);
+    font-size: var(--overlay-text-size);
     font-weight: var(--sk-weight-semibold);
     font-variant-numeric: tabular-nums;
     letter-spacing: var(--sk-tracking-tight);
@@ -267,17 +291,5 @@
 
   .l-overlay-text.is-paused .l-overlay-text__time {
     color: hsl(var(--sk-color-warning));
-  }
-
-  @keyframes l-overlay-drop-pulse {
-    0%,
-    100% {
-      filter: drop-shadow(var(--sk-shadow-droplet));
-    }
-    50% {
-      filter: drop-shadow(0 0 var(--sk-overlay-drop-blur) hsl(var(--sk-drop-pulse-rim)))
-        drop-shadow(0 0 var(--sk-overlay-drop-blur) hsl(var(--sk-drop-pulse-halo)))
-        var(--sk-shadow-droplet);
-    }
   }
 </style>

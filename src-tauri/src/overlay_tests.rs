@@ -15,19 +15,19 @@ fn the_default_overlay_position_sits_in_the_bottom_left_corner() {
 #[test]
 fn showing_the_clock_keeps_the_droplet_center_in_place() {
     let idle_origin = (24, 1471);
-    let grown = droplet_anchored_position(idle_origin, true, false, 1.0);
-    assert_eq!(grown, (24, 1466));
+    let grown = droplet_anchored_position(idle_origin, true, false, OverlaySize::M, 1.0);
+    assert_eq!(grown, (24, 1462));
     let idle_center = (
-        f64::from(idle_origin.0) + droplet_center(true).0,
-        f64::from(idle_origin.1) + droplet_center(true).1,
+        f64::from(idle_origin.0) + droplet_center(true, OverlaySize::M).0,
+        f64::from(idle_origin.1) + droplet_center(true, OverlaySize::M).1,
     );
     let grown_center = (
-        f64::from(grown.0) + droplet_center(false).0,
-        f64::from(grown.1) + droplet_center(false).1,
+        f64::from(grown.0) + droplet_center(false, OverlaySize::M).0,
+        f64::from(grown.1) + droplet_center(false, OverlaySize::M).1,
     );
     assert_eq!(grown_center, idle_center);
     assert_eq!(
-        droplet_anchored_position(grown, false, true, 1.0),
+        droplet_anchored_position(grown, false, true, OverlaySize::M, 1.0),
         idle_origin
     );
 }
@@ -35,14 +35,14 @@ fn showing_the_clock_keeps_the_droplet_center_in_place() {
 #[test]
 fn a_fractional_scale_keeps_the_droplet_within_a_pixel() {
     let idle_origin = (24, 1471);
-    let grown = droplet_anchored_position(idle_origin, true, false, 1.5);
+    let grown = droplet_anchored_position(idle_origin, true, false, OverlaySize::M, 1.5);
     let idle_center = (
-        f64::from(idle_origin.0) + droplet_center(true).0 * 1.5,
-        f64::from(idle_origin.1) + droplet_center(true).1 * 1.5,
+        f64::from(idle_origin.0) + droplet_center(true, OverlaySize::M).0 * 1.5,
+        f64::from(idle_origin.1) + droplet_center(true, OverlaySize::M).1 * 1.5,
     );
     let grown_center = (
-        f64::from(grown.0) + droplet_center(false).0 * 1.5,
-        f64::from(grown.1) + droplet_center(false).1 * 1.5,
+        f64::from(grown.0) + droplet_center(false, OverlaySize::M).0 * 1.5,
+        f64::from(grown.1) + droplet_center(false, OverlaySize::M).1 * 1.5,
     );
     assert!((grown_center.0 - idle_center.0).abs() < 1.0);
     assert!((grown_center.1 - idle_center.1).abs() < 1.0);

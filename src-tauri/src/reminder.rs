@@ -17,7 +17,12 @@ use crate::timer::{Phase, SessionKind, SessionOutcome, SessionRecord, TimerSnaps
 #[serde(tag = "kind")]
 pub enum TimerNotice {
     /// Focus ended without an automatic break, so the card offers one.
-    FocusDone,
+    /// The id lets the card attach a tag to the session it just saved, and the
+    /// length keeps the card's "25 min · Focus" summary honest.
+    FocusDone {
+        session_id: String,
+        minutes: u32,
+    },
     /// A break ended; the card offers the next focus.
     BreakDone,
     CountdownDone {
@@ -45,8 +50,12 @@ pub fn notice_for(
     match session.kind {
         SessionKind::Focus => {
             // With an automatic break the break card is already the reminder.
-            (snapshot.phase == Phase::Idle && snapshot.pending_break.is_some())
-                .then_some(TimerNotice::FocusDone)
+            (snapshot.phase == Phase::Idle && snapshot.pending_break.is_some()).then(|| {
+                TimerNotice::FocusDone {
+                    session_id: session.id.clone(),
+                    minutes: (session.planned_ms / 60_000).max(1) as u32,
+                }
+            })
         }
         SessionKind::ShortBreak | SessionKind::LongBreak => Some(TimerNotice::BreakDone),
         SessionKind::Countdown => Some(TimerNotice::CountdownDone {
@@ -71,13 +80,24 @@ pub fn should_chime(
     ended_session.is_some_and(|session| session.outcome == SessionOutcome::Completed)
 }
 
-/// Plays the built-in reminder chime for the settings preview. Nothing is
-/// posted to the operating system, so the preview cannot leak a toast.
-pub fn preview(app: &AppHandle) -> Result<(), String> {
-    if !settings(app).notifications.enabled {
+/// Plays one reminder timbre for the settings preview. The row's own preview
+/// button can audition another timbre without changing the saved choice, so
+/// both the preset and the volume are optional overrides. Nothing is posted to
+/// the operating system, so the preview cannot leak a toast.
+pub fn preview(
+    app: &AppHandle,
+    preset: Option<crate::settings::SoundPreset>,
+    volume: Option<u8>,
+) -> Result<(), String> {
+    let settings = settings(app);
+    if !settings.notifications.enabled {
         return Err("reminders are turned off".to_owned());
     }
-    crate::sound::play_notification()
+    crate::sound::play(
+        preset.unwrap_or(settings.notifications.preset),
+        volume.unwrap_or(settings.notifications.volume),
+        settings.notifications.custom_path.as_deref(),
+    )
 }
 
 fn settings(app: &AppHandle) -> Settings {
@@ -103,6 +123,7 @@ mod tests {
             notifications: crate::settings::NotificationSettings {
                 enabled,
                 sound: true,
+                ..crate::settings::NotificationSettings::default()
             },
             ..Settings::default()
         }
@@ -144,7 +165,13 @@ mod tests {
             Some(&session(SessionKind::Focus, SessionOutcome::Completed)),
             false,
         );
-        assert_eq!(notice, Some(TimerNotice::FocusDone));
+        assert_eq!(
+            notice,
+            Some(TimerNotice::FocusDone {
+                session_id: "test".to_owned(),
+                minutes: 25
+            })
+        );
     }
 
     #[test]

@@ -200,6 +200,7 @@ function sessionRow(
     cell(`E${rowNumber}`, formatMinutesLabel(session.plannedMs), numeric),
     cell(`F${rowNumber}`, formatMinutesLabel(session.actualMs), numeric),
     cell(`G${rowNumber}`, session.interruptions, numeric),
+    cell(`H${rowNumber}`, session.tag ?? '', base),
   ];
   return `<row r="${rowNumber}" ht="20" customHeight="1">${cells.join('')}</row>`;
 }
@@ -297,6 +298,7 @@ export async function sessionsSheet(
         m['export.column.planned'](),
         m['export.column.actual'](),
         m['export.column.interruptions'](),
+        m['export.column.tag'](),
       ],
       6,
       24,
@@ -320,14 +322,14 @@ export async function sessionsSheet(
     options.onProgress?.(sessions.length, sessions.length);
   }
 
-  const emptyMerge = sessions.length === 0 ? [`A${tableStart}:G${tableStart}`] : [];
+  const emptyMerge = sessions.length === 0 ? [`A${tableStart}:H${tableStart}`] : [];
   return sheetXml({
-    dimension: `A1:G${last}`,
-    columns: [22, 12, 16, 16, 14, 14, 15],
+    dimension: `A1:H${last}`,
+    columns: [22, 12, 16, 16, 14, 14, 15, 20],
     rows,
     freeze: { rows: 4, topLeft: 'A5' },
-    autoFilter: sessions.length > 0 ? `A4:G${last}` : undefined,
-    merges: ['A1:G1', 'A2:G2', 'A3:G3', ...emptyMerge],
+    autoFilter: sessions.length > 0 ? `A4:H${last}` : undefined,
+    merges: ['A1:H1', 'A2:H2', 'A3:H3', ...emptyMerge],
     hyperlinks: brandHyperlink(),
     printHeader: printHeader(),
   });

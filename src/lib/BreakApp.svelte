@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
 
   import { m } from '../paraglide/messages.js';
+  import FocusDoneCard from './components/FocusDoneCard.svelte';
   import ReminderCard from './components/ReminderCard.svelte';
   import {
     dismissNotice,
@@ -108,7 +109,10 @@
   /** Browser-only preview: break.html?notice=FocusDone etc. */
   function previewNotice(): TimerNotice | null {
     const kind = new URLSearchParams(window.location.search).get('notice');
-    if (kind === 'FocusDone' || kind === 'BreakDone') {
+    if (kind === 'FocusDone') {
+      return { kind, sessionId: 'preview', minutes: 25 };
+    }
+    if (kind === 'BreakDone') {
       return { kind };
     }
     if (kind === 'CountdownDone') {
@@ -162,21 +166,12 @@
       {/snippet}
     </ReminderCard>
   {:else if notice?.kind === 'FocusDone'}
-    <ReminderCard
-      tone="Break"
-      icon="Coffee"
-      title={m['notification.focus.title']()}
-      body={m['notification.focus.body']()}
-    >
-      {#snippet actions()}
-        <Button variant="Primary" size="Sm" onclick={startNextPhase}>
-          {m['timer.action.startBreak']()}
-        </Button>
-        <Button variant="Ghost" size="Sm" onclick={closeCard}>
-          {m['common.action.close']()}
-        </Button>
-      {/snippet}
-    </ReminderCard>
+    <FocusDoneCard
+      sessionId={notice.sessionId}
+      minutes={notice.minutes}
+      onstart={startNextPhase}
+      onclose={closeCard}
+    />
   {:else if notice?.kind === 'BreakDone'}
     <ReminderCard
       tone="Focus"

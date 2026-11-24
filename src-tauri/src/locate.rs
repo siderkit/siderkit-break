@@ -43,11 +43,15 @@ pub fn show(app: &AppHandle) -> Result<(), String> {
         return Ok(());
     };
     let snapshot = engine_host::get_state(app)?;
+    let tier = engine_host::get_settings(app)
+        .map(|settings| settings.overlay.size)
+        .unwrap_or_default();
     let scale = overlay.scale_factor().map_err(|error| error.to_string())?;
     let center = droplet_screen_center(
         (position.x, position.y),
         (size.width, size.height),
         snapshot.phase == Phase::Idle,
+        tier,
         scale,
     );
     let target = PhysicalPosition::new(

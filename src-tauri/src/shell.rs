@@ -6,11 +6,10 @@ use tauri::{AppHandle, LogicalSize, Manager, PhysicalPosition, WebviewWindow};
 
 use crate::engine_host;
 use crate::overlay::{
-    clamp_overlay_visible, clamped_overlay_position, droplet_anchored_position, position_overlay,
-    save_overlay_position, OVERLAY_ACTIVE_HEIGHT, OVERLAY_ACTIVE_MAX_WIDTH,
-    OVERLAY_ACTIVE_MIN_WIDTH, OVERLAY_ACTIVE_WIDTH, OVERLAY_IDLE_SIZE,
+    clamp_overlay_visible, clamped_overlay_position, droplet_anchored_position,
+    overlay_active_size, position_overlay, save_overlay_position, OVERLAY_IDLE_SIZE,
 };
-use crate::settings::Settings;
+use crate::settings::{Settings, WindowMode};
 use crate::timer::{Phase, TimerSnapshot};
 use crate::topmost;
 use crate::window_size::{set_logical_size, size_matches};
@@ -26,7 +25,6 @@ const OVERLAY_CLAMP_INTERVAL: Duration = Duration::from_secs(2);
 /// of a native drag. The frontend clears it on pointer-up; the deadline is only
 /// a safety net for the pointer-up the window manager may swallow.
 const OVERLAY_DRAG_GUARD: Duration = Duration::from_secs(3);
-pub const PROJECT_URL: &str = "https://github.com/siderkit/siderkit-break";
 
 static OVERLAY_DRAG_UNTIL: OnceLock<Mutex<Option<Instant>>> = OnceLock::new();
 
@@ -64,24 +62,22 @@ pub fn resize_break_card(app: &AppHandle, height: f64) -> Result<(), String> {
     set_logical_size(&window, width, height)
 }
 
-/// Sizes the countdown window to the measured label so the droplet keeps a
-/// small fixed gap instead of floating in a fixed-width box.
-pub fn resize_overlay(app: &AppHandle, width: f64) -> Result<(), String> {
-    if !width.is_finite() {
-        return Err("invalid overlay width".to_owned());
-    }
+/// Sizes the countdown window to the tier chosen in Settings. The measured
+/// width is ignored so every locale gets the same predictable footprint.
+pub fn resize_overlay(app: &AppHandle, _width: f64) -> Result<(), String> {
     let snapshot = engine_host::get_state(app)?;
     if snapshot.phase == Phase::Idle {
         return Ok(());
     }
+    let settings = engine_host::get_settings(app)?;
+    let (width, height) = overlay_active_size(settings.overlay.size);
     let window = app
         .get_webview_window("overlay")
         .ok_or_else(|| "the overlay window is missing".to_owned())?;
-    let width = width.clamp(OVERLAY_ACTIVE_MIN_WIDTH, OVERLAY_ACTIVE_MAX_WIDTH);
-    if size_matches(&window, width, OVERLAY_ACTIVE_HEIGHT) {
+    if size_matches(&window, width, height) {
         return Ok(());
     }
-    set_logical_size(&window, width, OVERLAY_ACTIVE_HEIGHT)
+    set_logical_size(&window, width, height)
 }
 
 fn clamp_break_height(height: f64) -> f64 {
@@ -101,6 +97,7 @@ pub fn apply_startup_view(app: &AppHandle) {
         }
     }
     if let Ok(settings) = engine_host::get_settings(app) {
+        let _ = apply_window_mode(app, settings.general.window_mode);
         if let Err(error) = apply_settings(app, &settings) {
             warn!("failed to apply settings: {error}");
         }
@@ -111,6 +108,24 @@ pub fn apply_startup_view(app: &AppHandle) {
     if let Ok(settings) = engine_host::get_settings(app) {
         position_overlay(app, &settings);
     }
+}
+
+/// Applies the saved main-window shape. Only the two shipped sizes are used,
+/// so the timer can never end up taller than the compact layout allows.
+pub fn apply_window_mode(app: &AppHandle, mode: WindowMode) -> Result<(), String> {
+    let Some(window) = app.get_webview_window("main") else {
+        return Ok(());
+    };
+    let (width, height, min_height) = match mode {
+        WindowMode::Standard => (360.0, 560.0, 400.0),
+        WindowMode::Compact => (320.0, 200.0, 200.0),
+    };
+    window
+        .set_min_size(Some(tauri::Size::Logical(LogicalSize::new(
+            320.0, min_height,
+        ))))
+        .map_err(|error| error.to_string())?;
+    set_logical_size(&window, width, height)
 }
 
 /// Window-state restores the last physical size, which can be smaller than the
@@ -342,27 +357,6 @@ fn point_in_rect(x: f64, y: f64, bounds: (i32, i32, i32, i32)) -> bool {
     x >= f64::from(left) && x < right && y >= f64::from(top) && y < bottom
 }
 
-/// Opens the public project page in the user's default browser.
-pub fn open_project_page() -> Result<(), String> {
-    let mut command = if cfg!(target_os = "windows") {
-        let mut command = std::process::Command::new("cmd");
-        command.args(["/C", "start", "", PROJECT_URL]);
-        command
-    } else if cfg!(target_os = "macos") {
-        let mut command = std::process::Command::new("open");
-        command.arg(PROJECT_URL);
-        command
-    } else {
-        let mut command = std::process::Command::new("xdg-open");
-        command.arg(PROJECT_URL);
-        command
-    };
-    command
-        .spawn()
-        .map(|_| ())
-        .map_err(|error| error.to_string())
-}
-
 pub fn sync_windows(app: &AppHandle, snapshot: &TimerSnapshot, missed_deadline: bool) {
     let settings = engine_host::get_settings(app).ok();
     let notice = engine_host::notice(app);
@@ -423,24 +417,18 @@ fn sync_overlay_size(app: &AppHandle, snapshot: &TimerSnapshot) {
     let Some(window) = app.get_webview_window("overlay") else {
         return;
     };
+    let tier = engine_host::get_settings(app)
+        .map(|settings| settings.overlay.size)
+        .unwrap_or_default();
     let idle = snapshot.phase == Phase::Idle;
     let scale = window.scale_factor().unwrap_or(1.0);
     let before = window.outer_size().ok();
     let origin = window.outer_position().ok();
     let before_logical = before.map(|size| (size.width as f64 / scale, size.height as f64 / scale));
-    // Keep the measured label width; the fallback covers the first active frame.
-    let width = if idle {
-        OVERLAY_IDLE_SIZE
+    let (width, height) = if idle {
+        (OVERLAY_IDLE_SIZE, OVERLAY_IDLE_SIZE)
     } else {
-        match before_logical {
-            Some((width, _)) if width > OVERLAY_IDLE_SIZE + 0.5 => width,
-            _ => OVERLAY_ACTIVE_WIDTH,
-        }
-    };
-    let height = if idle {
-        OVERLAY_IDLE_SIZE
-    } else {
-        OVERLAY_ACTIVE_HEIGHT
+        overlay_active_size(tier)
     };
     let needs_resize = before_logical.is_none_or(|(current, current_height)| {
         (current - width).abs() > 0.5 || (current_height - height).abs() > 0.5
@@ -456,7 +444,8 @@ fn sync_overlay_size(app: &AppHandle, snapshot: &TimerSnapshot) {
             (width - OVERLAY_IDLE_SIZE).abs() < 0.5 && (height - OVERLAY_IDLE_SIZE).abs() < 0.5
         });
         if before_idle != idle {
-            let (x, y) = droplet_anchored_position((origin.x, origin.y), before_idle, idle, scale);
+            let (x, y) =
+                droplet_anchored_position((origin.x, origin.y), before_idle, idle, tier, scale);
             let (x, y) = clamped_overlay_position(&window, (x, y), (after.width, after.height))
                 .unwrap_or((x, y));
             if let Err(error) = window.set_position(PhysicalPosition::new(x, y)) {

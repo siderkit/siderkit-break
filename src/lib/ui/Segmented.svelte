@@ -3,17 +3,19 @@
     options,
     value,
     label,
+    showLabel = true,
     onchange,
   }: {
     options: Array<{ value: string; label: string }>;
     value: string;
     label?: string;
+    showLabel?: boolean;
     onchange: (value: string) => void;
   } = $props();
 </script>
 
 <div class="l-segmented">
-  {#if label}<span class="l-segmented__label">{label}</span>{/if}
+  {#if label && showLabel}<span class="l-segmented__label">{label}</span>{/if}
   <div class="l-segmented__group" role="group" aria-label={label}>
     {#each options as option (option.value)}
       <button

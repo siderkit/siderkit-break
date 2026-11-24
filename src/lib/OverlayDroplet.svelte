@@ -70,8 +70,8 @@
 
   .l-overlay-droplet__shape {
     display: block;
-    inline-size: var(--sk-overlay-drop-size);
-    block-size: var(--sk-overlay-drop-size);
+    inline-size: var(--overlay-drop-size);
+    block-size: var(--overlay-drop-size);
     overflow: visible;
     filter: drop-shadow(var(--sk-shadow-droplet));
     transition:

@@ -2,10 +2,14 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 
 import type {
+  Diagnostics,
   History,
   HistoryRangeSummary,
   HistoryWindow,
+  InsightsPayload,
+  InsightsRange,
   Settings,
+  SoundPreset,
   TimerNotice,
   TimerSnapshot,
   TodaySummary,
@@ -25,6 +29,15 @@ export function openProjectPage(): Promise<void> {
     return Promise.resolve();
   }
   return invoke<void>('open_project_page');
+}
+
+/** Opens the privacy policy in the default browser. */
+export function openPrivacyPage(): Promise<void> {
+  if (!isTauri) {
+    window.open(`${PROJECT_URL}/blob/main/PRIVACY.md`, '_blank', 'noopener,noreferrer');
+    return Promise.resolve();
+  }
+  return invoke<void>('open_privacy_page');
 }
 
 /** Reads the authoritative timer snapshot from the Rust engine. */
@@ -112,6 +125,46 @@ export function getHistoryRangeSummary(fromMs: number, toMs: number): Promise<Hi
   return invoke<HistoryRangeSummary>('get_history_range_summary', { fromMs, toMs });
 }
 
+/** Reads one aggregated Insights range; raw sessions never cross the IPC. */
+export function getInsights(range: InsightsRange): Promise<InsightsPayload> {
+  return invoke<InsightsPayload>('get_insights', { range });
+}
+
+/** Returns the most recently used tags, newest first. */
+export function getRecentTags(limit = 3): Promise<string[]> {
+  return invoke<string[]>('get_recent_tags', { limit });
+}
+
+/** Saves or clears one session tag; blank input clears it. */
+export function setSessionTag(sessionId: string, tag: string | null): Promise<boolean> {
+  return invoke<boolean>('set_session_tag', { sessionId, tag });
+}
+
+/** Permanently deletes every stored session after the confirmation dialog. */
+export function clearHistory(): Promise<number> {
+  return invoke<number>('clear_history');
+}
+
+/** Reads the support block shown on the Data & Privacy screen. */
+export function getDiagnostics(): Promise<Diagnostics> {
+  return invoke<Diagnostics>('get_diagnostics');
+}
+
+/** Deletes every log file while keeping the directory. */
+export function clearLogs(): Promise<void> {
+  return invoke<void>('clear_logs');
+}
+
+/** Opens the log directory in the platform file manager. */
+export function openLogDir(): Promise<void> {
+  return invoke<void>('open_log_dir');
+}
+
+/** Imports a custom reminder sound and returns its stored path. */
+export function chooseCustomSound(): Promise<string | null> {
+  return invoke<string | null>('choose_custom_sound');
+}
+
 /** Returns the full local data snapshot as pretty-printed JSON. */
 export function exportData(): Promise<string> {
   return invoke<string>('export_data');
@@ -196,6 +249,11 @@ export function saveOverlayPosition(): Promise<void> {
   return invoke<void>('save_overlay_position');
 }
 
+/** Moves the floating ball back to its default corner and forgets the saved position. */
+export function resetOverlayPosition(): Promise<void> {
+  return invoke<void>('reset_overlay_position');
+}
+
 /** Starts a native drag while the hover watcher holds the window interactive. */
 export function beginOverlayDrag(): Promise<void> {
   return invoke<void>('begin_overlay_drag');
@@ -227,8 +285,11 @@ export function hideBreakCard(): Promise<void> {
 }
 
 /** Plays the built-in reminder chime without showing a system notification. */
-export function previewNotificationSound(): Promise<void> {
-  return invoke<void>('preview_notification_sound');
+export function previewNotificationSound(preset?: SoundPreset, volume?: number): Promise<void> {
+  if (preset === undefined && volume === undefined) {
+    return invoke<void>('preview_notification_sound');
+  }
+  return invoke<void>('preview_sound', { preset: preset ?? null, volume: volume ?? null });
 }
 
 /** Reads the reminder card Rust has open, so a late window load still shows it. */

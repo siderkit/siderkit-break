@@ -98,6 +98,16 @@ export class HistoryListState {
       viewport.scrollTop = 0;
     }
   }
+
+  /** Applies a saved tag without refetching the whole feed. */
+  applyTag(sessionId: string, tag: string | null): void {
+    this.days = this.days.map((day) => ({
+      ...day,
+      sessions: day.sessions.map((session) =>
+        session.id === sessionId ? { ...session, tag } : session,
+      ),
+    }));
+  }
 }
 
 function oldestDayStart(groups: HistoryDay[]): number | null {

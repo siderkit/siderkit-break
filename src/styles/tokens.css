@@ -23,16 +23,43 @@
   --sk-color-countdown-soft: 205 45% 91%;
   --sk-color-warning: 25 60% 44%;
   --sk-color-alert: 0 72% 51%;
-  --sk-color-swatch-forest: 150 62% 38%;
-  --sk-color-swatch-ocean: 205 82% 46%;
-  --sk-color-swatch-ember: 8 80% 52%;
-  --sk-color-swatch-plum: 272 68% 50%;
-  --sk-color-swatch-slate: 220 10% 44%;
-  --sk-color-swatch-rose: 332 75% 56%;
-  --sk-color-swatch-aurora: 180 70% 42%;
-  --sk-color-swatch-sand: 42 85% 52%;
-  --sk-color-swatch-shine: 0 0% 100% / 0.5;
-  --sk-color-swatch-ring: 0 0% 100% / 0.3;
+  /* Three-band palette previews: page, surface, accent. */
+  --sk-color-palette-forest-bg: 120 10% 94%;
+  --sk-color-palette-forest-surface: 138 15% 87%;
+  --sk-color-palette-forest-accent: 152 39% 30%;
+  --sk-color-palette-ocean-bg: 203 31% 95%;
+  --sk-color-palette-ocean-surface: 203 36% 88%;
+  --sk-color-palette-ocean-accent: 202 44% 33%;
+  --sk-color-palette-ember-bg: 30 40% 94%;
+  --sk-color-palette-ember-surface: 30 45% 85%;
+  --sk-color-palette-ember-accent: 19 55% 41%;
+  --sk-color-palette-sand-bg: 45 38% 94%;
+  --sk-color-palette-sand-surface: 44 35% 85%;
+  --sk-color-palette-sand-accent: 41 35% 40%;
+  --sk-color-palette-slate-bg: 210 13% 94%;
+  --sk-color-palette-slate-surface: 210 15% 87%;
+  --sk-color-palette-slate-accent: 209 17% 35%;
+  --sk-color-palette-rose-bg: 352 33% 95%;
+  --sk-color-palette-rose-surface: 352 37% 88%;
+  --sk-color-palette-rose-accent: 351 33% 46%;
+  --sk-color-palette-moss-bg: 75 24% 93%;
+  --sk-color-palette-moss-surface: 74 27% 84%;
+  --sk-color-palette-moss-accent: 78 30% 32%;
+  --sk-color-palette-ink-bg: 210 12% 93%;
+  --sk-color-palette-ink-surface: 207 11% 85%;
+  --sk-color-palette-ink-accent: 205 12% 20%;
+  --sk-color-palette-dusk-bg: 257 26% 95%;
+  --sk-color-palette-dusk-surface: 259 26% 88%;
+  --sk-color-palette-dusk-accent: 253 18% 40%;
+  --sk-color-palette-clay-bg: 20 31% 94%;
+  --sk-color-palette-clay-surface: 20 32% 85%;
+  --sk-color-palette-clay-accent: 18 33% 41%;
+  --sk-color-palette-plum-bg: 285 31% 95%;
+  --sk-color-palette-plum-surface: 278 37% 88%;
+  --sk-color-palette-plum-accent: 275 37% 39%;
+  --sk-color-palette-aurora-bg: 164 35% 94%;
+  --sk-color-palette-aurora-surface: 161 32% 87%;
+  --sk-color-palette-aurora-accent: 168 59% 30%;
 
   /* ── Surfaces ───────────────────────────────────────────────── */
   --sk-color-bg-app: 39 39% 93%;
@@ -84,8 +111,12 @@
   --sk-text-display: 44px;
   --sk-text-display-compact: 34px;
   --sk-text-display-tight: 28px;
-  --sk-text-overlay: 20px;
-  --sk-overlay-drop-size: 18px;
+  --sk-text-overlay-s: 16px;
+  --sk-text-overlay-m: 20px;
+  --sk-text-overlay-l: 26px;
+  --sk-overlay-drop-size-s: 14px;
+  --sk-overlay-drop-size-m: 18px;
+  --sk-overlay-drop-size-l: 22px;
   --sk-text-clock-long: 26px;
   --sk-leading-none: 1;
   --sk-leading-tight: 1.25;
@@ -107,9 +138,11 @@
   --sk-timer-ring-size-compact: 128px;
   --sk-timer-ring-size-tight: 110px;
   --sk-brand-mark-size: 32px;
+  --sk-focus-done-mark-size: 30px;
   --sk-reminder-mark-size: 26px;
   --sk-icon-button-size: 26px;
   --sk-icon-size: 16px;
+  --sk-icon-size-sm: 14px;
   --sk-badge-size: 6px;
   --sk-icon-stroke: 1.5px;
   --sk-shadow-icon-drop: 0 2px 5px hsl(var(--sk-color-brand-strong) / 0.3);
@@ -149,13 +182,35 @@
   --sk-drop-pulse-rim: 0 0% 100% / 0.6;
   --sk-drop-pulse-halo: 0 0% 100% / 0.22;
   --sk-drop-move-outline: 0 0% 100% / 0.8;
-  --sk-swatch-size: 28px;
   --sk-dialog-inline-size: 320px;
   --sk-dialog-inline-size-wide: 440px;
   --sk-dialog-max-block-size: calc(100dvh - (var(--sk-space-lg) * 2));
   --sk-history-dialog-block-size: min(560px, var(--sk-dialog-max-block-size));
   --sk-progress-height: 6px;
-  --sk-language-list-height: 232px;
+  /* Settings rows follow the 1.0.0 prototype: 40 navigation, 48 control,
+     44 action. Values are shared so every detail page lines up. */
+  --sk-settings-page-header: 56px;
+  --sk-settings-row-height: 40px;
+  --sk-settings-control-height: 48px;
+  --sk-settings-action-height: 44px;
+  --sk-settings-chip-height: 30px;
+  --sk-settings-swatch-band: 40px;
+  --sk-settings-swatch-columns: 3;
+  --sk-stat-value: 26px;
+  --sk-tab-indicator: 2px;
+  --sk-heat-cell: 4px;
+  --sk-heat-gap: 2px;
+  --sk-heat-radius: 1px;
+  --sk-heat-0: 150 12% 86%;
+  --sk-heat-1: 150 38% 78%;
+  --sk-heat-2: 150 44% 64%;
+  --sk-heat-3: 150 52% 50%;
+  --sk-heat-4: 150 60% 36%;
+  --sk-insight-bar-height: 6px;
+  --sk-tag-input-height: 36px;
+  --sk-tag-chip-height: 26px;
+  --sk-language-row-height: 44px;
+  --sk-text-compact-clock: 48px;
 
   /* ── Motion ─────────────────────────────────────────────────── */
   --sk-duration-fast: 0.12s;

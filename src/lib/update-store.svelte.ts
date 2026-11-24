@@ -34,7 +34,7 @@ class UpdateStore {
     }
     this.started = true;
     if (!isTauri) {
-      this.currentVersion = '0.0.0';
+      this.currentVersion = '1.0.0';
       return;
     }
     try {

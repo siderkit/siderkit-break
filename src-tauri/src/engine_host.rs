@@ -7,7 +7,7 @@ use tauri::{AppHandle, Emitter, Manager};
 
 use crate::db::{now_ms, Store, TodaySummary};
 use crate::reminder::{self, TimerNotice};
-use crate::settings::{OverlayPosition, Settings};
+use crate::settings::Settings;
 use crate::shell;
 use crate::timer::{Phase, TimerEngine, TimerError, TimerSnapshot, Transition};
 use crate::tray;
@@ -178,6 +178,9 @@ pub fn update_settings(app: &AppHandle, settings: Settings) -> Result<Settings, 
     }
     *lock_settings(&state)? = settings.clone();
     shell::apply_settings(app, &settings)?;
+    if previous.general.window_mode != settings.general.window_mode {
+        shell::apply_window_mode(app, settings.general.window_mode)?;
+    }
     apply_autostart(app, settings.general.launch_at_login)?;
     if !settings.notifications.enabled {
         clear_notice(app, &state)?;
@@ -236,19 +239,6 @@ pub fn set_overlay_visible(app: &AppHandle, visible: bool) -> Result<(), String>
         shell::sync_windows(app, &snapshot, false);
     }
     Ok(())
-}
-
-pub fn remember_overlay_position(app: &AppHandle, position: OverlayPosition) -> Result<(), String> {
-    let state = app.state::<AppState>();
-    let mut settings = lock_settings(&state)?;
-    if settings.overlay.position == Some(position) {
-        return Ok(());
-    }
-    settings.overlay.position = Some(position);
-    let store = lock_store(&state)?;
-    store
-        .save_settings(&settings)
-        .map_err(|error| error.to_string())
 }
 
 /// Re-assert the persisted preference at startup so an OS entry removed outside
@@ -319,7 +309,11 @@ fn commit(
         transition.ended_session.as_ref(),
         transition.missed_deadline,
     ) {
-        crate::sound::play_notification_in_background();
+        crate::sound::play_in_background(
+            settings.notifications.preset,
+            settings.notifications.volume,
+            settings.notifications.custom_path.as_deref(),
+        );
     }
     let next_notice = reminder::notice_for(
         &settings,
@@ -397,6 +391,13 @@ fn tick_loop(app: &AppHandle) {
             let snapshot = transition.snapshot;
             let _ = app.emit("timer:tick", snapshot.clone());
             tray::update(app, &snapshot);
+            if snapshot.phase == Phase::Focus && !snapshot.is_paused {
+                if let Ok(settings) = lock_settings(&state) {
+                    if settings.notifications.tick {
+                        crate::sound::tick();
+                    }
+                }
+            }
         }
     }
 }
@@ -454,7 +455,7 @@ pub(crate) fn lock_store(state: &AppState) -> Result<MutexGuard<'_, Store>, Stri
         .map_err(|_| "local storage is unavailable".to_owned())
 }
 
-fn lock_settings(state: &AppState) -> Result<MutexGuard<'_, Settings>, String> {
+pub(crate) fn lock_settings(state: &AppState) -> Result<MutexGuard<'_, Settings>, String> {
     state
         .settings
         .lock()

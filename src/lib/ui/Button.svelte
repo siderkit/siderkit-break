@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
 
-  type ButtonVariant = 'Primary' | 'Secondary' | 'Ghost';
+  type ButtonVariant = 'Primary' | 'Secondary' | 'Ghost' | 'Danger';
   type ButtonSize = 'Sm' | 'Md';
 
   let {
@@ -98,5 +98,16 @@
   .l-button--ghost:hover:not(:disabled) {
     color: hsl(var(--sk-color-text));
     background: hsl(var(--sk-color-brand-soft));
+  }
+
+  .l-button--danger {
+    color: hsl(var(--sk-color-bg-surface));
+    background: hsl(var(--sk-color-alert));
+    border-color: hsl(var(--sk-color-alert));
+  }
+
+  .l-button--danger:hover:not(:disabled) {
+    background: hsl(var(--sk-color-alert) / 0.86);
+    border-color: hsl(var(--sk-color-alert) / 0.86);
   }
 </style>

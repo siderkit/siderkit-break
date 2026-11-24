@@ -75,3 +75,11 @@ input:focus-visible {
     transition-duration: var(--sk-duration-reduced) !important;
   }
 }
+
+:root[data-motion='Reduced'] *,
+:root[data-motion='Reduced'] *::before,
+:root[data-motion='Reduced'] *::after {
+  animation-duration: var(--sk-duration-reduced) !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: var(--sk-duration-reduced) !important;
+}

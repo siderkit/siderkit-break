@@ -7,7 +7,7 @@
   import type { UpdatePhase } from '../ipc/types';
   import Button from '../ui/Button.svelte';
 
-  let { live = false }: { live?: boolean } = $props();
+  let { live = false, showVersion = true }: { live?: boolean; showVersion?: boolean } = $props();
 
   const status = $derived(updateStore.status);
   const presentation = $derived(presentUpdate(status));
@@ -118,7 +118,7 @@
 </script>
 
 <div class="l-update-check">
-  {#if updateStore.currentVersion}
+  {#if showVersion && updateStore.currentVersion}
     <p class="l-update-check__version">
       {m['update.settings.current']({ version: updateStore.currentVersion })}
     </p>

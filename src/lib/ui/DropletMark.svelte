@@ -1,10 +1,18 @@
 <script lang="ts">
+  let { size = 'var(--sk-brand-mark-size)' }: { size?: string } = $props();
+
   const uid = $props.id();
   const fillId = `l-droplet-mark-fill-${uid}`;
   const sheenId = `l-droplet-mark-sheen-${uid}`;
 </script>
 
-<svg class="l-droplet-mark" viewBox="0 0 32 35" aria-hidden="true">
+<svg
+  class="l-droplet-mark"
+  viewBox="0 0 32 35"
+  aria-hidden="true"
+  style:inline-size={size}
+  style:block-size={size}
+>
   <defs>
     <linearGradient id={fillId} x1="10" y1="3" x2="22" y2="29" gradientUnits="userSpaceOnUse">
       <stop class="l-droplet-mark__stop-top" offset="0" />

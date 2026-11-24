@@ -26,6 +26,38 @@ pub enum Palette {
     Rose,
     Aurora,
     Sand,
+    Moss,
+    Ink,
+    Dusk,
+    Clay,
+}
+
+/// Main-window shape. Compact keeps the timer visible in a 320x200 window.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum WindowMode {
+    #[default]
+    Standard,
+    Compact,
+}
+
+/// Floating-window size tiers; the text scales with the container.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum OverlaySize {
+    S,
+    #[default]
+    M,
+    L,
+}
+
+/// Built-in reminder timbres plus a user-supplied file.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SoundPreset {
+    #[default]
+    Chime,
+    Soft,
+    Bell,
+    Custom,
+    Off,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -52,6 +84,9 @@ pub struct OverlayPosition {
 #[serde(default, rename_all = "camelCase")]
 pub struct OverlaySettings {
     pub enabled: bool,
+    pub size: OverlaySize,
+    /// Content opacity in percent, 40-100.
+    pub opacity: u8,
     /// Rust-owned window position. Deserialization skips it so a settings
     /// payload from the UI can never move or reset the overlay.
     #[serde(default, skip_deserializing)]
@@ -62,16 +97,25 @@ impl Default for OverlaySettings {
     fn default() -> Self {
         Self {
             enabled: true,
+            size: OverlaySize::M,
+            opacity: 100,
             position: None,
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct NotificationSettings {
     pub enabled: bool,
     pub sound: bool,
+    pub preset: SoundPreset,
+    /// Playback volume in percent, 0-100.
+    pub volume: u8,
+    /// Absolute path of a validated custom sound, if one was imported.
+    pub custom_path: Option<String>,
+    /// A quiet tick while a focus session runs.
+    pub tick: bool,
 }
 
 impl Default for NotificationSettings {
@@ -79,6 +123,10 @@ impl Default for NotificationSettings {
         Self {
             enabled: true,
             sound: true,
+            preset: SoundPreset::Chime,
+            volume: 70,
+            custom_path: None,
+            tick: false,
         }
     }
 }
@@ -90,6 +138,8 @@ pub struct GeneralSettings {
     pub start_minimized: bool,
     pub theme: Theme,
     pub palette: Palette,
+    pub window_mode: WindowMode,
+    pub reduce_motion: bool,
     /// `None` follows the operating system.
     pub locale: Option<String>,
 }
@@ -101,6 +151,8 @@ impl Default for GeneralSettings {
             start_minimized: false,
             theme: Theme::System,
             palette: Palette::Forest,
+            window_mode: WindowMode::Standard,
+            reduce_motion: false,
             locale: None,
         }
     }
@@ -144,6 +196,13 @@ pub struct Settings {
 impl Settings {
     pub fn normalized(mut self) -> Self {
         self.timer = self.timer.normalized();
+        self.overlay.opacity = self.overlay.opacity.clamp(40, 100);
+        self.notifications.volume = self.notifications.volume.min(100);
+        if self.notifications.preset == SoundPreset::Custom
+            && self.notifications.custom_path.is_none()
+        {
+            self.notifications.preset = SoundPreset::Chime;
+        }
         self.general.locale = match self.general.locale.as_deref() {
             Some(value) => normalize_locale(value).map(str::to_owned),
             None => None,
@@ -230,9 +289,35 @@ mod tests {
         assert!(settings.general.launch_at_login);
         assert_eq!(settings.general.palette, Palette::Forest);
         assert_eq!(settings.general.locale, None);
+        assert_eq!(settings.general.window_mode, WindowMode::Standard);
+        assert!(!settings.general.reduce_motion);
         assert!(settings.notifications.enabled);
+        assert_eq!(settings.notifications.preset, SoundPreset::Chime);
+        assert_eq!(settings.notifications.volume, 70);
+        assert_eq!(settings.overlay.size, OverlaySize::M);
+        assert_eq!(settings.overlay.opacity, 100);
         assert!(settings.update.auto_check);
         assert!(settings.update.metrics);
+    }
+
+    #[test]
+    fn new_settings_are_clamped_and_custom_without_a_file_falls_back() {
+        let settings = Settings {
+            overlay: OverlaySettings {
+                opacity: 5,
+                ..OverlaySettings::default()
+            },
+            notifications: NotificationSettings {
+                volume: 250,
+                preset: SoundPreset::Custom,
+                ..NotificationSettings::default()
+            },
+            ..Settings::default()
+        }
+        .normalized();
+        assert_eq!(settings.overlay.opacity, 40);
+        assert_eq!(settings.notifications.volume, 100);
+        assert_eq!(settings.notifications.preset, SoundPreset::Chime);
     }
 
     #[test]

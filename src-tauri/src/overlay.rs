@@ -2,20 +2,31 @@ use log::{info, warn};
 use tauri::{AppHandle, Manager, PhysicalPosition, WebviewWindow};
 
 use crate::engine_host;
-use crate::settings::{OverlayPosition, Settings};
+use crate::settings::{OverlayPosition, OverlaySize, Settings};
 
 const OVERLAY_MARGIN: i32 = 24;
 pub(crate) const OVERLAY_IDLE_SIZE: f64 = 22.0;
-/// Fallback width until the webview reports the measured label width.
-pub(crate) const OVERLAY_ACTIVE_WIDTH: f64 = 128.0;
-pub(crate) const OVERLAY_ACTIVE_MIN_WIDTH: f64 = 48.0;
-pub(crate) const OVERLAY_ACTIVE_MAX_WIDTH: f64 = 240.0;
-pub(crate) const OVERLAY_ACTIVE_HEIGHT: f64 = 32.0;
-/// `--sk-space-3xs` and `--sk-overlay-drop-size` from `tokens.css`. The
-/// countdown pins the droplet to this inset so its center matches the idle
-/// window and the clock can grow to the right without moving it.
+/// `--sk-space-3xs` from `tokens.css`. The countdown pins the droplet
+/// to this inset so its center matches the idle window.
 const OVERLAY_DROP_INSET: f64 = 2.0;
-const OVERLAY_DROP_SIZE: f64 = 18.0;
+
+/// Logical window size for each floating-window tier.
+pub(crate) fn overlay_active_size(size: OverlaySize) -> (f64, f64) {
+    match size {
+        OverlaySize::S => (96.0, 32.0),
+        OverlaySize::M => (136.0, 40.0),
+        OverlaySize::L => (180.0, 52.0),
+    }
+}
+
+/// Droplet size for each tier; the icon and clock scale together.
+pub(crate) fn overlay_drop_size(size: OverlaySize) -> f64 {
+    match size {
+        OverlaySize::S => 14.0,
+        OverlaySize::M => 18.0,
+        OverlaySize::L => 22.0,
+    }
+}
 
 pub(crate) fn save_overlay_position(app: &AppHandle) {
     let Some(window) = app.get_webview_window("overlay") else {
@@ -39,9 +50,40 @@ pub(crate) fn save_overlay_position(app: &AppHandle) {
         screen_width: Some(bounds.2),
         screen_height: Some(bounds.3),
     };
-    if let Err(error) = engine_host::remember_overlay_position(app, saved) {
+    if let Err(error) = remember_overlay_position(app, saved) {
         warn!("failed to persist overlay position: {error}");
     }
+}
+
+/// Stores the overlay's own position; a settings draft never touches it.
+pub(crate) fn remember_overlay_position(
+    app: &AppHandle,
+    position: OverlayPosition,
+) -> Result<(), String> {
+    persist_position(app, Some(position))
+}
+
+/// Clears the remembered position and moves the ball back to the default
+/// corner. The fresh position is saved immediately so the next launch matches.
+pub(crate) fn reset_overlay_position(app: &AppHandle) -> Result<(), String> {
+    persist_position(app, None)?;
+    let settings = engine_host::get_settings(app)?;
+    position_overlay(app, &settings);
+    save_overlay_position(app);
+    Ok(())
+}
+
+fn persist_position(app: &AppHandle, position: Option<OverlayPosition>) -> Result<(), String> {
+    let state = app.state::<engine_host::AppState>();
+    let mut settings = engine_host::lock_settings(&state)?;
+    if settings.overlay.position == position {
+        return Ok(());
+    }
+    settings.overlay.position = position;
+    let result = engine_host::lock_store(&state)?
+        .save_settings(&settings)
+        .map_err(|error| error.to_string());
+    result
 }
 
 pub(crate) fn position_overlay(app: &AppHandle, settings: &Settings) {
@@ -273,13 +315,14 @@ fn bottom_left_position(
 /// The droplet center inside each overlay shape, in logical pixels. The idle
 /// window wraps it with equal space; the countdown centers it vertically but
 /// places it after the inline padding.
-fn droplet_center(idle: bool) -> (f64, f64) {
+fn droplet_center(idle: bool, size: OverlaySize) -> (f64, f64) {
     if idle {
         (OVERLAY_IDLE_SIZE / 2.0, OVERLAY_IDLE_SIZE / 2.0)
     } else {
+        let (_, height) = overlay_active_size(size);
         (
-            OVERLAY_DROP_INSET + OVERLAY_DROP_SIZE / 2.0,
-            OVERLAY_ACTIVE_HEIGHT / 2.0,
+            OVERLAY_DROP_INSET + overlay_drop_size(size) / 2.0,
+            height / 2.0,
         )
     }
 }
@@ -289,12 +332,13 @@ pub(crate) fn droplet_screen_center(
     origin: (i32, i32),
     size: (u32, u32),
     idle: bool,
+    tier: OverlaySize,
     scale: f64,
 ) -> (i32, i32) {
     if idle {
         return (origin.0 + size.0 as i32 / 2, origin.1 + size.1 as i32 / 2);
     }
-    let (x, y) = droplet_center(false);
+    let (x, y) = droplet_center(false, tier);
     (
         origin.0 + (x * scale).round() as i32,
         origin.1 + (y * scale).round() as i32,
@@ -307,10 +351,11 @@ pub(crate) fn droplet_anchored_position(
     origin: (i32, i32),
     before_idle: bool,
     after_idle: bool,
+    tier: OverlaySize,
     scale: f64,
 ) -> (i32, i32) {
-    let (before_x, before_y) = droplet_center(before_idle);
-    let (after_x, after_y) = droplet_center(after_idle);
+    let (before_x, before_y) = droplet_center(before_idle, tier);
+    let (after_x, after_y) = droplet_center(after_idle, tier);
     (
         origin.0 + ((before_x - after_x) * scale).round() as i32,
         origin.1 + ((before_y - after_y) * scale).round() as i32,

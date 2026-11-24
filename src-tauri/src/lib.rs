@@ -1,9 +1,11 @@
 mod commands;
 mod context_menu;
 mod db;
+mod diagnostics;
 mod engine_host;
 mod export;
 mod i18n;
+mod links;
 mod locate;
 mod metrics;
 mod overlay;
@@ -43,7 +45,15 @@ pub fn run() {
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             shell::show_main_window(app);
         }))
-        .plugin(tauri_plugin_log::Builder::new().build())
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::LogDir { file_name: None },
+                ))
+                .max_file_size(1_000_000)
+                .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepSome(3))
+                .build(),
+        )
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
@@ -138,12 +148,23 @@ pub fn run() {
             commands::show_overlay_menu,
             commands::show_context_menu,
             commands::open_project_page,
+            commands::open_privacy_page,
+            commands::reset_overlay_position,
+            commands::preview_sound,
             commands::show_main_window,
             commands::get_today_summary,
             commands::get_history,
             commands::get_history_window,
             commands::get_history_range,
             commands::get_history_range_summary,
+            commands::get_insights,
+            commands::get_recent_tags,
+            commands::set_session_tag,
+            commands::clear_history,
+            commands::get_diagnostics,
+            commands::clear_logs,
+            commands::open_log_dir,
+            commands::choose_custom_sound,
             commands::export_data,
             commands::choose_history_workbook_path,
             commands::write_history_workbook,

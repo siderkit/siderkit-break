@@ -6,7 +6,7 @@ use rusqlite::params;
 
 use super::{now_ms, Store, StoreError};
 
-pub(super) const SCHEMA_VERSION: i64 = 2;
+pub(super) const SCHEMA_VERSION: i64 = 3;
 pub(super) const BASE_SCHEMA: &str = "
     CREATE TABLE IF NOT EXISTS settings (
         key TEXT PRIMARY KEY,
@@ -38,6 +38,8 @@ pub(super) const BASE_SCHEMA: &str = "
     );";
 const KIND_INDEX: &str =
     "CREATE INDEX IF NOT EXISTS sessions_kind_started_at ON sessions(kind, started_at);";
+const TAG_INDEX: &str = "CREATE INDEX IF NOT EXISTS sessions_tag_started_at
+    ON sessions(tag, started_at) WHERE tag IS NOT NULL;";
 
 impl Store {
     pub(super) fn migrate(&self) -> Result<(), StoreError> {
@@ -75,6 +77,10 @@ impl Store {
         if from < 2 {
             self.connection.execute_batch(KIND_INDEX)?;
         }
+        if from < 3 {
+            self.ensure_column("sessions", "tag", "TEXT")?;
+            self.connection.execute_batch(TAG_INDEX)?;
+        }
         self.repair_schema()?;
         self.connection
             .pragma_update(None, "user_version", SCHEMA_VERSION)?;
@@ -88,6 +94,7 @@ impl Store {
         self.ensure_column("settings", "rev", "INTEGER NOT NULL DEFAULT 1")?;
         self.ensure_column("sessions", "deleted_at", "INTEGER")?;
         self.ensure_column("sessions", "rev", "INTEGER NOT NULL DEFAULT 1")?;
+        self.ensure_column("sessions", "tag", "TEXT")?;
         Ok(())
     }
 

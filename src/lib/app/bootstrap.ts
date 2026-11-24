@@ -1,4 +1,4 @@
-import { getSettings, isTauri, onLocaleChanged } from '../ipc/client';
+import { getSettings, isTauri, onLocaleChanged, onSettingsChanged } from '../ipc/client';
 import { installContextMenu } from '../utils/context-menu.util';
 import {
   applyDocumentLocale,
@@ -7,7 +7,7 @@ import {
   systemLocale,
   type Locale,
 } from '../utils/locale.util';
-import { applyPalette, applyTheme } from '../utils/theme.util';
+import { applyAppearance } from '../utils/theme.util';
 import { installRipple } from '../utils/ripple.util';
 
 export type WindowName = 'main' | 'overlay' | 'break' | 'locate';
@@ -24,14 +24,12 @@ export async function prepareWindow(name: WindowName): Promise<void> {
   if (isTauri) {
     try {
       const settings = await getSettings();
-      applyTheme(settings.general.theme);
-      applyPalette(settings.general.palette);
+      applyAppearance(settings.general);
       locale = settings.general.locale
         ? (normalizeLocale(settings.general.locale) ?? locale)
         : locale;
     } catch {
-      applyTheme('System');
-      applyPalette('Forest');
+      applyAppearance({ theme: 'System', palette: 'Forest', reduceMotion: false });
     }
   }
   await prepareLocale(locale);
@@ -47,6 +45,15 @@ export async function prepareWindow(name: WindowName): Promise<void> {
       });
     } catch {
       // The event bridge can drop during shutdown; the local switch is enough.
+    }
+    try {
+      // Windows that live hidden (locate, the pending break window) would
+      // otherwise keep their startup palette forever and flash it stale.
+      await onSettingsChanged((next) => {
+        applyAppearance(next.general);
+      });
+    } catch {
+      // Same bridge caveat: a best-effort repaint is all bootstrap owes.
     }
   }
 }

@@ -20,7 +20,7 @@ import {
   updateSettings,
 } from '../ipc/client';
 import type { Settings, TimerSnapshot, TodaySummary } from '../ipc/types';
-import { applyMotion, applyPalette, applyTheme } from '../utils/theme.util';
+import { applyAppearance } from '../utils/theme.util';
 import { m } from '../../paraglide/messages.js';
 
 const emptySnapshot: TimerSnapshot = {
@@ -129,9 +129,7 @@ class TimerStore {
         }),
         await onSettingsChanged((next) => {
           this.settings = next;
-          applyTheme(next.general.theme);
-          applyPalette(next.general.palette);
-          applyMotion(next.general.reduceMotion);
+          applyAppearance(next.general);
         }),
       );
       const [snapshot, settings, summary] = await Promise.all([
@@ -142,9 +140,7 @@ class TimerStore {
       this.snapshot = snapshot;
       this.settings = settings;
       this.summary = summary;
-      applyTheme(settings.general.theme);
-      applyPalette(settings.general.palette);
-      applyMotion(settings.general.reduceMotion);
+      applyAppearance(settings.general);
     } catch (error) {
       this.error = messageFor(error);
     } finally {
@@ -196,16 +192,12 @@ class TimerStore {
       // The browser preview has no Rust engine; apply the choice locally so
       // the palette and theme stay inspectable without an IPC error.
       this.settings = next;
-      applyTheme(next.general.theme);
-      applyPalette(next.general.palette);
-      applyMotion(next.general.reduceMotion);
+      applyAppearance(next.general);
       return;
     }
     try {
       this.settings = await updateSettings(next);
-      applyTheme(this.settings.general.theme);
-      applyPalette(this.settings.general.palette);
-      applyMotion(this.settings.general.reduceMotion);
+      applyAppearance(this.settings.general);
     } catch (error) {
       this.error = messageFor(error);
     }

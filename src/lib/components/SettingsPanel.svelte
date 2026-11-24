@@ -9,7 +9,7 @@
     resetOverlayPosition,
   } from '../ipc/client';
   import type { Settings } from '../ipc/types';
-  import { applyMotion, applyPalette, applyTheme } from '../utils/theme.util';
+  import { applyAppearance } from '../utils/theme.util';
   import { createDefaultSettings, timerStore } from '../state/timer.store.svelte.ts';
   import { updateStore } from '../state/update.store.svelte.ts';
   import Button from '../ui/Button.svelte';
@@ -90,15 +90,11 @@
   }
 
   async function patchGeneral(patch: Partial<Settings['general']>): Promise<void> {
-    if (patch.theme) {
-      applyTheme(patch.theme);
-    }
-    if (patch.palette) {
-      applyPalette(patch.palette);
-    }
-    if (patch.reduceMotion !== undefined) {
-      applyMotion(patch.reduceMotion);
-    }
+    applyAppearance({
+      theme: patch.theme ?? draft.general.theme,
+      palette: patch.palette ?? draft.general.palette,
+      reduceMotion: patch.reduceMotion ?? draft.general.reduceMotion,
+    });
     await persist({ ...draft, general: { ...draft.general, ...patch } });
   }
 
@@ -124,9 +120,7 @@
     restoreError = null;
     try {
       const defaults = createDefaultSettings();
-      applyTheme(defaults.general.theme);
-      applyPalette(defaults.general.palette);
-      applyMotion(defaults.general.reduceMotion);
+      applyAppearance(defaults.general);
       localStorage.removeItem(COUNTDOWN_STORAGE_KEY);
       await persist(defaults);
       restoreOpen = false;

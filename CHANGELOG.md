@@ -57,6 +57,7 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 
 ### Fixed
 
+- The locate hint ("I'm here") kept the palette it was painted with at startup: it is a hidden window and was the only one without a `settings:changed` listener, so after changing colors it flashed the previous palette. Every window now repaints theme, palette, and motion on the event, and the three paint calls collapse into one `applyAppearance` helper.
 - The privacy-policy link pointed at `blob/main/PRIVACY.md`, but the default branch is `master`; it now uses `blob/HEAD/`, which GitHub always resolves to the default branch, so a branch rename can never 404 it again.
 - The main window's right-click menu now offers "Locate floating window" while the floating window is enabled, matching the tray menu, so a window that drifted off-screen can be found from the window in hand.
 - The main window no longer appears at the screen center for a frame and then jumps to its remembered spot. It is created hidden, sized first, positioned with the saved coordinates clamped to the visible work area, and shown only once, so the remembered position is the first thing painted.

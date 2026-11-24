@@ -1,8 +1,18 @@
-import type { Palette, Theme } from '../ipc/types.ts';
+import type { Palette, Settings, Theme } from '../ipc/types.ts';
 
 let systemQuery: MediaQueryList | undefined;
 let systemListener: (() => void) | undefined;
 let activeTheme: Theme = 'System';
+
+/** The appearance slice every window repaints together on a setting change. */
+export type Appearance = Pick<Settings['general'], 'theme' | 'palette' | 'reduceMotion'>;
+
+/** Repaints theme, palette, and motion in one call so callers stay one-line. */
+export function applyAppearance(appearance: Appearance): void {
+  applyTheme(appearance.theme);
+  applyPalette(appearance.palette);
+  applyMotion(appearance.reduceMotion);
+}
 
 /** Repaints the document theme and attaches the system listener when needed. */
 export function applyTheme(theme: Theme): void {

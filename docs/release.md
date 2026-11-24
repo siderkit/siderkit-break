@@ -270,6 +270,29 @@ Run on the target operating system before publishing:
 
 Record the operating-system build, DPI, and result for each row in `docs/acceptance.md`.
 
+## Testing the update flow without publishing
+
+A local endpoint plus a config override exercises the whole flow — dialog, download, signature
+verification, and the installer — without touching production:
+
+1. Serve a copy of the live `latest.json` from `http://127.0.0.1:8787/latest.json` (any static file
+   server).
+2. Start the app with the repository's dev-only override, which repoints the updater at the local
+   server: `pnpm tauri dev --config src-tauri/tauri.update-test.json`. There is no leading `--`;
+   with one, the argument is forwarded to `cargo` and fails with a TOML parse error.
+3. Run Help → About → Check now. The dialog, download progress, and restart-to-install path run
+   against the real installer, which can be cancelled.
+
+Release builds refuse `http` endpoints; dev builds only warn. Keep the override out of any shipped
+configuration.
+
+**Signature-version cross-check.** The updater compares the version inside the signature's trusted
+comment with the version announced by the manifest. Raising only the manifest version while reusing
+an old signature fails at download time ("The update was signed for version X but the update
+endpoint announced version Y"). To test the update prompt against the real production manifest,
+lower the app's own version instead: add `"version": "0.9.9"` at the top level of the override
+config so the app sees the real release as an update, and the real signature verifies untouched.
+
 ## Publishing
 
 1. Update the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`; update `CHANGELOG.md`.
@@ -279,6 +302,7 @@ Record the operating-system build, DPI, and result for each row in `docs/accepta
 5. Publish the GitHub release. `/siderkit-break/latest.json` starts serving the new manifest immediately, because the Worker reads `releases/latest/download/latest-dl.json`; `promote.yml` verifies the live version and installer afterwards.
 6. Run an update from the previous version against `https://dl.siderkit.com/siderkit-break/latest.json` and the GitHub fallback endpoint.
 7. If Actions is unavailable, run the same build and `scripts/make-latest-json.mjs` locally and create the release with `gh release create`.
+8. Without the `gh` CLI, drive the draft from the REST API: obtain a token (for example through `git credential fill` for `github.com`), then `PATCH /repos/<owner>/<repo>/releases/{id}` with `{"draft": false}` publishes it, and `GET /actions/runs` plus `GET /releases` cover the status checks the CLI would do.
 
 Do not attach debug builds or the raw `target/` directory. Do not hand-edit
 `latest.json`; regenerate it from the installer and `.sig` file.

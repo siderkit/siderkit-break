@@ -2,6 +2,18 @@
 
 All notable changes to Siderkit Break are recorded here. `1.0.0` is the first stable release.
 
+## [1.0.1] - 2026-11-24
+
+### Changed
+
+- **The update prompt is a modal dialog.** An available update opens a centered dialog instead of a banner pinned above the header, so nothing on the page shifts while you decide. Download progress, the ready-to-restart state, and failure states live in the same dialog with Download, Later, Skip, and Retry actions.
+- **"Last checked" keeps ticking.** A fresh check reads as 刚刚 / Just now and rolls over to minutes on its own, and the label stays visible while a check runs instead of collapsing the row. The settings and help update cells share the behavior.
+- **First release with macOS and Linux artifacts.** The release workflow now builds the universal DMG and the deb, rpm, and AppImage packages alongside the signed Windows installer. The auto-update channel itself stays Windows-only.
+
+### Fixed
+
+- The help panel no longer crowds its first heading against the top of the page.
+
 ## [1.0.0] - 2026-11-24
 
 ### Added

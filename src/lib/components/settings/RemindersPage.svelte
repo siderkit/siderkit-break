@@ -2,7 +2,7 @@
   import { m } from '../../../paraglide/messages.js';
   import { chooseCustomSound, isTauri, previewNotificationSound } from '../../ipc/client';
   import type { Settings, SoundPreset } from '../../ipc/types';
-  import { presetName } from '../../settings-summary';
+  import { presetName } from '../../utils/settings-summary.util';
   import SettingsField from './SettingsField.svelte';
   import SettingsSlider from './SettingsSlider.svelte';
   import SettingsToggle from './SettingsToggle.svelte';
@@ -109,7 +109,11 @@
     onchange={(sound) => onchange({ sound })}
   />
 
-  <SettingsField label={m['settings.notifications.preset']()} value={presetName(value.preset)}>
+  <SettingsField
+    label={m['settings.notifications.preset']()}
+    value={presetName(value.preset)}
+    divided
+  >
     <div
       class="l-reminders-page__radios"
       role="radiogroup"
@@ -173,6 +177,7 @@
     max={100}
     step={5}
     valueLabel={`${value.volume}%`}
+    divided
     onchange={(volume) => onchange({ volume })}
   />
 
@@ -189,7 +194,6 @@
   .l-reminders-page {
     display: flex;
     flex-direction: column;
-    padding-block-start: var(--sk-space-sm);
   }
 
   .l-reminders-page__radios {
@@ -200,12 +204,16 @@
   .l-reminders-page__radio {
     display: flex;
     align-items: center;
-    gap: var(--sk-space-sm);
-    min-block-size: var(--sk-settings-action-height);
-    padding-inline: var(--sk-space-2xs);
-    border-radius: var(--sk-radius-xs);
+    gap: var(--sk-space-xs);
+    min-block-size: var(--sk-radio-row-height);
+    margin-inline: calc(-1 * var(--sk-space-sm));
+    padding-inline: var(--sk-space-sm);
     cursor: pointer;
     transition: background-color var(--sk-duration-base) var(--sk-ease-standard);
+  }
+
+  .l-reminders-page__radio + .l-reminders-page__radio {
+    border-block-start: var(--sk-edge) solid hsl(var(--sk-color-border));
   }
 
   .l-reminders-page__radio:hover {
@@ -219,16 +227,16 @@
 
   .l-reminders-page__dot {
     flex: 0 0 auto;
-    inline-size: var(--sk-space-sm);
-    block-size: var(--sk-space-sm);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border-strong));
+    inline-size: var(--sk-radio-size);
+    block-size: var(--sk-radio-size);
+    border: var(--sk-radio-ring) solid hsl(var(--sk-color-border-strong));
     border-radius: var(--sk-radius-full);
     background: transparent;
   }
 
   .l-reminders-page__radio.is-on .l-reminders-page__dot {
-    border: var(--sk-space-2xs) solid hsl(var(--sk-color-brand));
-    background: hsl(var(--sk-color-brand));
+    border-color: hsl(var(--sk-color-brand));
+    background: radial-gradient(circle, hsl(var(--sk-color-brand)) 0 45%, transparent 48%);
   }
 
   .l-reminders-page__name {
@@ -241,14 +249,18 @@
   }
 
   .l-reminders-page__preview {
+    display: inline-flex;
     flex: 0 0 auto;
-    padding: var(--sk-space-2xs) var(--sk-space-xs);
+    align-items: center;
+    justify-content: center;
+    padding: var(--sk-space-xs) var(--sk-space-sm);
     border: 0;
-    border-radius: var(--sk-radius-xs);
-    color: hsl(var(--sk-color-brand));
-    background: transparent;
-    font-size: var(--sk-text-xs);
+    border-radius: var(--sk-radius-full);
+    color: hsl(var(--sk-color-brand-strong));
+    background: hsl(var(--sk-color-brand-soft) / 0.7);
+    font-size: var(--sk-text-note);
     font-weight: var(--sk-weight-semibold);
+    line-height: normal;
   }
 
   .l-reminders-page__preview:hover:not(:disabled) {

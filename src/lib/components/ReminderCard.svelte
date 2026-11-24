@@ -54,7 +54,7 @@
     <h2 class="l-reminder-card__title" id={titleId}>{title}</h2>
     <p class="l-reminder-card__body">{body}</p>
   </div>
-  <div class="l-reminder-card__actions">
+  <div class="l-reminder-card__actions" data-card-actions>
     {@render actions()}
   </div>
   {#if autoDismissMs}
@@ -135,10 +135,20 @@
 
   .l-reminder-card__actions {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     grid-column: 1 / -1;
     gap: var(--sk-space-sm);
     margin-block-start: var(--sk-space-2xs);
+    padding-inline-start: calc(var(--sk-reminder-mark-size) + var(--sk-space-md));
+    min-inline-size: 0;
+  }
+
+  /* The native window follows the measured row, so actions stay on one line
+     in every language instead of stacking into a tall narrow card. */
+  .l-reminder-card__actions > :global(button) {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   .l-reminder-card__deadline {

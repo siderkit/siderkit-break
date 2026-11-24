@@ -3,8 +3,8 @@
 
   import { m } from '../../paraglide/messages.js';
   import { isTauri, setSessionTag } from '../ipc/client';
-  import { cleanTag } from '../tag';
-  import { phaseLabel } from '../format';
+  import { cleanTag } from '../utils/tag.util';
+  import { phaseLabel } from '../utils/format.util';
   import Button from '../ui/Button.svelte';
   import DropletMark from '../ui/DropletMark.svelte';
   import TagEditor from './TagEditor.svelte';
@@ -116,7 +116,7 @@
     <p class="l-focus-done__error" role="alert">{error}</p>
   {/if}
 
-  <div class="l-focus-done__actions">
+  <div class="l-focus-done__actions" data-card-actions>
     <Button variant="Ghost" size="Sm" disabled={saving} onclick={expanded ? toggle : onclose}>
       {m['tags.skip']()}
     </Button>
@@ -234,10 +234,15 @@
 
   .l-focus-done__actions {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     gap: var(--sk-space-sm);
     margin-block-start: var(--sk-space-2xs);
+  }
+
+  .l-focus-done__actions > :global(button) {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   @media (prefers-reduced-motion: no-preference) {

@@ -1,8 +1,8 @@
 import './app.css';
 import { mount } from 'svelte';
 
-import BreakApp from './lib/BreakApp.svelte';
-import { prepareWindow } from './lib/bootstrap';
+import BreakApp from './lib/app/BreakApp.svelte';
+import { prepareWindow } from './lib/app/bootstrap';
 
 await prepareWindow('break');
 

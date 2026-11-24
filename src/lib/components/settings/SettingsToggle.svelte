@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SettingsCell from './SettingsCell.svelte';
+
   let {
     title,
     note,
@@ -14,7 +16,7 @@
   } = $props();
 </script>
 
-<label class="l-settings-toggle" class:is-divided={divided}>
+<SettingsCell label {divided}>
   <span class="l-settings-toggle__copy">
     <span class="l-settings-toggle__title">{title}</span>
     {#if note}<span class="l-settings-toggle__note">{note}</span>{/if}
@@ -30,40 +32,27 @@
       <span class="l-settings-toggle__thumb"></span>
     </span>
   </span>
-</label>
+</SettingsCell>
 
 <style>
-  .l-settings-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sk-space-md);
-    min-block-size: var(--sk-settings-control-height);
-    padding: var(--sk-space-xs) var(--sk-space-sm);
-    cursor: pointer;
-  }
-
-  .l-settings-toggle.is-divided {
-    border-block-start: var(--sk-edge) solid hsl(var(--sk-color-border));
-  }
-
   .l-settings-toggle__copy {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    gap: var(--sk-space-2xs);
+    gap: calc(var(--sk-edge) * 2);
     min-inline-size: 0;
   }
 
   .l-settings-toggle__title {
     color: hsl(var(--sk-color-text));
-    font-size: var(--sk-text-sm);
+    font-size: var(--sk-text-md);
+    font-weight: var(--sk-weight-medium);
   }
 
   .l-settings-toggle__note {
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
-    line-height: var(--sk-leading-normal);
+    font-size: var(--sk-text-note);
+    line-height: var(--sk-leading-snug);
   }
 
   .l-settings-toggle__control {
@@ -87,7 +76,7 @@
     block-size: 100%;
     padding: var(--sk-toggle-inset);
     border-radius: var(--sk-radius-full);
-    background: hsl(var(--sk-color-track));
+    background: hsl(var(--sk-color-toggle-track));
     transition: background-color var(--sk-duration-base) var(--sk-ease-standard);
   }
 

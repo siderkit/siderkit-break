@@ -1,80 +1,54 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
-  import { formatDateHeading, formatMinutes, localDateKey } from '../format';
-  import { currentLocale } from '../locale';
-  import { timerStore } from '../timer-store.svelte';
+  import { formatMinutes } from '../utils/format.util';
+  import { timerStore } from '../state/timer.store.svelte.ts';
 
-  const locale = currentLocale();
   const summary = $derived(timerStore.summary);
 </script>
 
 <div class="l-timer-summary">
-  <span class="l-timer-summary__title">{formatDateHeading(localDateKey(), locale)}</span>
-  <div class="l-timer-summary__values">
-    <span>{m['summary.rounds']({ count: summary.completedFocus })}</span>
-    <span class="l-timer-summary__dot" aria-hidden="true"></span>
-    <span>{m['summary.focusTime']({ minutes: formatMinutes(summary.focusMs) })}</span>
-    <span class="l-timer-summary__dot" aria-hidden="true"></span>
-    <span>
-      {m['summary.countdownTime']({
-        count: summary.completedCountdown,
-        minutes: formatMinutes(summary.countdownMs),
-      })}
-    </span>
-  </div>
+  <span class="l-timer-summary__title">
+    {m['summary.today']()} · {m['summary.rounds']({ count: summary.completedFocus })} ·
+    {m['summary.focusTime']({ minutes: formatMinutes(summary.focusMs) })}
+  </span>
+  <span class="l-timer-summary__countdown">
+    {m['summary.countdownTime']({
+      count: summary.completedCountdown,
+      minutes: formatMinutes(summary.countdownMs),
+    })}
+  </span>
 </div>
 
 <style>
+  /* Prototype s01: a quiet 11 px footer separated by one border, not a card. */
   .l-timer-summary {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sk-space-xs) var(--sk-space-md);
-    padding: var(--sk-space-md);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border));
-    border-radius: var(--sk-radius-md);
-    background: hsl(var(--sk-color-bg-surface));
-  }
-
-  .l-timer-summary__title {
     flex: 0 0 auto;
-    color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
-    letter-spacing: var(--sk-tracking-wide);
-    white-space: nowrap;
-  }
-
-  .l-timer-summary__values {
-    display: flex;
-    flex: 1 1 auto;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--sk-space-xs);
-    min-inline-size: 0;
-    color: hsl(var(--sk-color-text));
-    font-size: var(--sk-text-sm);
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sk-space-xs) var(--sk-timer-today-gap);
+    margin-block-start: var(--sk-space-xl);
+    padding-block-start: var(--sk-timer-today-pad);
+    border-block-start: var(--sk-edge) solid hsl(var(--sk-color-border));
+    color: hsl(var(--sk-color-text-muted));
+    font-size: var(--sk-text-2xs);
     font-variant-numeric: tabular-nums;
   }
 
-  .l-timer-summary__dot {
-    inline-size: var(--sk-space-2xs);
-    block-size: var(--sk-space-2xs);
-    border-radius: var(--sk-radius-full);
-    background: hsl(var(--sk-color-border-strong));
+  .l-timer-summary__title,
+  .l-timer-summary__countdown {
+    min-inline-size: 0;
+  }
+
+  .l-timer-summary__countdown {
+    flex: 0 0 auto;
   }
 
   @media (max-height: 460px) {
     .l-timer-summary {
-      padding: var(--sk-space-xs) var(--sk-space-sm);
-    }
-
-    .l-timer-summary__title {
-      display: none;
-    }
-
-    .l-timer-summary__values {
-      font-size: var(--sk-text-xs);
+      margin-block-start: var(--sk-space-xs);
+      padding-block-start: var(--sk-space-xs);
     }
   }
 </style>

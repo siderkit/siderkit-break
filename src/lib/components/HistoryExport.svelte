@@ -2,11 +2,14 @@
   import { onDestroy } from 'svelte';
 
   import { m } from '../../paraglide/messages.js';
-  import { fileNameOf } from '../export';
-  import { HistoryExportState } from '../history-export.svelte';
+  import { fileNameOf } from '../utils/export/export.util';
+  import { HistoryExportState } from '../state/history-export.store.svelte.ts';
   import { isTauri } from '../ipc/client';
+  import ActionBar from '../ui/ActionBar.svelte';
   import Button from '../ui/Button.svelte';
   import HistoryExportOptions from './HistoryExportOptions.svelte';
+
+  let { onclose }: { onclose: () => void } = $props();
 
   const state = new HistoryExportState();
 
@@ -28,9 +31,11 @@
       <div class="l-history-export__track">
         <div class="l-history-export__bar" style:inline-size="{state.progress}%"></div>
       </div>
-      <button class="l-history-export__cancel" type="button" onclick={() => state.cancel()}>
-        {m['history.exportCancel']()}
-      </button>
+      <div class="l-history-export__progress-actions">
+        <Button variant="Ghost" size="Sm" onclick={() => state.cancel()}>
+          {m['history.exportCancel']()}
+        </Button>
+      </div>
     </div>
   {/if}
 
@@ -46,16 +51,17 @@
     <p class="l-history-export__saved" role="status" aria-live="polite">
       {m['history.exportSaved']({ name: fileNameOf(state.savedPath) })}
       {#if isTauri}
-        <button class="l-history-export__reveal" type="button" onclick={() => void state.reveal()}>
+        <Button variant="Ghost" size="Sm" onclick={() => void state.reveal()}>
           {m['history.exportReveal']()}
-        </button>
+        </Button>
       {/if}
     </p>
   {/if}
 
-  <div class="l-history-export__actions">
+  <ActionBar {onclose}>
     <Button
       variant="Primary"
+      size="Sm"
       disabled={state.exporting || state.previewing || !state.range}
       onclick={() => void state.startExport(new Date())}
     >
@@ -67,7 +73,7 @@
         {m['history.export']()}
       {/if}
     </Button>
-  </div>
+  </ActionBar>
 </div>
 
 <style>
@@ -99,34 +105,15 @@
     transition: inline-size var(--sk-duration-base) var(--sk-ease-standard);
   }
 
-  .l-history-export__cancel {
-    align-self: flex-end;
-    padding: 0;
-    border: 0;
-    color: hsl(var(--sk-color-text-muted));
-    background: transparent;
-    font-size: var(--sk-text-xs);
-    text-decoration: underline;
+  .l-history-export__progress-actions {
+    display: flex;
+    justify-content: flex-start;
   }
 
   .l-history-export__saved {
     margin: 0;
     color: hsl(var(--sk-color-text-muted));
     font-size: var(--sk-text-xs);
-  }
-
-  .l-history-export__reveal {
-    padding: 0;
-    border: 0;
-    color: hsl(var(--sk-color-brand));
-    background: transparent;
-    font-size: var(--sk-text-xs);
-    font-weight: var(--sk-weight-semibold);
-    text-decoration: underline;
-  }
-
-  .l-history-export__reveal:hover {
-    color: hsl(var(--sk-color-brand-strong));
   }
 
   .l-history-export__error {
@@ -136,12 +123,5 @@
     color: hsl(var(--sk-color-break));
     background: hsl(var(--sk-color-break-soft) / 0.6);
     font-size: var(--sk-text-xs);
-  }
-
-  .l-history-export__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--sk-space-sm);
   }
 </style>

@@ -194,10 +194,10 @@ pub fn hide_break_card(app: AppHandle) {
     shell::hide_break_card(&app);
 }
 
-/// Grows or shrinks the break card window to the measured card height.
+/// Grows or shrinks the break card window to the measured card size.
 #[tauri::command]
-pub fn fit_break_card(app: AppHandle, height: f64) -> Result<(), String> {
-    shell::resize_break_card(&app, height)
+pub fn fit_break_card(app: AppHandle, width: f64, height: f64) -> Result<(), String> {
+    shell::resize_break_card(&app, width, height)
 }
 
 /// Sizes the countdown window to the measured label width.

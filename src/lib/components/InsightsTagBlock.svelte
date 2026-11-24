@@ -1,8 +1,8 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
-  import { formatCompactDuration } from '../format';
+  import { formatCompactDuration } from '../utils/format.util';
   import type { InsightsTag } from '../ipc/types';
-  import { tagBarPercent } from '../insights';
+  import { tagBarPercent } from '../utils/insights/insights.util';
 
   let { tags }: { tags: InsightsTag[] } = $props();
 
@@ -31,22 +31,15 @@
 
 <style>
   .l-insights-tags {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sk-space-xs);
-    padding: var(--sk-space-md);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border));
-    border-radius: var(--sk-radius-md);
-    background: hsl(var(--sk-color-bg-surface));
+    margin-block-start: var(--sk-space-lg);
+    padding-block-start: var(--sk-space-md);
+    border-block-start: var(--sk-edge) solid hsl(var(--sk-color-border));
   }
 
   .l-insights-tags__title {
-    margin: 0;
-    color: hsl(var(--sk-color-text-muted));
+    margin: 0 0 var(--sk-space-sm);
     font-size: var(--sk-text-xs);
     font-weight: var(--sk-weight-semibold);
-    letter-spacing: var(--sk-tracking-wide);
-    text-transform: uppercase;
   }
 
   .l-insights-tags__empty {
@@ -57,16 +50,17 @@
 
   .l-insights-tags__row {
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
+    grid-template-columns:
+      var(--sk-insights-tag-name-column) minmax(0, 1fr)
+      var(--sk-insights-tag-value-column);
     align-items: center;
-    gap: var(--sk-space-xs);
+    gap: var(--sk-space-sm);
+    block-size: var(--sk-insights-tag-row-height);
     font-size: var(--sk-text-xs);
   }
 
   .l-insights-tags__name {
-    max-inline-size: var(--sk-number-field-width);
     overflow: hidden;
-    font-weight: var(--sk-weight-medium);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -88,7 +82,9 @@
 
   .l-insights-tags__value {
     color: hsl(var(--sk-color-text-muted));
+    font-size: var(--sk-text-2xs);
     font-variant-numeric: tabular-nums;
+    text-align: end;
     white-space: nowrap;
   }
 </style>

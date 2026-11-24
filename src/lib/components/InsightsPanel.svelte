@@ -2,14 +2,15 @@
   import { onMount } from 'svelte';
 
   import { m } from '../../paraglide/messages.js';
-  import { formatCompactDuration } from '../format';
+  import { formatCompactDuration } from '../utils/format.util';
   import type { InsightsRange } from '../ipc/types';
-  import { insightsStore } from '../insights-store.svelte';
-  import { currentLocale } from '../locale';
-  import { timerStore } from '../timer-store.svelte';
+  import { insightsStore } from '../state/insights.store.svelte.ts';
+  import { currentLocale } from '../utils/locale.util';
+  import { timerStore } from '../state/timer.store.svelte.ts';
   import InsightsEmpty from './InsightsEmpty.svelte';
   import InsightsError from './InsightsError.svelte';
   import InsightsHeatmap from './InsightsHeatmap.svelte';
+  import InsightsLegend from './InsightsLegend.svelte';
   import InsightsTagBlock from './InsightsTagBlock.svelte';
 
   let { onclose }: { onclose: () => void } = $props();
@@ -109,15 +110,7 @@
         <span class="l-insights__heat-hint">{m['insights.heatmapHint']()}</span>
       </div>
       <InsightsHeatmap days={heatmap} {locale} />
-      <div class="l-insights__legend" aria-hidden="true">
-        <span>{m['insights.less']()}</span>
-        <i class="l-insights__legend-cell" data-level="0"></i>
-        <i class="l-insights__legend-cell" data-level="1"></i>
-        <i class="l-insights__legend-cell" data-level="2"></i>
-        <i class="l-insights__legend-cell" data-level="3"></i>
-        <i class="l-insights__legend-cell" data-level="4"></i>
-        <span>{m['insights.more']()}</span>
-      </div>
+      <InsightsLegend />
 
       <InsightsTagBlock {tags} />
     {/if}
@@ -137,9 +130,10 @@
     display: flex;
     flex: 0 0 auto;
     align-items: center;
-    gap: var(--sk-space-xs);
+    gap: var(--sk-space-sm);
     min-block-size: var(--sk-settings-page-header);
     padding-inline: var(--sk-space-lg);
+    border-block-end: var(--sk-edge) solid hsl(var(--sk-color-border));
   }
 
   .l-insights__back {
@@ -147,22 +141,25 @@
     place-items: center;
     inline-size: var(--sk-icon-button-size);
     block-size: var(--sk-icon-button-size);
-    margin-inline-start: calc(-1 * var(--sk-space-2xs));
+    margin-inline-start: calc(-1 * var(--sk-space-sm));
     padding: 0;
     border: 0;
-    border-radius: var(--sk-radius-full);
+    border-radius: var(--sk-radius-control);
     color: hsl(var(--sk-color-text-muted));
     background: transparent;
+    transition:
+      color var(--sk-duration-base) var(--sk-ease-standard),
+      background-color var(--sk-duration-base) var(--sk-ease-standard);
   }
 
   .l-insights__back:hover {
     color: hsl(var(--sk-color-text));
-    background: hsl(var(--sk-color-brand-soft));
+    background: hsl(var(--sk-color-brand-soft) / 0.55);
   }
 
   .l-insights__back-icon {
-    inline-size: var(--sk-icon-size);
-    block-size: var(--sk-icon-size);
+    inline-size: var(--sk-icon-size-lg);
+    block-size: var(--sk-icon-size-lg);
     fill: none;
     stroke: currentColor;
     stroke-width: var(--sk-icon-stroke);
@@ -171,17 +168,20 @@
   }
 
   .l-insights__title {
+    flex: 1 1 auto;
     margin: 0;
-    font-size: var(--sk-text-xl);
-    font-weight: var(--sk-weight-semibold);
-    letter-spacing: var(--sk-tracking-tight);
+    overflow: hidden;
+    font-size: var(--sk-text-title);
+    font-weight: var(--sk-weight-strong);
+    letter-spacing: var(--sk-tracking-title);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .l-insights__body {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    gap: var(--sk-space-md);
     min-block-size: 0;
     padding: 0 var(--sk-space-lg) var(--sk-space-xl);
     overflow-y: auto;
@@ -196,23 +196,28 @@
 
   .l-insights__tab {
     position: relative;
-    min-block-size: var(--sk-settings-row-height);
+    min-block-size: var(--sk-tab-height);
     padding-inline: var(--sk-space-xs);
     border: 0;
     border-radius: 0;
     color: hsl(var(--sk-color-text-muted));
     background: transparent;
-    font-size: var(--sk-text-xs);
+    font-size: var(--sk-text-value);
+  }
+
+  .l-insights__tab:hover {
+    color: hsl(var(--sk-color-text));
+    background: hsl(var(--sk-color-brand-soft) / 0.35);
   }
 
   .l-insights__tab.is-on {
     color: hsl(var(--sk-color-text));
-    font-weight: var(--sk-weight-semibold);
+    font-weight: var(--sk-weight-strong);
   }
 
   .l-insights__tab.is-on::after {
     position: absolute;
-    inset-inline: var(--sk-space-sm);
+    inset-inline: calc(var(--sk-space-sm) + var(--sk-space-3xs));
     inset-block-end: calc(-1 * var(--sk-edge));
     block-size: var(--sk-tab-indicator);
     border-radius: var(--sk-radius-full);
@@ -223,7 +228,8 @@
   .l-insights__stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sk-space-xs);
+    gap: var(--sk-space-sm);
+    padding: calc(var(--sk-space-lg) + var(--sk-space-3xs)) 0 var(--sk-space-md);
   }
 
   .l-insights__stat {
@@ -236,7 +242,7 @@
   .l-insights__stat-value {
     overflow: hidden;
     font-size: var(--sk-stat-value);
-    font-weight: var(--sk-weight-semibold);
+    font-weight: var(--sk-weight-heavy);
     font-variant-numeric: tabular-nums;
     letter-spacing: var(--sk-tracking-tight);
     text-overflow: ellipsis;
@@ -245,7 +251,7 @@
 
   .l-insights__stat-label {
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
+    font-size: var(--sk-text-2xs);
   }
 
   .l-insights__heat-head {
@@ -254,6 +260,7 @@
     align-items: baseline;
     justify-content: space-between;
     gap: var(--sk-space-2xs);
+    margin: calc(var(--sk-space-sm) + var(--sk-space-3xs)) 0 var(--sk-space-sm);
   }
 
   .l-insights__heat-title {
@@ -263,38 +270,6 @@
 
   .l-insights__heat-hint {
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
-  }
-
-  .l-insights__legend {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--sk-space-2xs);
-    color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
-  }
-
-  .l-insights__legend-cell {
-    inline-size: var(--sk-heat-cell);
-    block-size: var(--sk-heat-cell);
-    border-radius: var(--sk-heat-radius);
-    background: hsl(var(--sk-heat-0));
-  }
-
-  .l-insights__legend-cell[data-level='1'] {
-    background: hsl(var(--sk-heat-1));
-  }
-
-  .l-insights__legend-cell[data-level='2'] {
-    background: hsl(var(--sk-heat-2));
-  }
-
-  .l-insights__legend-cell[data-level='3'] {
-    background: hsl(var(--sk-heat-3));
-  }
-
-  .l-insights__legend-cell[data-level='4'] {
-    background: hsl(var(--sk-heat-4));
+    font-size: var(--sk-text-2xs);
   }
 </style>

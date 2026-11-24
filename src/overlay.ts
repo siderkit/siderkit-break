@@ -1,8 +1,8 @@
 import './app.css';
 import { mount } from 'svelte';
 
-import OverlayApp from './lib/OverlayApp.svelte';
-import { prepareWindow } from './lib/bootstrap';
+import OverlayApp from './lib/app/OverlayApp.svelte';
+import { prepareWindow } from './lib/app/bootstrap';
 
 await prepareWindow('overlay');
 

@@ -6,22 +6,22 @@
     helpLabel,
     helpActive,
     badge,
+    oninsights,
     onhelp,
     onsettings,
-    oncompact,
   }: {
     helpLabel: string;
     helpActive: boolean;
     badge: boolean;
+    oninsights: () => void;
     onhelp: () => void;
     onsettings: () => void;
-    oncompact: () => void;
   } = $props();
 </script>
 
 <header class="l-app-header">
   <div class="l-app-header__brand">
-    <DropletMark />
+    <DropletMark size="var(--sk-brand-mark-size-sm)" />
     <div class="l-app-header__copy">
       <h1 class="l-app-header__title">{m['app.name']()}</h1>
       <p class="l-app-header__tagline">{m['app.tagline']()}</p>
@@ -31,12 +31,14 @@
     <button
       class="l-app-header__icon-button"
       type="button"
-      aria-label={m['compact.collapse']()}
-      title={m['compact.collapse']()}
-      onclick={oncompact}
+      aria-label={m['insights.title']()}
+      title={m['insights.title']()}
+      onclick={oninsights}
     >
-      <svg class="l-app-header__collapse-icon" viewBox="0 0 20 20" aria-hidden="true">
-        <path d="m5.5 12.5 4.5-4.5 4.5 4.5" />
+      <svg class="l-app-header__insights-icon" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M4 16.2V9.4" />
+        <path d="M10 16.2V3.8" />
+        <path d="M16 16.2v-4.4" />
       </svg>
     </button>
     <button
@@ -66,41 +68,52 @@
 <style>
   .l-app-header {
     display: flex;
-    align-items: flex-start;
+    flex: 0 0 auto;
+    align-items: center;
     justify-content: space-between;
-    gap: var(--sk-space-md);
-    padding: var(--sk-space-lg) var(--sk-space-lg) var(--sk-space-md);
+    gap: var(--sk-space-sm);
+    min-block-size: var(--sk-settings-page-header);
+    padding-inline: var(--sk-space-lg);
+    border-block-end: var(--sk-edge) solid hsl(var(--sk-color-border));
   }
 
   .l-app-header__brand {
     display: flex;
     align-items: center;
-    gap: var(--sk-space-sm);
+    gap: var(--sk-settings-brand-gap);
+    min-inline-size: 0;
   }
 
   .l-app-header__copy {
     display: flex;
     flex-direction: column;
+    min-inline-size: 0;
   }
 
   .l-app-header__title {
     margin: 0;
-    font-size: var(--sk-text-lg);
-    font-weight: var(--sk-weight-semibold);
-    letter-spacing: var(--sk-tracking-tight);
+    overflow: hidden;
+    font-size: var(--sk-text-md);
+    font-weight: var(--sk-weight-bold);
+    letter-spacing: var(--sk-tracking-title);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .l-app-header__tagline {
-    margin: 0;
+    margin: var(--sk-edge) 0 0;
+    overflow: hidden;
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
+    font-size: var(--sk-text-3xs);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .l-app-header__actions {
     display: flex;
     flex: 0 0 auto;
     align-items: center;
-    gap: var(--sk-space-2xs);
+    gap: var(--sk-space-3xs);
   }
 
   .l-app-header__icon-button {
@@ -112,12 +125,12 @@
     block-size: var(--sk-icon-button-size);
     padding: 0;
     border: 0;
-    border-radius: var(--sk-radius-full);
+    border-radius: var(--sk-radius-control);
     color: hsl(var(--sk-color-text-muted));
     background: transparent;
     transition:
       color var(--sk-duration-base) var(--sk-ease-standard),
-      background var(--sk-duration-base) var(--sk-ease-standard);
+      background-color var(--sk-duration-base) var(--sk-ease-standard);
   }
 
   .l-app-header__icon-button:hover {
@@ -131,9 +144,9 @@
   }
 
   .l-app-header__help-icon,
-  .l-app-header__collapse-icon {
-    inline-size: var(--sk-icon-size);
-    block-size: var(--sk-icon-size);
+  .l-app-header__insights-icon {
+    inline-size: var(--sk-icon-size-lg);
+    block-size: var(--sk-icon-size-lg);
     fill: none;
     stroke: currentColor;
     stroke-width: var(--sk-icon-stroke);
@@ -158,38 +171,28 @@
   }
 
   .l-app-header__settings {
+    display: inline-flex;
     flex: 0 0 auto;
-    padding: var(--sk-space-2xs) var(--sk-space-md);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border-strong));
+    align-items: center;
+    justify-content: center;
+    padding: var(--sk-space-xs) var(--sk-space-md);
+    border: 0;
     border-radius: var(--sk-radius-full);
-    color: hsl(var(--sk-color-text-muted));
-    background: transparent;
-    font-size: var(--sk-text-xs);
+    color: hsl(var(--sk-color-brand-strong));
+    background: hsl(var(--sk-color-brand-soft) / 0.7);
+    font-size: var(--sk-text-md);
     font-weight: var(--sk-weight-semibold);
-    letter-spacing: var(--sk-tracking-wide);
-    transition:
-      color var(--sk-duration-base) var(--sk-ease-standard),
-      border-color var(--sk-duration-base) var(--sk-ease-standard);
+    line-height: normal;
   }
 
   .l-app-header__settings:hover {
-    color: hsl(var(--sk-color-text));
-    border-color: hsl(var(--sk-color-brand));
-  }
-
-  @media (max-height: 520px) {
-    .l-app-header {
-      padding: var(--sk-space-md) var(--sk-space-lg) var(--sk-space-sm);
-    }
+    color: hsl(var(--sk-color-brand-strong));
+    background: hsl(var(--sk-color-brand-soft));
   }
 
   @media (max-height: 460px) {
     .l-app-header {
-      padding: var(--sk-space-sm) var(--sk-space-lg);
-    }
-
-    .l-app-header__brand {
-      gap: var(--sk-space-xs);
+      min-block-size: var(--sk-app-header-height-low);
     }
 
     .l-app-header__tagline {

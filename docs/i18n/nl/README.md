@@ -17,7 +17,7 @@ Een rustige, lokaal werkende focustimer voor Windows, macOS en Linux. Hij houdt 
 - **Een ritme dat past.** Focus-, korte pauze- en lange pauzeycli met pauzeren, hervatten, overslaan en resetten.
 - **Blijft uit de weg.** Een kleine aftelling die altijd bovenop blijft en klikken doorlaat tot je erop wijst.
 - **Herinneringen met actie.** Kaarten in de app bij elke fasegrens, met uitstellen, overslaan en een ingebouwd geluid.
-- **Je gegevens blijven lokaal.** Lokale sessiegeschiedenis, export naar spreadsheet, 30 talen, thema’s en globale sneltoetsen.
+- **Je gegevens blijven lokaal.** Lokale sessiegeschiedenis, export naar spreadsheet, 40 talen, thema’s en globale sneltoetsen.
 
 ## Bouw vanuit de broncode
 

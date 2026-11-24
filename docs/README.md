@@ -13,7 +13,7 @@
 | [ADR-0002](adr/0002-taskbar-overlay.md)  | Tray + docked overlay, no in-taskbar text                      |
 | [ADR-0003](adr/0003-reminder-sound.md)   | Bundled reminder chime, one sound on every platform            |
 | [ADR-0004](adr/0004-in-app-reminders.md) | In-app reminder cards instead of system notifications          |
-| [Translations](i18n/README.md)           | 30 language READMEs and the shared language index              |
+| [Translations](i18n/README.md)           | 30 language READMEs; the app ships 40 UI locales               |
 | [README assets](assets/README.md)        | Screenshot sources, sizes, and capture rules                   |
 
 ## Status

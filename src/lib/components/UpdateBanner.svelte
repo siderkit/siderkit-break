@@ -1,7 +1,7 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
-  import { downloadPercent, formatDownloadSize } from '../update-format';
-  import { updateStore } from '../update-store.svelte';
+  import { downloadPercent, formatDownloadSize } from '../utils/update/update-format.util';
+  import { updateStore } from '../state/update.store.svelte.ts';
   import Button from '../ui/Button.svelte';
 
   const status = $derived(updateStore.status);

@@ -36,7 +36,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--sk-space-2xs);
-    padding-block: var(--sk-space-md);
   }
 
   .l-segmented__label {
@@ -47,21 +46,20 @@
     display: grid;
     grid-auto-columns: 1fr;
     grid-auto-flow: column;
-    gap: var(--sk-space-3xs);
-    padding: var(--sk-space-3xs);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border));
-    border-radius: var(--sk-radius-sm);
-    background: hsl(var(--sk-color-bg-app));
+    gap: var(--sk-space-2xs);
+    padding: calc(var(--sk-space-2xs) - var(--sk-edge));
+    border-radius: var(--sk-radius-card);
+    background: hsl(var(--sk-color-text) / 0.05);
   }
 
   .l-segmented__option {
-    min-block-size: var(--sk-control-height-sm);
+    min-block-size: var(--sk-settings-chip-height);
     padding-inline: var(--sk-space-xs);
     border: 0;
-    border-radius: var(--sk-radius-xs);
+    border-radius: var(--sk-radius-sm);
     color: hsl(var(--sk-color-text-muted));
     background: transparent;
-    font-size: var(--sk-text-xs);
+    font-size: var(--sk-text-value);
     white-space: nowrap;
     transition:
       color var(--sk-duration-base) var(--sk-ease-standard),
@@ -74,7 +72,8 @@
 
   .l-segmented__option.is-active {
     color: hsl(var(--sk-color-text));
-    background: hsl(var(--sk-color-bg-raised));
-    box-shadow: var(--sk-shadow-soft);
+    background: hsl(var(--sk-color-bg-surface));
+    font-weight: var(--sk-weight-strong);
+    box-shadow: var(--sk-shadow-segment);
   }
 </style>

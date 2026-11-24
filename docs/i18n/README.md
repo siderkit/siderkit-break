@@ -2,6 +2,8 @@
 
 The [English README](../../README.md) is the source of truth. Each translation is a shorter introduction to the same app, with links back to the full documentation.
 
+The app ships **40 UI locales**, each with the same 343 message keys. This table lists the **30 locales that also have a long-form README translation**; Javanese, Punjabi, Hausa, Yoruba, Gujarati, Kannada, Malayalam, Burmese, Amharic, and Nepali ship as in-app catalogs only.
+
 | Language         | English               | Code    | README                      |
 | ---------------- | --------------------- | ------- | --------------------------- |
 | English          | English               | `en`    | [README](../../README.md)   |

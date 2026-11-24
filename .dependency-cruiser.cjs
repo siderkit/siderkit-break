@@ -1,12 +1,6 @@
 module.exports = {
   forbidden: [
     {
-      name: 'core-does-not-import-ui-or-host',
-      severity: 'error',
-      from: { path: '^src/lib/core' },
-      to: { path: '^(svelte|@tauri-apps|\\$app|\\$lib/ipc|src/lib/ui)' },
-    },
-    {
       name: 'ui-does-not-import-host-directly',
       severity: 'error',
       from: { path: '^src/lib/ui' },

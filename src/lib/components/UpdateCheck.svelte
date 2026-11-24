@@ -1,9 +1,9 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
   import { isTauri } from '../ipc/client';
-  import { updateStore } from '../update-store.svelte';
-  import { formatDownloadSize, formatRelative } from '../update-format';
-  import { presentUpdate } from '../update-status';
+  import { updateStore } from '../state/update.store.svelte.ts';
+  import { formatDownloadSize, formatRelative } from '../utils/update/update-format.util';
+  import { presentUpdate } from '../utils/update/update-status.util';
   import type { UpdatePhase } from '../ipc/types';
   import Button from '../ui/Button.svelte';
 
@@ -81,40 +81,6 @@
     }
     return presentation.action === 'Cancel' ? 'Ghost' : 'Secondary';
   }
-
-  function retry(): void {
-    if (status?.lastError === 'download') {
-      void updateStore.download();
-      return;
-    }
-    if (status?.lastError === 'install') {
-      updateStore.install();
-      return;
-    }
-    void updateStore.checkNow();
-  }
-
-  function runAction(): void {
-    switch (presentation.action) {
-      case 'Check':
-        void updateStore.checkNow();
-        break;
-      case 'Download':
-        void updateStore.download();
-        break;
-      case 'Cancel':
-        void updateStore.cancel();
-        break;
-      case 'Restart':
-        updateStore.install();
-        break;
-      case 'Retry':
-        retry();
-        break;
-      default:
-        break;
-    }
-  }
 </script>
 
 <div class="l-update-check">
@@ -138,7 +104,12 @@
     </p>
     {#if presentation.action !== 'None'}
       <div class="l-update-check__action">
-        <Button variant={actionVariant()} size="Sm" {disabled} onclick={() => runAction()}>
+        <Button
+          variant={actionVariant()}
+          size="Sm"
+          {disabled}
+          onclick={() => updateStore.act(presentation.action)}
+        >
           {actionLabel()}
         </Button>
       </div>

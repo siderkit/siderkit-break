@@ -9,7 +9,7 @@ use crate::overlay::{
     clamp_overlay_visible, clamped_overlay_position, droplet_anchored_position,
     overlay_active_size, position_overlay, save_overlay_position, OVERLAY_IDLE_SIZE,
 };
-use crate::settings::{Settings, WindowMode};
+use crate::settings::Settings;
 use crate::timer::{Phase, TimerSnapshot};
 use crate::topmost;
 use crate::window_size::{set_logical_size, size_matches};
@@ -46,15 +46,13 @@ pub fn hide_break_card(app: &AppHandle) {
     }
 }
 
-/// Fits the break card window to the height the card needs, so long translations
-/// and wrapped action rows are never clipped.
-pub fn resize_break_card(app: &AppHandle, height: f64) -> Result<(), String> {
+/// Fits the break window to the measured card. The width floor keeps long
+/// translations above the 320 px minimum instead of clipping the action row.
+pub fn resize_break_card(app: &AppHandle, width: f64, height: f64) -> Result<(), String> {
     let window = app
         .get_webview_window("break")
         .ok_or_else(|| "the break window is missing".to_owned())?;
-    let scale = window.scale_factor().map_err(|error| error.to_string())?;
-    let size = window.outer_size().map_err(|error| error.to_string())?;
-    let width = size.width as f64 / scale;
+    let width = clamp_break_width(width);
     let height = clamp_break_height(height);
     if size_matches(&window, width, height) {
         return Ok(());
@@ -86,7 +84,17 @@ fn clamp_break_height(height: f64) -> f64 {
     height.clamp(MIN, MAX).ceil()
 }
 
+/// Keeps the card readable; the frontend supplies the measured width.
+fn clamp_break_width(width: f64) -> f64 {
+    const MIN: f64 = 320.0;
+    const MAX: f64 = 560.0;
+    width.clamp(MIN, MAX).ceil()
+}
+
 pub fn apply_startup_view(app: &AppHandle) {
+    // Size first, then clamp the restored position, so the final frame lands
+    // inside the work area at its shipped footprint before it is ever shown.
+    let _ = apply_main_window_size(app);
     fit_main_window(app);
     // The locate hint stays hidden at startup; its click-through flag is set
     // when it is shown, because the native window does not exist before that.
@@ -95,9 +103,13 @@ pub fn apply_startup_view(app: &AppHandle) {
         if let Some(window) = app.get_webview_window("main") {
             let _ = window.hide();
         }
+    } else {
+        // The window is created hidden so the restored size and position settle
+        // before the first paint; reveal it once instead of flashing a centered
+        // frame and jumping to the remembered place.
+        show_main_window(app);
     }
     if let Ok(settings) = engine_host::get_settings(app) {
-        let _ = apply_window_mode(app, settings.general.window_mode);
         if let Err(error) = apply_settings(app, &settings) {
             warn!("failed to apply settings: {error}");
         }
@@ -110,22 +122,15 @@ pub fn apply_startup_view(app: &AppHandle) {
     }
 }
 
-/// Applies the saved main-window shape. Only the two shipped sizes are used,
-/// so the timer can never end up taller than the compact layout allows.
-pub fn apply_window_mode(app: &AppHandle, mode: WindowMode) -> Result<(), String> {
+/// Restores the shipped main-window shape: 360×560 with a 320×400 floor.
+pub fn apply_main_window_size(app: &AppHandle) -> Result<(), String> {
     let Some(window) = app.get_webview_window("main") else {
         return Ok(());
     };
-    let (width, height, min_height) = match mode {
-        WindowMode::Standard => (360.0, 560.0, 400.0),
-        WindowMode::Compact => (320.0, 200.0, 200.0),
-    };
     window
-        .set_min_size(Some(tauri::Size::Logical(LogicalSize::new(
-            320.0, min_height,
-        ))))
+        .set_min_size(Some(tauri::Size::Logical(LogicalSize::new(320.0, 400.0))))
         .map_err(|error| error.to_string())?;
-    set_logical_size(&window, width, height)
+    set_logical_size(&window, 360.0, 560.0)
 }
 
 /// Window-state restores the last physical size, which can be smaller than the
@@ -167,6 +172,13 @@ fn fit_main_window(app: &AppHandle) {
     let max_height = work_area.size.height.saturating_sub(frame_height) as f64 / scale;
     let min_width = config.min_width.unwrap_or(0.0);
     let min_height = config.min_height.unwrap_or(0.0);
+    // The saved size can come from a wider display. Keep it inside both the
+    // work area and the configured shell cap so a restore never opens the app
+    // wider than the layout is designed for.
+    let max_width = config.max_width.map_or(max_width, |cap| max_width.min(cap));
+    let max_height = config
+        .max_height
+        .map_or(max_height, |cap| max_height.min(cap));
 
     let width = (inner.width as f64 / scale).max(min_width).min(max_width);
     let height = (inner.height as f64 / scale)

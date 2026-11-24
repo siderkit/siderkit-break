@@ -9,7 +9,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Manager};
 
 use crate::engine_host::AppState;
-use crate::settings::{Palette, Theme, WindowMode};
+use crate::settings::{Palette, Theme};
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -21,7 +21,6 @@ pub struct Diagnostics {
     pub locale: String,
     pub theme: String,
     pub palette: String,
-    pub window_mode: String,
     pub log_dir: String,
     pub log_size: u64,
     pub recent_logs: Vec<String>,
@@ -47,7 +46,6 @@ pub fn collect(app: &AppHandle) -> Result<Diagnostics, String> {
             .unwrap_or_else(|| "system".to_owned()),
         theme: theme_name(settings.general.theme).to_owned(),
         palette: palette_name(settings.general.palette).to_owned(),
-        window_mode: window_mode_name(settings.general.window_mode).to_owned(),
         log_dir: redact_home(app, &log_dir),
         log_size: directory_size(&log_dir),
         recent_logs: recent_warnings(&log_dir, 50),
@@ -165,12 +163,5 @@ fn palette_name(palette: Palette) -> &'static str {
         Palette::Ink => "Ink",
         Palette::Dusk => "Dusk",
         Palette::Clay => "Clay",
-    }
-}
-
-fn window_mode_name(mode: WindowMode) -> &'static str {
-    match mode {
-        WindowMode::Standard => "Standard",
-        WindowMode::Compact => "Compact",
     }
 }

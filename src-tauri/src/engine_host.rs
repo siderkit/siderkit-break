@@ -178,9 +178,6 @@ pub fn update_settings(app: &AppHandle, settings: Settings) -> Result<Settings, 
     }
     *lock_settings(&state)? = settings.clone();
     shell::apply_settings(app, &settings)?;
-    if previous.general.window_mode != settings.general.window_mode {
-        shell::apply_window_mode(app, settings.general.window_mode)?;
-    }
     apply_autostart(app, settings.general.launch_at_login)?;
     if !settings.notifications.enabled {
         clear_notice(app, &state)?;
@@ -188,6 +185,9 @@ pub fn update_settings(app: &AppHandle, settings: Settings) -> Result<Settings, 
     if previous.general.locale != settings.general.locale {
         let _ = app.emit("locale:changed", settings.general.locale.clone());
     }
+    // Theme, palette, opacity, and size changes must reach the overlay and
+    // break windows, which keep their own webview and settings store alive.
+    let _ = app.emit("settings:changed", settings.clone());
     if let Ok(snapshot) = get_state(app) {
         tray::update(app, &snapshot);
         shell::sync_windows(app, &snapshot, false);

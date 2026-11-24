@@ -17,7 +17,7 @@ Ein ruhiger, lokal arbeitender Fokus-Timer für Windows, macOS und Linux. Er hä
 - **Ein Rhythmus, der passt.** Fokus-, kurze und lange Pausenzyklen mit Pause, Fortsetzen, Überspringen und Zurücksetzen.
 - **Bleibt aus dem Weg.** Ein kleiner, immer sichtbarer Countdown, der Klicks durchlässt, bis du darauf zeigst.
 - **Erinnerungen mit Aktion.** Karten in der App an jeder Phasengrenze, mit Aufschieben, Überspringen und einem eingebauten Ton.
-- **Deine Daten bleiben lokal.** Lokaler Sitzungsverlauf, Tabellenkalkulations-Export, 30 Sprachen, Designs und globale Tastenkürzel.
+- **Deine Daten bleiben lokal.** Lokaler Sitzungsverlauf, Tabellenkalkulations-Export, 40 Sprachen, Designs und globale Tastenkürzel.
 
 ## Aus dem Quellcode bauen
 

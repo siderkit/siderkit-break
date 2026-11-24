@@ -2,9 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::timer::TimerConfig;
 
-pub const SUPPORTED_LOCALES: [&str; 30] = [
-    "en", "zh-CN", "zh-TW", "hi", "es", "fr", "pt", "ar", "bn", "id", "ru", "ur", "de", "ja", "sw",
-    "mr", "te", "tr", "ta", "vi", "ko", "fa", "fil", "th", "it", "ms", "pl", "uk", "nl", "ro",
+pub const SUPPORTED_LOCALES: [&str; 40] = [
+    "en", "zh-CN", "zh-TW", "hi", "es", "fr", "pt", "ar", "bn", "id", "jv", "ru", "ur", "pa", "de",
+    "ja", "ha", "yo", "sw", "mr", "te", "tr", "ta", "gu", "kn", "ml", "vi", "ko", "fa", "fil",
+    "th", "my", "am", "ne", "it", "ms", "pl", "uk", "nl", "ro",
 ];
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -30,14 +31,6 @@ pub enum Palette {
     Ink,
     Dusk,
     Clay,
-}
-
-/// Main-window shape. Compact keeps the timer visible in a 320x200 window.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum WindowMode {
-    #[default]
-    Standard,
-    Compact,
 }
 
 /// Floating-window size tiers; the text scales with the container.
@@ -138,7 +131,6 @@ pub struct GeneralSettings {
     pub start_minimized: bool,
     pub theme: Theme,
     pub palette: Palette,
-    pub window_mode: WindowMode,
     pub reduce_motion: bool,
     /// `None` follows the operating system.
     pub locale: Option<String>,
@@ -151,7 +143,6 @@ impl Default for GeneralSettings {
             start_minimized: false,
             theme: Theme::System,
             palette: Palette::Forest,
-            window_mode: WindowMode::Standard,
             reduce_motion: false,
             locale: None,
         }
@@ -289,7 +280,6 @@ mod tests {
         assert!(settings.general.launch_at_login);
         assert_eq!(settings.general.palette, Palette::Forest);
         assert_eq!(settings.general.locale, None);
-        assert_eq!(settings.general.window_mode, WindowMode::Standard);
         assert!(!settings.general.reduce_motion);
         assert!(settings.notifications.enabled);
         assert_eq!(settings.notifications.preset, SoundPreset::Chime);

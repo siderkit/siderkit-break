@@ -1,9 +1,9 @@
 import './app.css';
 import { mount } from 'svelte';
 
-import MainApp from './lib/MainApp.svelte';
-import { prepareWindow } from './lib/bootstrap';
-import { ensureWebviewSupported } from './lib/compat';
+import MainApp from './lib/app/MainApp.svelte';
+import { prepareWindow } from './lib/app/bootstrap';
+import { ensureWebviewSupported } from './lib/utils/compat.util';
 
 await prepareWindow('main');
 

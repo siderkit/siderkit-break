@@ -42,9 +42,6 @@
         <i class="l-palette-grid__tone l-palette-grid__tone--accent"></i>
       </span>
       <span class="l-palette-grid__name">{option.label}</span>
-      {#if option.value === value}
-        <span class="l-palette-grid__check" aria-hidden="true">✓</span>
-      {/if}
     </button>
   {/each}
 </div>
@@ -53,7 +50,16 @@
   .l-palette-grid {
     display: grid;
     grid-template-columns: repeat(var(--sk-settings-swatch-columns), minmax(0, 1fr));
-    gap: var(--sk-space-xs);
+    gap: var(--sk-space-sm);
+    margin-block-start: var(--sk-space-3xs);
+  }
+
+  /* The shell can grow to 768 px; four swatches per row keep the cards close
+     to their designed 96×64 shape instead of stretching three wide bands. */
+  @media (min-width: 639px) {
+    .l-palette-grid {
+      grid-template-columns: repeat(var(--sk-settings-swatch-columns-wide), minmax(0, 1fr));
+    }
   }
 
   .l-palette-grid__swatch {
@@ -64,21 +70,24 @@
     padding: 0;
     overflow: hidden;
     border: var(--sk-edge) solid hsl(var(--sk-color-border));
-    border-radius: var(--sk-radius-sm);
-    background: hsl(var(--sk-color-bg-raised));
-    text-align: center;
+    border-radius: var(--sk-radius-card);
+    background: hsl(var(--sk-color-bg-surface) / 0.8);
+    text-align: start;
     transition:
       border-color var(--sk-duration-base) var(--sk-ease-standard),
-      box-shadow var(--sk-duration-base) var(--sk-ease-standard);
+      box-shadow var(--sk-duration-base) var(--sk-ease-standard),
+      transform var(--sk-duration-base) var(--sk-ease-standard);
   }
 
   .l-palette-grid__swatch:hover {
-    border-color: hsl(var(--sk-color-border-strong));
+    border-color: hsl(var(--sk-color-brand) / 0.45);
+    transform: translateY(calc(-1 * var(--sk-space-3xs)));
+    box-shadow: var(--sk-shadow-swatch);
   }
 
   .l-palette-grid__swatch.is-on {
     border-color: hsl(var(--sk-color-brand));
-    box-shadow: inset 0 0 0 var(--sk-edge) hsl(var(--sk-color-brand));
+    box-shadow: 0 0 0 var(--sk-space-3xs) hsl(var(--sk-color-brand) / 0.35);
   }
 
   .l-palette-grid__band {
@@ -103,32 +112,13 @@
   }
 
   .l-palette-grid__name {
-    padding: var(--sk-space-2xs) var(--sk-space-xs);
+    padding: var(--sk-space-2xs) var(--sk-space-xs) var(--sk-space-xs);
     overflow: hidden;
-    color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
+    color: hsl(var(--sk-color-text));
+    font-size: var(--sk-text-3xs);
     line-height: var(--sk-leading-tight);
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .l-palette-grid__swatch.is-on .l-palette-grid__name {
-    color: hsl(var(--sk-color-text));
-    font-weight: var(--sk-weight-semibold);
-  }
-
-  .l-palette-grid__check {
-    position: absolute;
-    inset-block-start: var(--sk-space-2xs);
-    inset-inline-end: var(--sk-space-2xs);
-    display: grid;
-    place-items: center;
-    inline-size: var(--sk-space-lg);
-    block-size: var(--sk-space-lg);
-    border-radius: var(--sk-radius-full);
-    color: hsl(var(--sk-color-on-brand));
-    background: hsl(var(--sk-color-brand));
-    font-size: var(--sk-text-xs);
   }
 
   .l-palette-grid__swatch[data-palette='Forest'] {

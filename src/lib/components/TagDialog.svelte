@@ -3,7 +3,8 @@
 
   import { m } from '../../paraglide/messages.js';
   import { isTauri, setSessionTag } from '../ipc/client';
-  import { cleanTag } from '../tag';
+  import { cleanTag } from '../utils/tag.util';
+  import ActionBar from '../ui/ActionBar.svelte';
   import Button from '../ui/Button.svelte';
   import TagEditor from './TagEditor.svelte';
 
@@ -91,23 +92,16 @@
       <p class="l-tag-dialog__error" role="alert">{error}</p>
     {/if}
 
-    <div class="l-tag-dialog__actions">
-      <div class="l-tag-dialog__left">
-        {#if initial}
-          <Button variant="Ghost" size="Sm" disabled={saving} onclick={() => void remove()}>
-            {m['tags.remove']()}
-          </Button>
-        {/if}
-      </div>
-      <div class="l-tag-dialog__right">
-        <Button variant="Ghost" size="Sm" disabled={saving} onclick={() => dialog?.close()}>
-          {m['common.action.cancel']()}
+    <ActionBar onclose={() => dialog?.close()} closeDisabled={saving}>
+      <Button variant="Primary" size="Sm" disabled={saving} onclick={() => void save()}>
+        {m['tags.save']()}
+      </Button>
+      {#if initial}
+        <Button variant="Danger" size="Sm" disabled={saving} onclick={() => void remove()}>
+          {m['tags.remove']()}
         </Button>
-        <Button variant="Primary" size="Sm" disabled={saving} onclick={() => void save()}>
-          {m['tags.save']()}
-        </Button>
-      </div>
-    </div>
+      {/if}
+    </ActionBar>
   </div>
 </dialog>
 
@@ -148,21 +142,5 @@
     margin: 0;
     color: hsl(var(--sk-color-alert));
     font-size: var(--sk-text-xs);
-  }
-
-  .l-tag-dialog__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sk-space-sm);
-    margin-block-start: var(--sk-space-xs);
-  }
-
-  .l-tag-dialog__left,
-  .l-tag-dialog__right {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sk-space-sm);
   }
 </style>

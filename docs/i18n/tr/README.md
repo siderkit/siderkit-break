@@ -17,7 +17,7 @@ Windows, macOS ve Linux için sakin, yerel öncelikli bir odak zamanlayıcısı.
 - **Size uyan ritim.** Odak, kısa mola ve uzun mola döngüleri; duraklat, devam et, atla ve sıfırla ile.
 - **Yolunuza çıkmaz.** Her zaman üstte kalan küçük bir geri sayım; işaret edene kadar tıklamaları geçirir.
 - **Eyleme dönüşen hatırlatmalar.** Her aşama sonunda uygulama içi kartlar; ertele, atla ve yerleşik ses.
-- **Verileriniz sizde kalır.** Yerel oturum geçmişi, elektronik tablo dışa aktarımı, 30 dil, temalar ve genel kısayollar.
+- **Verileriniz sizde kalır.** Yerel oturum geçmişi, elektronik tablo dışa aktarımı, 40 dil, temalar ve genel kısayollar.
 
 ## Kaynaktan derle
 

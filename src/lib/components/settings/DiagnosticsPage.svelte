@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from 'svelte';
 
   import { m } from '../../../paraglide/messages.js';
-  import { diagnosticsText, formatBytes } from '../../diagnostics';
+  import { diagnosticsText, formatBytes } from '../../utils/diagnostics.util';
   import { clearLogs, getDiagnostics, isTauri, openLogDir, resetMetricsId } from '../../ipc/client';
   import type { Diagnostics } from '../../ipc/types';
   import ConfirmDialog from '../../ui/ConfirmDialog.svelte';
@@ -107,13 +107,15 @@
     label={m['settings.diagnostics.openLogs']()}
     value={data ? formatBytes(data.logSize) : ''}
     chevron
+    divided
     onclick={openLogs}
   />
-  <SettingsRow label={m['settings.diagnostics.clearLogs']()} chevron onclick={openClear} />
+  <SettingsRow label={m['settings.diagnostics.clearLogs']()} chevron divided onclick={openClear} />
   <SettingsRow
     label={m['update.settings.resetId']()}
     value={idReset ? m['settings.diagnostics.idReset']() : ''}
     chevron
+    divided
     onclick={() => void resetIdentity()}
   />
 
@@ -139,7 +141,6 @@
   .l-diagnostics-page {
     display: flex;
     flex-direction: column;
-    padding-block-start: var(--sk-space-sm);
   }
 
   .l-diagnostics-page__error {
@@ -149,7 +150,7 @@
   }
 
   .l-diagnostics-page__caption {
-    margin: var(--sk-space-md) var(--sk-space-sm) 0;
+    margin: var(--sk-space-lg) 0 0;
     color: hsl(var(--sk-color-text-muted));
     font-size: var(--sk-text-xs);
     line-height: var(--sk-leading-normal);

@@ -17,7 +17,7 @@ Un cronometru de concentrare calm, cu date locale, pentru Windows, macOS și Lin
 - **Un ritm potrivit.** Cicluri de concentrare, pauză scurtă și pauză lungă, cu pauză, reluare, sărire și resetare.
 - **Nu te încurcă.** Un mic numărător invers mereu deasupra, care lasă clicurile să treacă până îl indici.
 - **Reamintiri acționabile.** Carduri în aplicație la fiecare sfârșit de etapă, cu amânare, sărire și un sunet integrat.
-- **Datele rămân la tine.** Istoric local al sesiunilor, export în foaie de calcul, 30 de limbi, teme și scurtături globale.
+- **Datele rămân la tine.** Istoric local al sesiunilor, export în foaie de calcul, 40 de limbi, teme și scurtături globale.
 
 ## Compilează din surse
 

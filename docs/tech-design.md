@@ -296,8 +296,8 @@ timer.autoStartBreaks
 timer.autoStartFocus
 overlay.enabled
 overlay.mode            ghost | interactive
-overlay.size            pill | compact
-overlay.opacity         55-90
+overlay.size            S | M | L
+overlay.opacity         40-100
 overlay.monitor
 overlay.offsetX
 overlay.offsetY

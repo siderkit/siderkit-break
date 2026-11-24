@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { filterLocales, localeMeta, systemLocale } from '../../locale';
   import { m } from '../../../paraglide/messages.js';
+  import { filterLocales, localeMeta, systemLocale } from '../../utils/locale.util';
+  import Button from '../../ui/Button.svelte';
 
   let {
     value,
@@ -56,9 +57,9 @@
     <h2 class="l-language-sheet__title" id="language-sheet-title">
       {m['settings.general.language']()}
     </h2>
-    <button class="l-language-sheet__done" type="button" onclick={onclose}>
+    <Button variant="Secondary" size="Sm" onclick={onclose}>
       {m['common.action.done']()}
-    </button>
+    </Button>
   </header>
 
   <div class="l-language-sheet__search">
@@ -79,8 +80,8 @@
       {#if systemMatches}
         <button
           class="l-language-sheet__row"
-          class:is-on={value === null}
           type="button"
+          aria-pressed={value === null}
           onclick={() => pick(null)}
         >
           <span class="l-language-sheet__native">{m['settings.general.languageSystem']()}</span>
@@ -93,8 +94,8 @@
       {#each common as locale (locale.code)}
         <button
           class="l-language-sheet__row"
-          class:is-on={value === locale.code}
           type="button"
+          aria-pressed={value === locale.code}
           onclick={() => pick(locale.code)}
         >
           <span class="l-language-sheet__native">{locale.native}</span>
@@ -111,8 +112,8 @@
       {#each rest as locale (locale.code)}
         <button
           class="l-language-sheet__row"
-          class:is-on={value === locale.code}
           type="button"
+          aria-pressed={value === locale.code}
           onclick={() => pick(locale.code)}
         >
           <span class="l-language-sheet__native">{locale.native}</span>
@@ -144,51 +145,50 @@
 
   .l-language-sheet__head {
     display: flex;
+    flex: 0 0 var(--sk-language-head-height);
     align-items: center;
-    justify-content: space-between;
-    gap: var(--sk-space-md);
-    min-block-size: var(--sk-settings-page-header);
+    gap: var(--sk-space-sm);
     padding-inline: var(--sk-space-lg);
+    border-block-end: var(--sk-edge) solid hsl(var(--sk-color-border));
   }
 
   .l-language-sheet__title {
+    flex: 1 1 auto;
     margin: 0;
-    font-size: var(--sk-text-xl);
-    font-weight: var(--sk-weight-semibold);
-    letter-spacing: var(--sk-tracking-tight);
-  }
-
-  .l-language-sheet__done {
-    padding: var(--sk-space-2xs) 0;
-    border: 0;
-    color: hsl(var(--sk-color-brand));
-    background: transparent;
-    font-size: var(--sk-text-xs);
-    font-weight: var(--sk-weight-semibold);
+    overflow: hidden;
+    font-size: var(--sk-text-title);
+    font-weight: var(--sk-weight-strong);
+    letter-spacing: var(--sk-tracking-title);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .l-language-sheet__search {
     display: flex;
+    flex: 0 0 var(--sk-language-search-height);
     align-items: center;
-    gap: var(--sk-space-xs);
-    margin: 0 var(--sk-space-lg) var(--sk-space-sm);
-    padding-inline: var(--sk-space-sm);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border-strong));
-    border-radius: var(--sk-radius-sm);
-    background: hsl(var(--sk-color-bg-raised));
+    gap: var(--sk-space-sm);
+    margin: var(--sk-space-md) var(--sk-space-lg) var(--sk-space-2xs);
+    padding-inline: calc(var(--sk-space-sm) + var(--sk-space-3xs));
+    border: var(--sk-edge) solid hsl(var(--sk-color-border));
+    border-radius: var(--sk-radius-control);
+    color: hsl(var(--sk-color-text-muted));
+    font-size: var(--sk-text-value);
   }
 
   .l-language-sheet__search-icon {
     flex: 0 0 auto;
-    color: hsl(var(--sk-color-text-muted));
   }
 
   .l-language-sheet__input {
     inline-size: 100%;
-    min-block-size: var(--sk-settings-action-height);
+    block-size: 100%;
+    min-block-size: 0;
+    padding: 0;
     border: 0;
-    background: transparent;
     color: hsl(var(--sk-color-text));
+    background: transparent;
+    font-size: var(--sk-text-value);
   }
 
   .l-language-sheet__input:focus-visible {
@@ -204,24 +204,23 @@
   }
 
   .l-language-sheet__group {
-    margin: var(--sk-space-md) 0 var(--sk-space-2xs);
+    margin: var(--sk-language-group-gap) 0;
+    padding: var(--sk-language-group-pad);
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
-    font-weight: var(--sk-weight-semibold);
+    font-size: var(--sk-text-2xs);
+    font-weight: var(--sk-weight-strong);
     letter-spacing: var(--sk-tracking-wide);
     text-transform: uppercase;
   }
 
   .l-language-sheet__row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, auto) auto;
+    display: flex;
     align-items: center;
     gap: var(--sk-space-sm);
     inline-size: 100%;
-    min-block-size: var(--sk-language-row-height);
-    padding-inline: var(--sk-space-sm);
+    block-size: var(--sk-language-row-height);
+    padding: 0 var(--sk-space-lg);
     border: 0;
-    border-block-end: var(--sk-edge) solid hsl(var(--sk-color-border));
     color: hsl(var(--sk-color-text));
     background: transparent;
     text-align: start;
@@ -230,10 +229,6 @@
 
   .l-language-sheet__row:hover {
     background: hsl(var(--sk-color-brand-soft) / 0.45);
-  }
-
-  .l-language-sheet__row.is-on {
-    background: hsl(var(--sk-color-brand-soft) / 0.7);
   }
 
   .l-language-sheet__native {
@@ -248,14 +243,15 @@
     min-inline-size: 0;
     overflow: hidden;
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
+    font-size: var(--sk-text-2xs);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .l-language-sheet__check {
+    margin-inline-start: auto;
     color: hsl(var(--sk-color-brand));
-    font-weight: var(--sk-weight-semibold);
+    font-size: var(--sk-text-sm);
   }
 
   .l-language-sheet__empty {

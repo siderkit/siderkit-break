@@ -28,15 +28,10 @@
   <div class="l-export-dialog__card">
     <header class="l-export-dialog__header">
       <h2 class="l-export-dialog__title" id="export-title">{m['common.action.export']()}</h2>
-      <div class="l-export-dialog__actions">
-        <button class="l-export-dialog__link" type="button" onclick={() => dialog?.close()}>
-          {m['history.back']()}
-        </button>
-      </div>
     </header>
 
     <div class="l-export-dialog__body">
-      <HistoryExport />
+      <HistoryExport onclose={() => dialog?.close()} />
     </div>
   </div>
 </dialog>
@@ -84,28 +79,6 @@
     font-size: var(--sk-text-xl);
     font-weight: var(--sk-weight-semibold);
     letter-spacing: var(--sk-tracking-tight);
-  }
-
-  .l-export-dialog__actions {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: var(--sk-space-sm);
-  }
-
-  .l-export-dialog__link {
-    padding: var(--sk-space-3xs) 0;
-    border: 0;
-    color: hsl(var(--sk-color-brand));
-    background: transparent;
-    font-size: var(--sk-text-xs);
-    font-weight: var(--sk-weight-semibold);
-    text-decoration: underline;
-    text-underline-offset: var(--sk-space-3xs);
-  }
-
-  .l-export-dialog__link:hover {
-    color: hsl(var(--sk-color-brand-strong));
   }
 
   .l-export-dialog__body {

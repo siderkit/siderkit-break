@@ -1,7 +1,7 @@
 <script lang="ts">
   import { m } from '../../../paraglide/messages.js';
   import type { Settings } from '../../ipc/types';
-  import { languageValue } from '../../settings-summary';
+  import { languageValue } from '../../utils/settings-summary.util';
   import SettingsRow from './SettingsRow.svelte';
   import SettingsToggle from './SettingsToggle.svelte';
 
@@ -27,12 +27,14 @@
     title={m['settings.general.launchAtLogin']()}
     note={m['settings.general.launchAtLoginHint']()}
     checked={value.launchAtLogin}
+    divided
     onchange={(launchAtLogin) => onchange({ launchAtLogin })}
   />
   <SettingsToggle
     title={m['settings.general.startMinimized']()}
     note={m['settings.general.startMinimizedHint']()}
     checked={value.startMinimized}
+    divided
     onchange={(startMinimized) => onchange({ startMinimized })}
   />
 </div>
@@ -41,6 +43,5 @@
   .l-general-page {
     display: flex;
     flex-direction: column;
-    padding-block-start: var(--sk-space-sm);
   }
 </style>

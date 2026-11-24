@@ -17,7 +17,7 @@ Isang kalmado at lokal-first na focus timer para sa Windows, macOS, at Linux. Pi
 - **Ritmong bagay sa iyo.** Mga siklo ng focus, maikling pahinga, at mahabang pahinga na may pause, resume, skip, at reset.
 - **Hindi nakikialam.** Isang maliit na countdown na laging nasa ibabaw at pinapayagang dumaan ang mga click hanggang ituro mo ito.
 - **Mga reminder na may aksyon.** Mga card sa app sa dulo ng bawat yugto, may postpone, skip, at built-in na tunog.
-- **Sa iyo nananatili ang data.** Lokal na history ng session, spreadsheet export, 30 wika, tema, at global shortcuts.
+- **Sa iyo nananatili ang data.** Lokal na history ng session, spreadsheet export, 40 wika, tema, at global shortcuts.
 
 ## Mag-build mula sa source
 

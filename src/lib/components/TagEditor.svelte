@@ -158,17 +158,21 @@
   }
 
   .l-tag-editor__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-block-size: var(--sk-tag-chip-height);
-    padding-inline: var(--sk-space-xs);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border));
+    padding-inline: var(--sk-space-sm);
+    border: 0;
     border-radius: var(--sk-radius-full);
     color: hsl(var(--sk-color-text-muted));
-    background: transparent;
+    background: hsl(var(--sk-color-text) / 0.06);
     font-size: var(--sk-text-xs);
+    line-height: normal;
   }
 
   .l-tag-editor__chip:hover {
     color: hsl(var(--sk-color-text));
-    border-color: hsl(var(--sk-color-brand));
+    background: hsl(var(--sk-color-brand-soft));
   }
 </style>

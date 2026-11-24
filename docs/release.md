@@ -64,10 +64,10 @@ The 1.0.0 feature set is implemented and verified in source, but no 1.0.0 instal
 
 Source-level gates already pass:
 
-- `pnpm check:web`: CSS ownership, 183 tokens, ESLint, 65 unit tests, `svelte-check` with 0 errors and 0 warnings, dependency boundaries, duplicate scan, TODO scan, file size, download URLs.
+- `pnpm check:web`: CSS ownership, 253 tokens, ESLint, 65 unit tests, `svelte-check` with 0 errors and 0 warnings, dependency boundaries, duplicate scan, TODO scan, file size, download URLs.
 - `pnpm check:rust`: `cargo fmt --check`, `clippy -D warnings`, 100 tests.
-- `pnpm check:i18n`: no missing keys; all 30 catalogs match `en.json` at 350 keys.
-- Browser walkthrough at 360×560, 360×400, 320×400, and 320×200: main view has no scrollbars, compact mode fits, settings root and all seven detail pages render, Insights renders data and empty states, the finish card tag link expands and collapses, and the three floating-window size cards show real droplet previews.
+- `pnpm check:i18n`: no missing keys; all 40 catalogs match `en.json` at 343 keys.
+- Browser walkthrough at 360×560, 360×400, and 320×400: main view has no scrollbars, settings root and all seven detail pages render, Insights renders data and empty states, the finish card tag link expands and collapses, and the three floating-window size cards show real droplet previews.
 
 Not yet measured for 1.0.0: installer size, idle memory, cold start, and the on-VM matrix below. The rc.1 numbers stay in the records that follow until a 1.0.0 build replaces them.
 

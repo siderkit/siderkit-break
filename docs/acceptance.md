@@ -146,7 +146,7 @@ If the memory budget is missed, the team must either reduce the overlay to a nat
 
 ### A-16 Internationalization
 
-**P0.** English is the source locale and 29 translations keep the same message paths and placeholders. No user-facing string is hardcoded in a component. Arabic, Persian, and Urdu switch the document to RTL and mirror the layout. Dates and durations use the platform locale. Dates in the main summary and in history always include the year.
+**P0.** English is the source locale and 39 translations keep the same message paths and placeholders. No user-facing string is hardcoded in a component. Arabic, Persian, and Urdu switch the document to RTL and mirror the layout. Dates and durations use the platform locale. Dates in the main summary and in history always include the year.
 
 ### A-17 Platform matrix
 

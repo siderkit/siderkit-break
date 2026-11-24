@@ -2,7 +2,7 @@
   import { onDestroy } from 'svelte';
 
   import { m } from '../../paraglide/messages.js';
-  import { clampStep, stepValue } from './stepper';
+  import { clampStep, stepValue } from '../utils/stepper.util';
 
   let {
     label,
@@ -123,6 +123,12 @@
 
   .l-stepper.is-dense {
     padding-block: var(--sk-space-xs);
+  }
+
+  @media (max-height: 460px) {
+    .l-stepper.is-dense {
+      padding-block: 0;
+    }
   }
 
   .l-stepper__label {

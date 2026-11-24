@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { m } from '../../paraglide/messages.js';
-  import Button from '../ui/Button.svelte';
+  import ActionBar from './ActionBar.svelte';
+  import Button from './Button.svelte';
 
   let {
     title,
@@ -45,14 +45,11 @@
     {#if error}
       <p class="l-confirm-dialog__error" role="alert">{error}</p>
     {/if}
-    <div class="l-confirm-dialog__actions">
-      <Button variant="Ghost" size="Sm" disabled={busy} onclick={oncancel}>
-        {m['common.action.cancel']()}
-      </Button>
+    <ActionBar onclose={oncancel} closeDisabled={busy}>
       <Button variant={danger ? 'Danger' : 'Primary'} size="Sm" disabled={busy} onclick={onconfirm}>
         {confirmLabel}
       </Button>
-    </div>
+    </ActionBar>
   </div>
 </dialog>
 
@@ -100,13 +97,5 @@
     margin: 0;
     color: hsl(var(--sk-color-alert));
     font-size: var(--sk-text-xs);
-  }
-
-  .l-confirm-dialog__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: var(--sk-space-sm);
-    margin-block-start: var(--sk-space-xs);
   }
 </style>

@@ -34,6 +34,7 @@
   <SettingsField
     label={m['settings.timer.shortBreakMinutes']()}
     value={minutes(value.shortBreakMinutes)}
+    divided
   >
     <SettingsChips
       label={m['settings.timer.shortBreakMinutes']()}
@@ -46,6 +47,7 @@
   <SettingsField
     label={m['settings.timer.longBreakMinutes']()}
     value={minutes(value.longBreakMinutes)}
+    divided
   >
     <SettingsChips
       label={m['settings.timer.longBreakMinutes']()}
@@ -55,7 +57,11 @@
     />
   </SettingsField>
 
-  <SettingsField label={m['settings.timer.longBreakEvery']()} value={rounds(value.longBreakEvery)}>
+  <SettingsField
+    label={m['settings.timer.longBreakEvery']()}
+    value={rounds(value.longBreakEvery)}
+    divided
+  >
     <SettingsChips
       label={m['settings.timer.longBreakEvery']()}
       options={intervalPresets}
@@ -67,6 +73,7 @@
   <SettingsToggle
     title={m['settings.timer.autoStartBreaks']()}
     checked={value.autoStartBreaks}
+    divided
     onchange={(autoStartBreaks) => onchange({ autoStartBreaks })}
   />
   <SettingsToggle
@@ -81,6 +88,5 @@
   .l-rhythm-page {
     display: flex;
     flex-direction: column;
-    padding-block-start: var(--sk-space-sm);
   }
 </style>

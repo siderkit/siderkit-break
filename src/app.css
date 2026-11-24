@@ -56,8 +56,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Press feedback is a state layer, never a size change: scaling a control
+   makes dense lists jitter and reads as a zoom, not a press. */
 button:not(:disabled):active {
-  transform: scale(0.97);
+  filter: brightness(0.94);
 }
 
 button:focus-visible,

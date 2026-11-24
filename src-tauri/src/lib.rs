@@ -72,6 +72,15 @@ pub fn run() {
                 // The break card and overlay are sized and placed by Rust, so a
                 // restored size would fight the layout and can clip the card.
                 .with_denylist(&["break", "overlay", "locate"])
+                // Startup reveals the main window only after the restored
+                // position is clamped, so the plugin must not show it first.
+                .with_state_flags(
+                    tauri_plugin_window_state::StateFlags::SIZE
+                        | tauri_plugin_window_state::StateFlags::POSITION
+                        | tauri_plugin_window_state::StateFlags::MAXIMIZED
+                        | tauri_plugin_window_state::StateFlags::DECORATIONS
+                        | tauri_plugin_window_state::StateFlags::FULLSCREEN,
+                )
                 .build(),
         )
         .on_menu_event(|app, event| {

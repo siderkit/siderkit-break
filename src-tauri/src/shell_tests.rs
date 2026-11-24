@@ -2,7 +2,11 @@ use super::*;
 use crate::timer::Phase;
 
 #[test]
-fn the_break_card_height_stays_inside_the_usable_range() {
+fn the_break_card_size_stays_inside_the_usable_range() {
+    assert_eq!(clamp_break_width(344.0), 344.0);
+    assert_eq!(clamp_break_width(344.2), 345.0);
+    assert_eq!(clamp_break_width(280.0), 320.0);
+    assert_eq!(clamp_break_width(900.0), 560.0);
     assert_eq!(clamp_break_height(187.0), 187.0);
     assert_eq!(clamp_break_height(187.4), 188.0);
     assert_eq!(clamp_break_height(40.0), 96.0);

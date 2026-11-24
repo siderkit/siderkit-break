@@ -17,7 +17,7 @@ Spokojny, lokalny timer skupienia dla Windows, macOS i Linux. Utrzymuje rytm, ni
 - **Rytm dopasowany do Ciebie.** Cykle skupienia, krótkiej i długiej przerwy z pauzą, wznowieniem, pominięciem i resetem.
 - **Nie przeszkadza.** Mały licznik zawsze na wierzchu, który przepuszcza kliknięcia, dopóki na niego nie wskażesz.
 - **Przypomnienia z działaniem.** Karty w aplikacji na końcu każdego etapu, z odroczeniem, pominięciem i wbudowanym dźwiękiem.
-- **Dane zostają u Ciebie.** Lokalna historia sesji, eksport do arkusza, 30 języków, motywy i globalne skróty.
+- **Dane zostają u Ciebie.** Lokalna historia sesji, eksport do arkusza, 40 języków, motywy i globalne skróty.
 
 ## Zbuduj ze źródeł
 

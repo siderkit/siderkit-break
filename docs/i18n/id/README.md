@@ -17,7 +17,7 @@ Pengingat fokus yang tenang dan mengutamakan data lokal untuk Windows, macOS, da
 - **Ritme yang pas.** Siklus fokus, istirahat singkat, dan istirahat panjang dengan jeda, lanjutkan, lewati, dan atur ulang.
 - **Tidak menghalangi.** Hitungan mundur kecil yang selalu di atas dan meneruskan klik sampai Anda mengarahkannya.
 - **Pengingat yang bisa ditindaklanjuti.** Kartu di dalam aplikasi di setiap akhir fase, dengan tunda, lewati, dan suara bawaan.
-- **Data tetap milik Anda.** Riwayat sesi lokal, ekspor spreadsheet, 30 bahasa, tema, dan pintasan global.
+- **Data tetap milik Anda.** Riwayat sesi lokal, ekspor spreadsheet, 40 bahasa, tema, dan pintasan global.
 
 ## Bangun dari sumber
 

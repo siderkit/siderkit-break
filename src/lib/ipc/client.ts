@@ -15,7 +15,7 @@ import type {
   TodaySummary,
   UpdateStatus,
 } from './types';
-import { PROJECT_URL } from '../project';
+import { PROJECT_URL } from '../utils/project.util';
 
 /** True inside a Tauri webview; false in a plain browser design preview. */
 export const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
@@ -34,7 +34,8 @@ export function openProjectPage(): Promise<void> {
 /** Opens the privacy policy in the default browser. */
 export function openPrivacyPage(): Promise<void> {
   if (!isTauri) {
-    window.open(`${PROJECT_URL}/blob/main/PRIVACY.md`, '_blank', 'noopener,noreferrer');
+    // `blob/HEAD` always resolves to the default branch.
+    window.open(`${PROJECT_URL}/blob/HEAD/PRIVACY.md`, '_blank', 'noopener,noreferrer');
     return Promise.resolve();
   }
   return invoke<void>('open_privacy_page');
@@ -307,9 +308,9 @@ export function onTimerNotice(handler: (notice: TimerNotice | null) => void): Pr
   return listen<TimerNotice | null>('timer:notice', (event) => handler(event.payload));
 }
 
-/** Resizes the break card window to the height its content needs. */
-export function fitBreakCard(height: number): Promise<void> {
-  return invoke<void>('fit_break_card', { height });
+/** Resizes the break card window to the space its content needs. */
+export function fitBreakCard(width: number, height: number): Promise<void> {
+  return invoke<void>('fit_break_card', { width, height });
 }
 
 /** Resizes the countdown window to the width its label needs. */
@@ -345,6 +346,11 @@ export function onTimerMissed(handler: () => void): Promise<UnlistenFn> {
 /** Fires when the persisted locale changes in another window. */
 export function onLocaleChanged(handler: () => void): Promise<UnlistenFn> {
   return listen<string | null>('locale:changed', handler);
+}
+
+/** Fires after any window saves settings so every open window repaints. */
+export function onSettingsChanged(handler: (settings: Settings) => void): Promise<UnlistenFn> {
+  return listen<Settings>('settings:changed', (event) => handler(event.payload));
 }
 
 /** Fires when a tray or overlay menu asks the main window to change views. */

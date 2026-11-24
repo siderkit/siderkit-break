@@ -15,7 +15,6 @@ export type Palette =
   | 'Ink'
   | 'Dusk'
   | 'Clay';
-export type WindowMode = 'Standard' | 'Compact';
 export type OverlaySize = 'S' | 'M' | 'L';
 export type SoundPreset = 'Chime' | 'Soft' | 'Bell' | 'Custom' | 'Off';
 export type SessionKind = 'Focus' | 'ShortBreak' | 'LongBreak' | 'Countdown';
@@ -71,7 +70,6 @@ export interface GeneralSettings {
   startMinimized: boolean;
   theme: Theme;
   palette: Palette;
-  windowMode: WindowMode;
   reduceMotion: boolean;
   locale: string | null;
 }
@@ -203,7 +201,6 @@ export interface Diagnostics {
   locale: string;
   theme: string;
   palette: string;
-  windowMode: string;
   logDir: string;
   logSize: number;
   recentLogs: string[];

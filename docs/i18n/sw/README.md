@@ -17,7 +17,7 @@ Kipima muda cha umakini tulivu kinachotanguliza data ya ndani kwa Windows, macOS
 - **Mdundo unaokufaa.** Mizunguko ya umakini, mapumziko mafupi na marefu, pamoja na kusitisha, kuendelea, kuruka na kuweka upya.
 - **Hakiingilii.** Kipima muda kidogo kinachobaki juu na kuruhusu mibofyo kupita hadi ukielekeze.
 - **Vionyo vinavyotekelezeka.** Kadi ndani ya programu mwisho wa kila awamu, pamoja na kuahirisha, kuruka na sauti iliyojengwa ndani.
-- **Data yako inabaki kwako.** Historia ya vipindi vya ndani, hamisha lahajedwali, lugha 30, mandhari na njia za mkato za kimataifa.
+- **Data yako inabaki kwako.** Historia ya vipindi vya ndani, hamisha lahajedwali, lugha 40, mandhari na njia za mkato za kimataifa.
 
 ## Jenga kutoka kwa chanzo
 

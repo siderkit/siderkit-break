@@ -2,10 +2,14 @@
   import { onMount } from 'svelte';
 
   import { m } from '../../paraglide/messages.js';
-  import { buildHistoryLayout, spacerHeights, visibleItemRange } from '../history-page';
-  import { HistoryListState } from '../history-list.svelte';
+  import {
+    buildHistoryLayout,
+    spacerHeights,
+    visibleItemRange,
+  } from '../utils/history/history-page.util';
+  import { HistoryListState } from '../state/history-list.store.svelte.ts';
   import type { HistorySession } from '../ipc/types';
-  import { currentLocale } from '../locale';
+  import { currentLocale } from '../utils/locale.util';
   import Button from '../ui/Button.svelte';
   import HistoryRow from './HistoryRow.svelte';
   import TagDialog from './TagDialog.svelte';

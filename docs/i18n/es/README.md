@@ -17,7 +17,7 @@ Un temporizador de concentración tranquilo y local para Windows, macOS y Linux.
 - **Un ritmo a tu medida.** Ciclos de concentración, descanso corto y descanso largo con pausa, reanudación, salto y reinicio.
 - **Sin estorbar.** Una pequeña cuenta atrás siempre visible que deja pasar los clics hasta que la señalas.
 - **Recordatorios accionables.** Tarjetas dentro de la app al final de cada fase, con posponer, saltar y un aviso sonoro integrado.
-- **Tus datos se quedan contigo.** Historial local, exportación a hoja de cálculo, 30 idiomas, temas y atajos globales.
+- **Tus datos se quedan contigo.** Historial local, exportación a hoja de cálculo, 40 idiomas, temas y atajos globales.
 
 ## Compilar desde el código fuente
 

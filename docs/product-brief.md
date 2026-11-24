@@ -60,7 +60,7 @@ The 1.0 product is not for teams, managers, or people who need cross-device sync
 - A break card with postpone, skip, and hide, plus focus-complete and break-complete cards.
 - Defaults follow the classic 25/5/15 focus rhythm: 25-minute focus, 5-minute break, and a 15-minute long break every 4 rounds. Every length stays editable, and Settings → Restore defaults returns to this baseline.
 - Local SQLite persistence for every focus, break, and countdown session.
-- 30 UI languages with system-language detection and true RTL; light, dark, and system themes; eight color styles.
+- 40 UI languages with system-language detection and true RTL; light, dark, and system themes; twelve color styles that repaint the whole window.
 - Global shortcuts for start/pause, skip, and overlay toggle.
 - Windows auto-update with signed NSIS installers; macOS and Linux get manual downloads.
 - Optional anonymous install and update counts, off-switch and reset included. No session data leaves the device.

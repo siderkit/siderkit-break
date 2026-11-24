@@ -17,7 +17,7 @@ Pemasa fokus yang tenang dan mengutamakan data setempat untuk Windows, macOS dan
 - **Rentak yang sesuai.** Kitaran fokus, rehat pendek dan rehat panjang dengan jeda, sambung, langkau dan set semula.
 - **Tidak menghalang.** Kira detik kecil yang sentiasa di atas dan melalukan klik sehingga anda menunjuk ke arahnya.
 - **Peringatan yang boleh diambil tindakan.** Kad dalam aplikasi pada setiap hujung fasa, dengan tangguh, langkau dan bunyi terbina dalam.
-- **Data kekal milik anda.** Sejarah sesi setempat, eksport hamparan, 30 bahasa, tema dan pintasan global.
+- **Data kekal milik anda.** Sejarah sesi setempat, eksport hamparan, 40 bahasa, tema dan pintasan global.
 
 ## Bina daripada sumber
 

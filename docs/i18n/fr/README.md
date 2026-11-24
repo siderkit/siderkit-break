@@ -17,7 +17,7 @@ Un minuteur de concentration calme et local pour Windows, macOS et Linux. Il gar
 - **Un rythme qui vous ressemble.** Cycles de concentration, pause courte et pause longue, avec pause, reprise, passage et réinitialisation.
 - **Discret.** Un petit compte à rebours toujours au premier plan, qui laisse passer les clics tant que vous ne le pointez pas.
 - **Des rappels actionnables.** Des cartes dans l’application à chaque fin de phase, avec report, passage et une sonnerie intégrée.
-- **Vos données restent locales.** Historique local, export tableur, 30 langues, thèmes et raccourcis globaux.
+- **Vos données restent locales.** Historique local, export tableur, 40 langues, thèmes et raccourcis globaux.
 
 ## Compiler depuis les sources
 

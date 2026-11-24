@@ -23,64 +23,73 @@
   --sk-color-countdown-soft: 205 45% 91%;
   --sk-color-warning: 25 60% 44%;
   --sk-color-alert: 0 72% 51%;
-  /* Three-band palette previews: page, surface, accent. */
-  --sk-color-palette-forest-bg: 120 10% 94%;
-  --sk-color-palette-forest-surface: 138 15% 87%;
-  --sk-color-palette-forest-accent: 152 39% 30%;
-  --sk-color-palette-ocean-bg: 203 31% 95%;
-  --sk-color-palette-ocean-surface: 203 36% 88%;
-  --sk-color-palette-ocean-accent: 202 44% 33%;
-  --sk-color-palette-ember-bg: 30 40% 94%;
-  --sk-color-palette-ember-surface: 30 45% 85%;
-  --sk-color-palette-ember-accent: 19 55% 41%;
-  --sk-color-palette-sand-bg: 45 38% 94%;
-  --sk-color-palette-sand-surface: 44 35% 85%;
-  --sk-color-palette-sand-accent: 41 35% 40%;
-  --sk-color-palette-slate-bg: 210 13% 94%;
-  --sk-color-palette-slate-surface: 210 15% 87%;
-  --sk-color-palette-slate-accent: 209 17% 35%;
-  --sk-color-palette-rose-bg: 352 33% 95%;
-  --sk-color-palette-rose-surface: 352 37% 88%;
-  --sk-color-palette-rose-accent: 351 33% 46%;
-  --sk-color-palette-moss-bg: 75 24% 93%;
-  --sk-color-palette-moss-surface: 74 27% 84%;
-  --sk-color-palette-moss-accent: 78 30% 32%;
-  --sk-color-palette-ink-bg: 210 12% 93%;
-  --sk-color-palette-ink-surface: 207 11% 85%;
-  --sk-color-palette-ink-accent: 205 12% 20%;
-  --sk-color-palette-dusk-bg: 257 26% 95%;
-  --sk-color-palette-dusk-surface: 259 26% 88%;
-  --sk-color-palette-dusk-accent: 253 18% 40%;
-  --sk-color-palette-clay-bg: 20 31% 94%;
-  --sk-color-palette-clay-surface: 20 32% 85%;
-  --sk-color-palette-clay-accent: 18 33% 41%;
-  --sk-color-palette-plum-bg: 285 31% 95%;
-  --sk-color-palette-plum-surface: 278 37% 88%;
-  --sk-color-palette-plum-accent: 275 37% 39%;
-  --sk-color-palette-aurora-bg: 164 35% 94%;
-  --sk-color-palette-aurora-surface: 161 32% 87%;
-  --sk-color-palette-aurora-accent: 168 59% 30%;
+  /* Three-band palette previews: page, surface, accent. Values are tuned to
+     read apart at 96×64, so choosing a palette is visible before it applies. */
+  --sk-color-palette-forest-bg: 120 18% 92%;
+  --sk-color-palette-forest-surface: 138 24% 83%;
+  --sk-color-palette-forest-accent: 150 58% 28%;
+  --sk-color-palette-ocean-bg: 203 40% 92%;
+  --sk-color-palette-ocean-surface: 203 45% 82%;
+  --sk-color-palette-ocean-accent: 205 78% 34%;
+  --sk-color-palette-ember-bg: 12 40% 92%;
+  --sk-color-palette-ember-surface: 12 44% 82%;
+  --sk-color-palette-ember-accent: 6 78% 42%;
+  --sk-color-palette-sand-bg: 43 46% 91%;
+  --sk-color-palette-sand-surface: 43 50% 81%;
+  --sk-color-palette-sand-accent: 42 85% 29%;
+  --sk-color-palette-slate-bg: 215 18% 92%;
+  --sk-color-palette-slate-surface: 216 22% 83%;
+  --sk-color-palette-slate-accent: 220 24% 31%;
+  --sk-color-palette-rose-bg: 338 34% 92%;
+  --sk-color-palette-rose-surface: 338 40% 83%;
+  --sk-color-palette-rose-accent: 332 70% 42%;
+  --sk-color-palette-moss-bg: 75 30% 91%;
+  --sk-color-palette-moss-surface: 75 34% 81%;
+  --sk-color-palette-moss-accent: 82 46% 27%;
+  --sk-color-palette-ink-bg: 210 10% 90%;
+  --sk-color-palette-ink-surface: 210 12% 80%;
+  --sk-color-palette-ink-accent: 210 18% 18%;
+  --sk-color-palette-dusk-bg: 258 30% 92%;
+  --sk-color-palette-dusk-surface: 258 34% 83%;
+  --sk-color-palette-dusk-accent: 258 58% 42%;
+  --sk-color-palette-clay-bg: 22 32% 91%;
+  --sk-color-palette-clay-surface: 22 36% 81%;
+  --sk-color-palette-clay-accent: 22 60% 37%;
+  --sk-color-palette-plum-bg: 285 32% 92%;
+  --sk-color-palette-plum-surface: 285 36% 83%;
+  --sk-color-palette-plum-accent: 285 64% 40%;
+  --sk-color-palette-aurora-bg: 170 32% 91%;
+  --sk-color-palette-aurora-surface: 170 36% 82%;
+  --sk-color-palette-aurora-accent: 180 70% 28%;
 
   /* ── Surfaces ───────────────────────────────────────────────── */
-  --sk-color-bg-app: 39 39% 93%;
-  --sk-color-bg-surface: 40 100% 97%;
-  --sk-color-bg-raised: 45 100% 99%;
+  /* Forest is the base; every palette repaints these three names below. */
+  --sk-color-bg-app: 120 18% 92%;
+  --sk-color-bg-surface: 110 32% 97%;
+  --sk-color-bg-raised: 100 38% 99%;
+  /* A soft halo anchored to the window top, not to a corner, so it still
+     sits behind the content when the window is wider than the column. */
   --sk-gradient-app:
-    radial-gradient(circle at 18% 8%, hsl(var(--sk-color-brand-soft) / 0.8), transparent 34%),
+    radial-gradient(
+      ellipse 78% 34% at 50% 0%,
+      hsl(var(--sk-color-brand-soft) / 0.9),
+      transparent 72%
+    ),
     hsl(var(--sk-color-bg-app));
 
   /* ── Text ───────────────────────────────────────────────────── */
-  --sk-color-text: 162 18% 14%;
-  --sk-color-text-muted: 150 6% 46%;
+  --sk-color-text: 210 12% 13%;
+  --sk-color-text-muted: 210 8% 45%;
 
   /* ── Lines ──────────────────────────────────────────────────── */
-  --sk-color-border: 162 18% 14% / 0.12;
-  --sk-color-border-strong: 162 18% 14% / 0.22;
-  --sk-color-track: 150 60% 30% / 0.12;
+  --sk-color-border: var(--sk-color-text) / 0.12;
+  --sk-color-border-strong: var(--sk-color-text) / 0.22;
+  --sk-color-track: var(--sk-color-brand) / 0.14;
+  --sk-color-toggle-track: var(--sk-color-text) / 0.18;
 
   /* ── Floating surfaces ──────────────────────────────────────── */
-  --sk-color-overlay-surface: 40 100% 97% / 0.4;
-  --sk-color-focus: 12 64% 59%;
+  --sk-color-overlay-surface: var(--sk-color-bg-surface) / 0.4;
+  --sk-color-focus: var(--sk-color-break);
 
   /* ── Spacing ────────────────────────────────────────────────── */
   --sk-space-3xs: 2px;
@@ -91,9 +100,16 @@
   --sk-space-lg: 16px;
   --sk-space-xl: 20px;
 
+  /* ── Layout ─────────────────────────────────────────────────── */
+  /* The shell window allows 320–768 px; the content stops here so a wide
+     window keeps a readable column instead of stretching the timer. */
+  --sk-content-w: 560px;
+
   /* ── Radius ─────────────────────────────────────────────────── */
   --sk-radius-xs: 4px;
   --sk-radius-sm: 8px;
+  --sk-radius-control: 10px;
+  --sk-radius-card: 11px;
   --sk-radius-md: 12px;
   --sk-radius-lg: 20px;
   --sk-radius-full: 9999px;
@@ -108,9 +124,16 @@
   --sk-text-md: 14px;
   --sk-text-lg: 16px;
   --sk-text-xl: 20px;
-  --sk-text-display: 44px;
-  --sk-text-display-compact: 34px;
+  /* Prototype 1.0.0 type ramp: 10.5 palette names, 11 section labels,
+     11.5 notes, 12.5 values, 15 titles. */
+  --sk-text-3xs: 10.5px;
+  --sk-text-2xs: 11px;
+  --sk-text-note: 11.5px;
+  --sk-text-value: 12.5px;
+  --sk-text-title: 15px;
+  --sk-text-display: 42px;
   --sk-text-display-tight: 28px;
+  --sk-text-action: 13.5px;
   --sk-text-overlay-s: 16px;
   --sk-text-overlay-m: 20px;
   --sk-text-overlay-l: 26px;
@@ -120,29 +143,53 @@
   --sk-text-clock-long: 26px;
   --sk-leading-none: 1;
   --sk-leading-tight: 1.25;
+  --sk-leading-snug: 1.4;
   --sk-leading-normal: 1.5;
+  --sk-weight-regular: 400;
   --sk-weight-medium: 500;
   --sk-weight-semibold: 600;
+  --sk-weight-strong: 620;
+  --sk-weight-bold: 650;
+  --sk-weight-heavy: 660;
   --sk-tracking-tight: -0.02em;
+  --sk-tracking-clock: -0.03em;
+  --sk-tracking-pill: 0.02em;
+  --sk-tracking-title: -0.15px;
   --sk-tracking-wide: 0.08em;
+  --sk-tracking-label: 0.1em;
 
   /* ── Controls ───────────────────────────────────────────────── */
   --sk-control-height: 44px;
   --sk-control-height-sm: 32px;
-  --sk-toggle-width: 42px;
-  --sk-toggle-height: 24px;
+  --sk-control-height-sm-tight: 28px;
+  --sk-toggle-width: 38px;
+  --sk-toggle-height: 22px;
   --sk-toggle-thumb-size: 18px;
-  --sk-toggle-inset: 3px;
+  --sk-toggle-inset: 2px;
   --sk-number-field-width: 64px;
-  --sk-timer-ring-size: 168px;
-  --sk-timer-ring-size-compact: 128px;
+  /* Prototype s01: a 174 px ring with a 162 px face, a 40 px primary,
+     36 px quick pills, and a 10 px today divider. */
+  --sk-timer-ring-size: 174px;
   --sk-timer-ring-size-tight: 110px;
+  --sk-timer-ring-gap: 10px;
+  --sk-timer-phase-pad: 18px 0 6px;
+  --sk-timer-pill-pad: 3px 9px;
+  --sk-timer-primary-height: 40px;
+  --sk-timer-primary-height-tight: 36px;
+  --sk-timer-quick-height: 36px;
+  --sk-timer-quick-height-tight: 28px;
+  --sk-timer-quick-pad: 0 16px;
+  --sk-timer-quick-radius: var(--sk-radius-full);
+  --sk-timer-today-pad: 10px;
+  --sk-timer-today-gap: 10px;
+  --sk-app-header-height-low: 48px;
   --sk-brand-mark-size: 32px;
   --sk-focus-done-mark-size: 30px;
   --sk-reminder-mark-size: 26px;
-  --sk-icon-button-size: 26px;
+  --sk-icon-button-size: 30px;
   --sk-icon-size: 16px;
   --sk-icon-size-sm: 14px;
+  --sk-icon-size-lg: 18px;
   --sk-badge-size: 6px;
   --sk-icon-stroke: 1.5px;
   --sk-shadow-icon-drop: 0 2px 5px hsl(var(--sk-color-brand-strong) / 0.3);
@@ -169,19 +216,21 @@
   --sk-overlay-drop-hover-opacity: 0.62;
   --sk-shadow-droplet: 0 1px 3px hsl(220 20% 10% / 0.18);
   --sk-shadow-droplet-hover: 0 2px 5px hsl(220 20% 10% / 0.24);
-  --sk-drop-body-top: 195 60% 99% / 0.04;
-  --sk-drop-body-middle: 205 35% 82% / 0.09;
-  --sk-drop-body-bottom: 214 30% 42% / 0.16;
-  --sk-drop-outline: 215 30% 25% / 0.42;
+  /* The droplet is tinted glass: its gradient follows the active palette’s
+     brand, while the shine and rim stay white so it still reads as glass. */
+  --sk-drop-body-top: var(--sk-color-brand) / 0.08;
+  --sk-drop-body-middle: var(--sk-color-brand) / 0.18;
+  --sk-drop-body-bottom: var(--sk-color-brand-strong) / 0.38;
+  --sk-drop-outline: var(--sk-color-brand-strong) / 0.55;
   --sk-drop-shine: 0 0% 100% / 0.92;
   --sk-drop-shine-soft: 0 0% 100% / 0.26;
   --sk-drop-inner-rim: 0 0% 100% / 0.42;
   --sk-drop-inner-rim-strong: 0 0% 100% / 0.62;
   --sk-drop-stroke: 1px;
   --sk-drop-rim-stroke: 0.9px;
-  --sk-drop-pulse-rim: 0 0% 100% / 0.6;
-  --sk-drop-pulse-halo: 0 0% 100% / 0.22;
-  --sk-drop-move-outline: 0 0% 100% / 0.8;
+  --sk-drop-pulse-rim: var(--sk-color-brand) / 0.65;
+  --sk-drop-pulse-halo: var(--sk-color-brand) / 0.25;
+  --sk-drop-move-outline: var(--sk-color-brand) / 0.85;
   --sk-dialog-inline-size: 320px;
   --sk-dialog-inline-size-wide: 440px;
   --sk-dialog-max-block-size: calc(100dvh - (var(--sk-space-lg) * 2));
@@ -190,27 +239,62 @@
   /* Settings rows follow the 1.0.0 prototype: 40 navigation, 48 control,
      44 action. Values are shared so every detail page lines up. */
   --sk-settings-page-header: 56px;
-  --sk-settings-row-height: 40px;
-  --sk-settings-control-height: 48px;
-  --sk-settings-action-height: 44px;
+  --sk-settings-page-header-low: 40px;
+  --sk-settings-section-gap: 18px;
+  --sk-settings-page-inset: 14px;
+  --sk-settings-page-inset-tight: 10px;
+  --sk-settings-cell-height: 44px;
+  --sk-settings-cell-pad: 10px;
+  --sk-settings-cell-pad-inline: 8px;
+  --sk-settings-cell-height-tight: 40px;
   --sk-settings-chip-height: 30px;
-  --sk-settings-swatch-band: 40px;
+  --sk-settings-chip-height-root: 32px;
+  --sk-settings-field-gap: 9px;
+  --sk-settings-swatch-band: 34px;
   --sk-settings-swatch-columns: 3;
-  --sk-stat-value: 26px;
+  --sk-settings-swatch-columns-wide: 4;
+  --sk-brand-mark-size-sm: 28px;
+  --sk-brand-mark-size-lg: 42px;
+  --sk-radio-size: 16px;
+  --sk-radio-row-height: 37px;
+  --sk-radio-ring: calc(var(--sk-edge) * 1.5);
+  --sk-size-preview-s-width: 48px;
+  --sk-size-preview-s-height: 16px;
+  --sk-size-preview-s-font: 8px;
+  --sk-size-preview-s-drop: 8px;
+  --sk-size-preview-m-width: 68px;
+  --sk-size-preview-m-height: 20px;
+  --sk-size-preview-m-font: 9px;
+  --sk-size-preview-m-drop: 10px;
+  --sk-size-preview-l-width: 90px;
+  --sk-size-preview-l-height: 26px;
+  --sk-size-preview-l-font: 11px;
+  --sk-size-preview-l-drop: 13px;
+  --sk-settings-size-card-height: 64px;
+  --sk-settings-brand-pad-block-start: 8px;
+  --sk-settings-brand-pad-block-end: 18px;
+  --sk-settings-brand-gap: 10px;
+  --sk-stat-value: 21px;
+  --sk-tab-height: 36px;
   --sk-tab-indicator: 2px;
-  --sk-heat-cell: 4px;
-  --sk-heat-gap: 2px;
+  --sk-legend-cell: 7px;
   --sk-heat-radius: 1px;
-  --sk-heat-0: 150 12% 86%;
-  --sk-heat-1: 150 38% 78%;
-  --sk-heat-2: 150 44% 64%;
-  --sk-heat-3: 150 52% 50%;
-  --sk-heat-4: 150 60% 36%;
+  --sk-heat-0: var(--sk-color-toggle-track);
+  --sk-heat-1: var(--sk-color-brand) / 0.18;
+  --sk-heat-2: var(--sk-color-brand) / 0.36;
+  --sk-heat-3: var(--sk-color-brand) / 0.58;
+  --sk-heat-4: var(--sk-color-brand);
   --sk-insight-bar-height: 6px;
+  --sk-insights-tag-name-column: 58px;
+  --sk-insights-tag-value-column: 46px;
+  --sk-insights-tag-row-height: 26px;
   --sk-tag-input-height: 36px;
   --sk-tag-chip-height: 26px;
-  --sk-language-row-height: 44px;
-  --sk-text-compact-clock: 48px;
+  --sk-language-head-height: 52px;
+  --sk-language-row-height: 38px;
+  --sk-language-search-height: 34px;
+  --sk-language-group-pad: 10px 16px 2px;
+  --sk-language-group-gap: 11px;
 
   /* ── Motion ─────────────────────────────────────────────────── */
   --sk-duration-fast: 0.12s;
@@ -221,7 +305,8 @@
 
   /* ── Elevation ──────────────────────────────────────────────── */
   --sk-shadow-card: 0 18px 48px hsl(162 20% 20% / 0.14);
-  --sk-shadow-soft: 0 2px 6px hsl(162 20% 20% / 0.08);
+  --sk-shadow-segment: 0 2px 5px hsl(162 20% 20% / 0.1);
+  --sk-shadow-swatch: 0 8px 16px -12px hsl(162 20% 20% / 0.5);
   --sk-shadow-thumb: 0 1px 4px hsl(162 20% 20% / 0.24);
 
   /* ── Opacity ────────────────────────────────────────────────── */
@@ -234,17 +319,10 @@
 
   --sk-shadow-droplet: 0 1px 3px hsl(0 0% 0% / 0.3);
   --sk-shadow-droplet-hover: 0 2px 5px hsl(0 0% 0% / 0.36);
-  --sk-drop-body-top: 0 0% 100% / 0.05;
-  --sk-drop-body-middle: 200 25% 82% / 0.1;
-  --sk-drop-body-bottom: 205 30% 72% / 0.16;
-  --sk-drop-outline: 0 0% 100% / 0.55;
   --sk-drop-shine: 0 0% 100% / 0.95;
   --sk-drop-shine-soft: 0 0% 100% / 0.3;
   --sk-drop-inner-rim: 0 0% 100% / 0.4;
   --sk-drop-inner-rim-strong: 0 0% 100% / 0.6;
-  --sk-drop-pulse-rim: 0 0% 100% / 0.45;
-  --sk-drop-pulse-halo: 0 0% 100% / 0.18;
-  --sk-drop-move-outline: 0 0% 100% / 0.7;
 
   --sk-color-brand: 150 55% 68%;
   --sk-color-brand-strong: 150 60% 80%;
@@ -256,27 +334,26 @@
   --sk-color-countdown-soft: 205 25% 18%;
   --sk-color-warning: 24 67% 66%;
   --sk-color-alert: 0 72% 62%;
-  --sk-color-bg-app: 163 17% 8%;
-  --sk-color-bg-surface: 162 16% 11%;
-  --sk-color-bg-raised: 156 16% 14%;
+  --sk-color-bg-app: 160 20% 8%;
+  --sk-color-bg-surface: 158 18% 11%;
+  --sk-color-bg-raised: 156 18% 14%;
   --sk-gradient-app:
-    radial-gradient(circle at 18% 8%, hsl(var(--sk-color-brand-soft) / 0.55), transparent 34%),
+    radial-gradient(
+      ellipse 78% 34% at 50% 0%,
+      hsl(var(--sk-color-brand-soft) / 0.6),
+      transparent 72%
+    ),
     hsl(var(--sk-color-bg-app));
-  --sk-color-text: 140 20% 94%;
-  --sk-color-text-muted: 153 10% 65%;
-  --sk-color-border: 140 20% 94% / 0.12;
-  --sk-color-border-strong: 140 20% 94% / 0.2;
-  --sk-color-track: 161 35% 67% / 0.16;
-  --sk-color-overlay-surface: 162 16% 11% / 0.52;
-  --sk-color-focus: 13 79% 73%;
+  --sk-color-text: 210 12% 94%;
+  --sk-color-text-muted: 210 8% 64%;
   --sk-shadow-card: 0 18px 48px hsl(0 0% 0% / 0.35);
-  --sk-shadow-soft: 0 2px 6px hsl(0 0% 0% / 0.24);
   --sk-shadow-thumb: 0 1px 4px hsl(0 0% 0% / 0.35);
 }
 
 /* ── Color styles ────────────────────────────────────────────────
    Each palette repaints the same semantic names; components never
-   branch on a palette. Forest is the base token set above. */
+   branch on a palette. Forest is the base token set above. Backgrounds
+   and accents move together so a palette switch is visible at a glance. */
 :root[data-palette='Ocean'] {
   --sk-color-brand: 205 80% 36%;
   --sk-color-brand-strong: 205 85% 28%;
@@ -284,6 +361,11 @@
   --sk-color-on-brand: 200 100% 98%;
   --sk-color-break: 38 85% 46%;
   --sk-color-break-soft: 38 75% 91%;
+  --sk-color-countdown: 270 55% 48%;
+  --sk-color-countdown-soft: 270 45% 93%;
+  --sk-color-bg-app: 203 38% 92%;
+  --sk-color-bg-surface: 203 48% 97%;
+  --sk-color-bg-raised: 200 52% 99%;
 }
 
 :root[data-theme='Dark'][data-palette='Ocean'] {
@@ -293,78 +375,123 @@
   --sk-color-on-brand: 205 40% 10%;
   --sk-color-break: 38 85% 68%;
   --sk-color-break-soft: 38 30% 18%;
+  --sk-color-countdown: 270 65% 74%;
+  --sk-color-countdown-soft: 270 30% 18%;
+  --sk-color-bg-app: 205 30% 8%;
+  --sk-color-bg-surface: 205 25% 11%;
+  --sk-color-bg-raised: 205 22% 14%;
 }
 
 :root[data-palette='Ember'] {
-  --sk-color-brand: 8 78% 44%;
-  --sk-color-brand-strong: 8 82% 35%;
-  --sk-color-brand-soft: 8 70% 92%;
+  --sk-color-brand: 6 80% 44%;
+  --sk-color-brand-strong: 6 84% 35%;
+  --sk-color-brand-soft: 6 72% 92%;
   --sk-color-on-brand: 10 100% 98%;
   --sk-color-break: 180 60% 36%;
   --sk-color-break-soft: 180 45% 90%;
+  --sk-color-countdown: 210 65% 42%;
+  --sk-color-countdown-soft: 210 55% 92%;
+  --sk-color-bg-app: 12 38% 92%;
+  --sk-color-bg-surface: 14 48% 97%;
+  --sk-color-bg-raised: 16 52% 99%;
 }
 
 :root[data-theme='Dark'][data-palette='Ember'] {
-  --sk-color-brand: 8 75% 72%;
-  --sk-color-brand-strong: 8 80% 83%;
-  --sk-color-brand-soft: 8 35% 19%;
-  --sk-color-on-brand: 8 40% 10%;
+  --sk-color-brand: 6 75% 70%;
+  --sk-color-brand-strong: 6 80% 82%;
+  --sk-color-brand-soft: 6 35% 18%;
+  --sk-color-on-brand: 6 40% 10%;
   --sk-color-break: 180 55% 64%;
   --sk-color-break-soft: 180 25% 18%;
+  --sk-color-countdown: 210 65% 70%;
+  --sk-color-countdown-soft: 210 30% 18%;
+  --sk-color-bg-app: 10 22% 8%;
+  --sk-color-bg-surface: 10 20% 11%;
+  --sk-color-bg-raised: 10 18% 14%;
 }
 
 :root[data-palette='Plum'] {
-  --sk-color-brand: 272 65% 42%;
-  --sk-color-brand-strong: 272 70% 33%;
-  --sk-color-brand-soft: 272 55% 93%;
-  --sk-color-on-brand: 275 100% 98%;
-  --sk-color-break: 38 85% 48%;
+  --sk-color-brand: 285 65% 42%;
+  --sk-color-brand-strong: 285 70% 33%;
+  --sk-color-brand-soft: 285 55% 93%;
+  --sk-color-on-brand: 285 100% 98%;
+  --sk-color-break: 38 85% 46%;
   --sk-color-break-soft: 38 75% 91%;
+  --sk-color-countdown: 190 60% 38%;
+  --sk-color-countdown-soft: 190 50% 91%;
+  --sk-color-bg-app: 285 30% 92%;
+  --sk-color-bg-surface: 285 38% 97%;
+  --sk-color-bg-raised: 284 42% 99%;
 }
 
 :root[data-theme='Dark'][data-palette='Plum'] {
-  --sk-color-brand: 272 70% 76%;
-  --sk-color-brand-strong: 272 75% 86%;
-  --sk-color-brand-soft: 272 30% 19%;
-  --sk-color-on-brand: 272 35% 10%;
+  --sk-color-brand: 285 60% 74%;
+  --sk-color-brand-strong: 285 65% 85%;
+  --sk-color-brand-soft: 285 30% 19%;
+  --sk-color-on-brand: 285 35% 10%;
   --sk-color-break: 38 85% 68%;
   --sk-color-break-soft: 38 28% 18%;
+  --sk-color-countdown: 190 55% 66%;
+  --sk-color-countdown-soft: 190 25% 18%;
+  --sk-color-bg-app: 285 22% 8%;
+  --sk-color-bg-surface: 285 20% 11%;
+  --sk-color-bg-raised: 285 18% 14%;
 }
 
 :root[data-palette='Slate'] {
-  --sk-color-brand: 220 10% 36%;
-  --sk-color-brand-strong: 220 12% 28%;
-  --sk-color-brand-soft: 220 12% 92%;
-  --sk-color-on-brand: 210 25% 98%;
+  --sk-color-brand: 220 24% 34%;
+  --sk-color-brand-strong: 220 28% 26%;
+  --sk-color-brand-soft: 220 18% 91%;
+  --sk-color-on-brand: 210 30% 98%;
   --sk-color-break: 12 75% 52%;
   --sk-color-break-soft: 12 65% 92%;
+  --sk-color-countdown: 190 65% 38%;
+  --sk-color-countdown-soft: 190 55% 91%;
+  --sk-color-bg-app: 215 18% 92%;
+  --sk-color-bg-surface: 214 22% 97%;
+  --sk-color-bg-raised: 212 25% 99%;
 }
 
 :root[data-theme='Dark'][data-palette='Slate'] {
-  --sk-color-brand: 220 10% 74%;
-  --sk-color-brand-strong: 220 12% 85%;
-  --sk-color-brand-soft: 220 10% 19%;
-  --sk-color-on-brand: 220 15% 10%;
+  --sk-color-brand: 220 25% 72%;
+  --sk-color-brand-strong: 220 30% 84%;
+  --sk-color-brand-soft: 220 15% 19%;
+  --sk-color-on-brand: 220 20% 10%;
   --sk-color-break: 12 75% 70%;
   --sk-color-break-soft: 12 28% 18%;
+  --sk-color-countdown: 190 60% 68%;
+  --sk-color-countdown-soft: 190 25% 18%;
+  --sk-color-bg-app: 215 16% 8%;
+  --sk-color-bg-surface: 215 14% 11%;
+  --sk-color-bg-raised: 215 12% 14%;
 }
 
 :root[data-palette='Rose'] {
-  --sk-color-brand: 332 72% 46%;
-  --sk-color-brand-strong: 332 76% 37%;
-  --sk-color-brand-soft: 332 65% 93%;
+  --sk-color-brand: 332 72% 44%;
+  --sk-color-brand-strong: 332 76% 35%;
+  --sk-color-brand-soft: 332 60% 92%;
   --sk-color-on-brand: 330 100% 98%;
-  --sk-color-break: 175 55% 36%;
-  --sk-color-break-soft: 175 45% 90%;
+  --sk-color-break: 175 50% 34%;
+  --sk-color-break-soft: 175 42% 90%;
+  --sk-color-countdown: 265 55% 48%;
+  --sk-color-countdown-soft: 265 45% 93%;
+  --sk-color-bg-app: 338 32% 92%;
+  --sk-color-bg-surface: 338 42% 97%;
+  --sk-color-bg-raised: 340 46% 99%;
 }
 
 :root[data-theme='Dark'][data-palette='Rose'] {
-  --sk-color-brand: 332 75% 77%;
-  --sk-color-brand-strong: 332 80% 87%;
+  --sk-color-brand: 332 75% 74%;
+  --sk-color-brand-strong: 332 80% 85%;
   --sk-color-brand-soft: 332 30% 19%;
   --sk-color-on-brand: 332 35% 10%;
-  --sk-color-break: 175 55% 62%;
+  --sk-color-break: 175 50% 60%;
   --sk-color-break-soft: 175 25% 18%;
+  --sk-color-countdown: 265 60% 72%;
+  --sk-color-countdown-soft: 265 28% 18%;
+  --sk-color-bg-app: 335 20% 8%;
+  --sk-color-bg-surface: 335 18% 11%;
+  --sk-color-bg-raised: 335 16% 14%;
 }
 
 :root[data-palette='Aurora'] {
@@ -374,6 +501,11 @@
   --sk-color-on-brand: 180 100% 98%;
   --sk-color-break: 12 75% 55%;
   --sk-color-break-soft: 12 65% 92%;
+  --sk-color-countdown: 275 55% 46%;
+  --sk-color-countdown-soft: 275 45% 93%;
+  --sk-color-bg-app: 170 30% 91%;
+  --sk-color-bg-surface: 170 38% 96%;
+  --sk-color-bg-raised: 168 42% 99%;
 }
 
 :root[data-theme='Dark'][data-palette='Aurora'] {
@@ -383,6 +515,11 @@
   --sk-color-on-brand: 180 35% 10%;
   --sk-color-break: 12 78% 72%;
   --sk-color-break-soft: 12 28% 18%;
+  --sk-color-countdown: 275 55% 68%;
+  --sk-color-countdown-soft: 275 25% 18%;
+  --sk-color-bg-app: 172 20% 8%;
+  --sk-color-bg-surface: 172 18% 11%;
+  --sk-color-bg-raised: 172 16% 14%;
 }
 
 :root[data-palette='Sand'] {
@@ -392,6 +529,11 @@
   --sk-color-on-brand: 45 100% 98%;
   --sk-color-break: 205 65% 42%;
   --sk-color-break-soft: 205 55% 91%;
+  --sk-color-countdown: 280 50% 48%;
+  --sk-color-countdown-soft: 280 42% 93%;
+  --sk-color-bg-app: 43 45% 91%;
+  --sk-color-bg-surface: 44 52% 97%;
+  --sk-color-bg-raised: 45 55% 99%;
 }
 
 :root[data-theme='Dark'][data-palette='Sand'] {
@@ -401,4 +543,121 @@
   --sk-color-on-brand: 42 40% 10%;
   --sk-color-break: 205 65% 68%;
   --sk-color-break-soft: 205 28% 18%;
+  --sk-color-countdown: 280 55% 70%;
+  --sk-color-countdown-soft: 280 25% 18%;
+  --sk-color-bg-app: 42 18% 8%;
+  --sk-color-bg-surface: 42 16% 11%;
+  --sk-color-bg-raised: 42 14% 14%;
+}
+
+:root[data-palette='Moss'] {
+  --sk-color-brand: 82 48% 28%;
+  --sk-color-brand-strong: 82 52% 21%;
+  --sk-color-brand-soft: 80 38% 90%;
+  --sk-color-on-brand: 80 60% 98%;
+  --sk-color-break: 345 62% 47%;
+  --sk-color-break-soft: 345 52% 92%;
+  --sk-color-countdown: 205 50% 40%;
+  --sk-color-countdown-soft: 205 42% 91%;
+  --sk-color-bg-app: 75 28% 91%;
+  --sk-color-bg-surface: 78 34% 97%;
+  --sk-color-bg-raised: 80 38% 99%;
+}
+
+:root[data-theme='Dark'][data-palette='Moss'] {
+  --sk-color-brand: 82 45% 65%;
+  --sk-color-brand-strong: 82 50% 78%;
+  --sk-color-brand-soft: 82 25% 18%;
+  --sk-color-on-brand: 82 30% 10%;
+  --sk-color-break: 345 65% 68%;
+  --sk-color-break-soft: 345 30% 18%;
+  --sk-color-countdown: 205 55% 68%;
+  --sk-color-countdown-soft: 205 25% 18%;
+  --sk-color-bg-app: 80 18% 8%;
+  --sk-color-bg-surface: 80 16% 11%;
+  --sk-color-bg-raised: 80 14% 14%;
+}
+
+:root[data-palette='Ink'] {
+  --sk-color-brand: 210 18% 20%;
+  --sk-color-brand-strong: 210 22% 14%;
+  --sk-color-brand-soft: 210 12% 90%;
+  --sk-color-on-brand: 210 20% 98%;
+  --sk-color-break: 28 82% 46%;
+  --sk-color-break-soft: 28 72% 91%;
+  --sk-color-countdown: 195 60% 38%;
+  --sk-color-countdown-soft: 195 50% 91%;
+  --sk-color-bg-app: 210 10% 90%;
+  --sk-color-bg-surface: 210 12% 96%;
+  --sk-color-bg-raised: 210 10% 99%;
+}
+
+:root[data-theme='Dark'][data-palette='Ink'] {
+  --sk-color-brand: 210 20% 72%;
+  --sk-color-brand-strong: 210 22% 84%;
+  --sk-color-brand-soft: 210 10% 18%;
+  --sk-color-on-brand: 210 15% 10%;
+  --sk-color-break: 28 80% 66%;
+  --sk-color-break-soft: 28 30% 18%;
+  --sk-color-countdown: 195 55% 66%;
+  --sk-color-countdown-soft: 195 25% 18%;
+  --sk-color-bg-app: 210 10% 7%;
+  --sk-color-bg-surface: 210 9% 10%;
+  --sk-color-bg-raised: 210 8% 13%;
+}
+
+:root[data-palette='Dusk'] {
+  --sk-color-brand: 258 58% 44%;
+  --sk-color-brand-strong: 258 62% 35%;
+  --sk-color-brand-soft: 258 45% 92%;
+  --sk-color-on-brand: 260 100% 98%;
+  --sk-color-break: 28 82% 48%;
+  --sk-color-break-soft: 28 72% 91%;
+  --sk-color-countdown: 190 55% 38%;
+  --sk-color-countdown-soft: 190 45% 91%;
+  --sk-color-bg-app: 258 28% 92%;
+  --sk-color-bg-surface: 258 34% 97%;
+  --sk-color-bg-raised: 260 38% 99%;
+}
+
+:root[data-theme='Dark'][data-palette='Dusk'] {
+  --sk-color-brand: 258 55% 74%;
+  --sk-color-brand-strong: 258 60% 85%;
+  --sk-color-brand-soft: 258 30% 19%;
+  --sk-color-on-brand: 258 35% 10%;
+  --sk-color-break: 28 80% 68%;
+  --sk-color-break-soft: 28 30% 18%;
+  --sk-color-countdown: 190 55% 66%;
+  --sk-color-countdown-soft: 190 25% 18%;
+  --sk-color-bg-app: 258 22% 8%;
+  --sk-color-bg-surface: 258 20% 11%;
+  --sk-color-bg-raised: 258 18% 14%;
+}
+
+:root[data-palette='Clay'] {
+  --sk-color-brand: 22 60% 40%;
+  --sk-color-brand-strong: 22 64% 31%;
+  --sk-color-brand-soft: 22 48% 91%;
+  --sk-color-on-brand: 24 100% 98%;
+  --sk-color-break: 195 58% 36%;
+  --sk-color-break-soft: 195 48% 90%;
+  --sk-color-countdown: 275 48% 46%;
+  --sk-color-countdown-soft: 275 42% 93%;
+  --sk-color-bg-app: 22 30% 91%;
+  --sk-color-bg-surface: 24 36% 96%;
+  --sk-color-bg-raised: 26 40% 99%;
+}
+
+:root[data-theme='Dark'][data-palette='Clay'] {
+  --sk-color-brand: 22 60% 68%;
+  --sk-color-brand-strong: 22 65% 80%;
+  --sk-color-brand-soft: 22 30% 18%;
+  --sk-color-on-brand: 22 35% 10%;
+  --sk-color-break: 195 55% 62%;
+  --sk-color-break-soft: 195 25% 18%;
+  --sk-color-countdown: 275 50% 68%;
+  --sk-color-countdown-soft: 275 25% 18%;
+  --sk-color-bg-app: 20 18% 8%;
+  --sk-color-bg-surface: 20 16% 11%;
+  --sk-color-bg-raised: 20 14% 14%;
 }

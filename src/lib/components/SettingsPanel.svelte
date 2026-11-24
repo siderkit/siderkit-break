@@ -1,6 +1,6 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
-  import { COUNTDOWN_STORAGE_KEY } from '../countdown';
+  import { COUNTDOWN_STORAGE_KEY } from '../utils/countdown.util';
   import {
     isTauri,
     locateOverlay,
@@ -9,9 +9,10 @@
     resetOverlayPosition,
   } from '../ipc/client';
   import type { Settings } from '../ipc/types';
-  import { applyMotion, applyPalette, applyTheme } from '../theme';
-  import { createDefaultSettings, timerStore } from '../timer-store.svelte';
-  import { updateStore } from '../update-store.svelte';
+  import { applyMotion, applyPalette, applyTheme } from '../utils/theme.util';
+  import { createDefaultSettings, timerStore } from '../state/timer.store.svelte.ts';
+  import { updateStore } from '../state/update.store.svelte.ts';
+  import Button from '../ui/Button.svelte';
   import ConfirmDialog from '../ui/ConfirmDialog.svelte';
   import AboutPage from './settings/AboutPage.svelte';
   import AppearancePage from './settings/AppearancePage.svelte';
@@ -24,7 +25,7 @@
   import RhythmPage from './settings/RhythmPage.svelte';
   import SettingsHeader from './settings/SettingsHeader.svelte';
   import SettingsRoot from './settings/SettingsRoot.svelte';
-  import type { SettingsPage } from './settings/settings-pages';
+  import type { SettingsPage } from './settings/settings-pages.model';
 
   let { onclose }: { onclose: () => void } = $props();
 
@@ -99,9 +100,6 @@
       applyMotion(patch.reduceMotion);
     }
     await persist({ ...draft, general: { ...draft.general, ...patch } });
-    if (patch.windowMode === 'Compact') {
-      onclose();
-    }
   }
 
   async function pickLanguage(locale: string | null): Promise<void> {
@@ -142,7 +140,20 @@
 </script>
 
 <section class="l-settings-shell">
-  <SettingsHeader {page} {title} {onclose} onback={() => (page = backTarget)} />
+  <SettingsHeader {page} {title} {onclose} onback={() => (page = backTarget)}>
+    {#if page === 'root'}
+      <Button
+        variant="Ghost"
+        size="Sm"
+        onclick={() => {
+          restoreError = null;
+          restoreOpen = true;
+        }}
+      >
+        {m['settings.restoreDefaults']()}
+      </Button>
+    {/if}
+  </SettingsHeader>
 
   <div class="l-settings-shell__body">
     {#if page === 'root'}
@@ -151,10 +162,6 @@
         {version}
         onnavigate={(target) => (page = target)}
         ontimer={(focusMinutes) => patchTimer({ focusMinutes })}
-        onrestore={() => {
-          restoreError = null;
-          restoreOpen = true;
-        }}
       />
     {:else if page === 'general'}
       <GeneralPage
@@ -227,13 +234,14 @@
   .l-settings-shell__body {
     flex: 1 1 auto;
     min-block-size: 0;
-    padding: 0 var(--sk-space-lg) var(--sk-space-xl);
+    padding: var(--sk-settings-page-inset) var(--sk-space-lg) var(--sk-space-xl);
     overflow-y: auto;
     overscroll-behavior: contain;
   }
 
   @media (max-height: 460px) {
     .l-settings-shell__body {
+      padding-block: var(--sk-settings-page-inset-tight) var(--sk-space-md);
       padding-inline: var(--sk-space-md);
     }
   }

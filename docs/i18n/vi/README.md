@@ -17,7 +17,7 @@ Một bộ hẹn giờ tập trung nhẹ nhàng, ưu tiên dữ liệu cục b�
 - **Nhịp độ phù hợp.** Chu kỳ tập trung, nghỉ ngắn và nghỉ dài với tạm dừng, tiếp tục, bỏ qua và đặt lại.
 - **Không làm phiền.** Đồng hồ đếm ngược nhỏ luôn ở trên cùng, cho phép bấm xuyên qua cho đến khi bạn trỏ vào.
 - **Nhắc nhở có hành động.** Thẻ trong ứng dụng ở mỗi cuối giai đoạn, có hoãn, bỏ qua và âm thanh tích hợp.
-- **Dữ liệu ở lại với bạn.** Lịch sử phiên cục bộ, xuất bảng tính, 30 ngôn ngữ, giao diện và phím tắt toàn cục.
+- **Dữ liệu ở lại với bạn.** Lịch sử phiên cục bộ, xuất bảng tính, 40 ngôn ngữ, giao diện và phím tắt toàn cục.
 
 ## Build từ mã nguồn
 

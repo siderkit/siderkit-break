@@ -1,7 +1,9 @@
 //! External links opened from the app's menus and settings.
 
 pub const PROJECT_URL: &str = "https://github.com/siderkit/siderkit-break";
-pub const PRIVACY_URL: &str = "https://github.com/siderkit/siderkit-break/blob/main/PRIVACY.md";
+// `blob/HEAD` always resolves to the default branch, so a rename of master
+// can never 404 the policy again.
+pub const PRIVACY_URL: &str = "https://github.com/siderkit/siderkit-break/blob/HEAD/PRIVACY.md";
 
 /// Opens the public project page in the user's default browser.
 pub fn open_project_page() -> Result<(), String> {

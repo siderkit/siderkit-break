@@ -26,6 +26,7 @@ const SKIP: &str = "ctx-skip";
 const COLLAPSE: &str = "ctx-collapse";
 const LOCATE: &str = "ctx-locate";
 const OPEN: &str = "ctx-open";
+const STATS: &str = "ctx-stats";
 const SETTINGS: &str = "ctx-settings";
 const HELP: &str = "ctx-help";
 const QUIT: &str = "ctx-quit";
@@ -180,6 +181,7 @@ fn app_plan(
             translate(locale, "tray.locateOverlay"),
         ));
     }
+    entries.push(Entry::Action(STATS, translate(locale, "insights.title")));
     entries.push(Entry::Action(
         SETTINGS,
         translate(locale, "common.action.settings"),
@@ -221,6 +223,11 @@ pub fn handle(app: &AppHandle, id: &str) {
             Ok(())
         }
         LOCATE => locate::show(app),
+        STATS => {
+            shell::show_main_window(app);
+            let _ = app.emit("navigate", "insights");
+            Ok(())
+        }
         SETTINGS => {
             shell::show_main_window(app);
             let _ = app.emit("navigate", "settings");
@@ -273,6 +280,9 @@ mod tests {
         assert!(!entries
             .iter()
             .any(|entry| matches!(entry, Entry::Action(OPEN, _))));
+        assert!(entries
+            .iter()
+            .any(|entry| matches!(entry, Entry::Action(STATS, _))));
         assert!(entries
             .iter()
             .any(|entry| matches!(entry, Entry::Action(HELP, _))));

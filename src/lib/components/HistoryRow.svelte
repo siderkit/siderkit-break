@@ -6,10 +6,10 @@
     formatTime,
     outcomeLabel,
     sessionKindLabel,
-  } from '../format';
-  import type { HistoryListItem } from '../history-page';
+  } from '../utils/format.util';
+  import type { HistoryListItem } from '../utils/history/history-page.util';
   import type { HistoryDay, HistorySession } from '../ipc/types';
-  import type { Locale } from '../locale';
+  import type { Locale } from '../utils/locale.util';
 
   let {
     item,

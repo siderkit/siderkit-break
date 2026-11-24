@@ -129,6 +129,13 @@ fn build_menu(
     } else {
         None
     };
+    let stats = MenuItem::with_id(
+        app,
+        "stats",
+        translate(locale, "insights.title"),
+        true,
+        None::<&str>,
+    )?;
     let open = MenuItem::with_id(
         app,
         "settings",
@@ -168,6 +175,7 @@ fn build_menu(
     if let Some(locate) = &locate {
         items.push(locate);
     }
+    items.push(&stats);
     items.push(&open);
     items.push(&fourth_separator);
     items.push(&quit);
@@ -236,6 +244,14 @@ pub fn show_overlay_menu(app: &AppHandle) -> Result<(), String> {
         None::<&str>,
     )
     .map_err(|error| error.to_string())?;
+    let stats = MenuItem::with_id(
+        app,
+        "overlay-menu-stats",
+        translate(&locale, "insights.title"),
+        true,
+        None::<&str>,
+    )
+    .map_err(|error| error.to_string())?;
     let settings = MenuItem::with_id(
         app,
         "overlay-menu-settings",
@@ -263,6 +279,7 @@ pub fn show_overlay_menu(app: &AppHandle) -> Result<(), String> {
             &toggle,
             &locate,
             &open,
+            &stats,
             &settings,
             &second_separator,
             &quit,
@@ -286,6 +303,11 @@ pub fn handle_overlay_menu(app: &AppHandle, id: &str) {
         }
         "overlay-menu-toggle" => engine_host::toggle_start_pause(app).map(|_| ()),
         "overlay-menu-locate" => locate::show(app),
+        "overlay-menu-stats" => {
+            shell::show_main_window(app);
+            let _ = app.emit("navigate", "insights");
+            Ok(())
+        }
         "overlay-menu-settings" => {
             shell::show_main_window(app);
             let _ = app.emit("navigate", "settings");
@@ -424,6 +446,11 @@ fn handle_menu(app: &AppHandle, id: &str) {
         }
         "overlay" => toggle_overlay(app),
         "locate" => locate::show(app),
+        "stats" => {
+            shell::show_main_window(app);
+            let _ = app.emit("navigate", "insights");
+            Ok(())
+        }
         "settings" | "show" => {
             shell::show_main_window(app);
             Ok(())

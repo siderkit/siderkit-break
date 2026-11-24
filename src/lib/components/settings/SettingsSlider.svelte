@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SettingsCell from './SettingsCell.svelte';
+
   let {
     label,
     value,
@@ -7,6 +9,7 @@
     step = 1,
     valueLabel,
     disabled = false,
+    divided = false,
     onchange,
   }: {
     label: string;
@@ -16,11 +19,12 @@
     step?: number;
     valueLabel: string;
     disabled?: boolean;
+    divided?: boolean;
     onchange: (value: number) => void;
   } = $props();
 </script>
 
-<div class="l-settings-slider">
+<SettingsCell stacked {divided}>
   <div class="l-settings-slider__head">
     <span class="l-settings-slider__label">{label}</span>
     <span class="l-settings-slider__value">{valueLabel}</span>
@@ -36,31 +40,25 @@
     aria-label={label}
     onchange={(event) => onchange(Number(event.currentTarget.value))}
   />
-</div>
+</SettingsCell>
 
 <style>
-  .l-settings-slider {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sk-space-xs);
-    padding: var(--sk-space-sm);
-  }
-
   .l-settings-slider__head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--sk-space-sm);
+    gap: var(--sk-space-md);
   }
 
   .l-settings-slider__label {
     color: hsl(var(--sk-color-text));
-    font-size: var(--sk-text-sm);
+    font-size: var(--sk-text-md);
+    font-weight: var(--sk-weight-medium);
   }
 
   .l-settings-slider__value {
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
+    font-size: var(--sk-text-value);
     font-variant-numeric: tabular-nums;
   }
 

@@ -1,15 +1,19 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
-  import { cancelLabel, phaseClass, phaseDurationMs, phaseLabel, skipLabel } from '../format';
-  import { timerStore } from '../timer-store.svelte';
+  import {
+    cancelLabel,
+    phaseClass,
+    phaseDurationMs,
+    phaseLabel,
+    skipLabel,
+  } from '../utils/format.util';
+  import { timerStore } from '../state/timer.store.svelte.ts';
   import Button from '../ui/Button.svelte';
   import ProgressRing from '../ui/ProgressRing.svelte';
   import CountdownDialog from './CountdownDialog.svelte';
   import HistoryDialog from './HistoryDialog.svelte';
-  import InsightEntry from './InsightEntry.svelte';
   import TimerSummary from './TimerSummary.svelte';
 
-  let { oninsights }: { oninsights: () => void } = $props();
   let countdownOpen = $state(false);
   let historyOpen = $state(false);
 
@@ -62,42 +66,43 @@
 </script>
 
 <section class="l-timer-panel" class:is-modal={countdownOpen || historyOpen}>
-  <div class="l-timer-panel__phase-row">
-    <span class="l-timer-panel__phase {phaseClass(displayPhase)}">{phaseText}</span>
-    {#if roundText}<span class="l-timer-panel__round">{roundText}</span>{/if}
-  </div>
+  <div class="l-timer-panel__stack">
+    <div class="l-timer-panel__phase-row">
+      <span class="l-timer-panel__phase {phaseClass(displayPhase)}">{phaseText}</span>
+      {#if roundText}<span class="l-timer-panel__round">{roundText}</span>{/if}
+    </div>
 
-  <ProgressRing
-    phase={displayPhase}
-    remainingMs={ringRemainingMs}
-    plannedMs={ringPlannedMs}
-    paused={snapshot.isPaused}
-    pausedLabel={m['timer.paused']()}
-  />
+    <ProgressRing
+      phase={displayPhase}
+      remainingMs={ringRemainingMs}
+      plannedMs={ringPlannedMs}
+      paused={snapshot.isPaused}
+      pausedLabel={m['timer.paused']()}
+    />
 
-  <div class="l-timer-panel__actions">
-    <Button variant="Primary" onclick={onPrimary}>{primaryLabel}</Button>
-  </div>
+    <div class="l-timer-panel__actions">
+      <Button variant="Primary" onclick={onPrimary}>{primaryLabel}</Button>
+    </div>
 
-  <div class="l-timer-panel__quick-actions">
-    {#if canEnd}
-      <Button variant="Ghost" size="Sm" onclick={onEnd}>{secondaryLabel}</Button>
-    {/if}
-    {#if canDiscardPending}
-      <Button variant="Ghost" size="Sm" onclick={onDiscard}>{discardLabel}</Button>
-    {/if}
-    {#if countdownAvailable}
-      <Button variant="Secondary" size="Sm" onclick={() => (countdownOpen = true)}>
-        {m['timer.action.startCountdown']()}
+    <div class="l-timer-panel__quick-actions">
+      {#if canEnd}
+        <Button variant="Ghost" size="Sm" onclick={onEnd}>{secondaryLabel}</Button>
+      {/if}
+      {#if canDiscardPending}
+        <Button variant="Ghost" size="Sm" onclick={onDiscard}>{discardLabel}</Button>
+      {/if}
+      {#if countdownAvailable}
+        <Button variant="Secondary" size="Sm" onclick={() => (countdownOpen = true)}>
+          {m['timer.action.startCountdown']()}
+        </Button>
+      {/if}
+      <Button variant="Ghost" size="Sm" onclick={() => (historyOpen = true)}>
+        {m['timer.action.history']()}
       </Button>
-    {/if}
-    <Button variant="Ghost" size="Sm" onclick={() => (historyOpen = true)}>
-      {m['timer.action.history']()}
-    </Button>
-  </div>
+    </div>
 
-  <TimerSummary />
-  <InsightEntry onopen={oninsights} />
+    <TimerSummary />
+  </div>
 
   {#if countdownOpen}
     <CountdownDialog onclose={() => (countdownOpen = false)} />
@@ -112,53 +117,41 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: var(--sk-space-md);
     min-block-size: 0;
-    padding: var(--sk-space-lg) var(--sk-space-lg) var(--sk-space-xl);
+    padding: 0 var(--sk-space-lg) var(--sk-space-lg);
     overflow-y: auto;
+  }
+
+  .l-timer-panel__stack {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
   }
 
   .l-timer-panel.is-modal {
     overflow: hidden;
   }
 
-  @media (max-height: 520px) {
-    .l-timer-panel {
-      gap: var(--sk-space-sm);
-      padding: var(--sk-space-md) var(--sk-space-lg);
-      overflow-y: hidden;
-      scrollbar-width: none;
-    }
-
-    .l-timer-panel::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  @media (max-height: 460px) {
-    .l-timer-panel {
-      gap: var(--sk-space-xs);
-      padding: var(--sk-space-sm) var(--sk-space-lg);
-    }
-  }
-
+  /* Prototype s01: the phase row owns the top rhythm and the summary is pinned
+     to the bottom. */
   .l-timer-panel__phase-row {
     display: flex;
-    align-items: center;
+    flex: 0 0 auto;
+    align-items: baseline;
     justify-content: space-between;
     gap: var(--sk-space-md);
-    min-block-size: var(--sk-control-height-sm);
+    padding: var(--sk-timer-phase-pad);
   }
 
   .l-timer-panel__phase {
     display: inline-flex;
     align-items: center;
-    padding: var(--sk-space-3xs) var(--sk-space-md);
+    padding: var(--sk-timer-pill-pad);
     border-radius: var(--sk-radius-full);
-    font-size: var(--sk-text-xs);
-    font-weight: var(--sk-weight-semibold);
-    letter-spacing: var(--sk-tracking-wide);
-    text-transform: uppercase;
+    font-size: var(--sk-text-note);
+    font-weight: var(--sk-weight-bold);
+    letter-spacing: var(--sk-tracking-pill);
   }
 
   .l-timer-panel__phase.is-focus {
@@ -183,20 +176,71 @@
 
   .l-timer-panel__round {
     color: hsl(var(--sk-color-text-muted));
-    font-size: var(--sk-text-xs);
-    letter-spacing: var(--sk-tracking-wide);
+    font-size: var(--sk-text-2xs);
   }
 
   .l-timer-panel__actions {
     display: flex;
+    flex: 0 0 auto;
     flex-direction: column;
     gap: var(--sk-space-sm);
   }
 
+  .l-timer-panel__actions > :global(button) {
+    min-block-size: var(--sk-timer-primary-height);
+    border-radius: var(--sk-radius-card);
+    font-size: var(--sk-text-action);
+    font-weight: var(--sk-weight-bold);
+  }
+
   .l-timer-panel__quick-actions {
     display: flex;
+    flex: 0 0 auto;
     flex-wrap: wrap;
     justify-content: center;
-    gap: var(--sk-space-sm);
+    gap: var(--sk-space-2xs);
+    margin: var(--sk-space-lg) 0 var(--sk-space-2xs);
+  }
+
+  .l-timer-panel__quick-actions > :global(button) {
+    min-block-size: var(--sk-timer-quick-height);
+    padding: var(--sk-timer-quick-pad);
+    border-radius: var(--sk-timer-quick-radius);
+    font-size: var(--sk-text-sm);
+    font-weight: var(--sk-weight-regular);
+  }
+
+  /* Prototype low layout: 110 px ring and a 36 px primary button. */
+  @media (max-height: 460px) {
+    .l-timer-panel {
+      padding: 0 var(--sk-space-lg) var(--sk-space-md);
+      overflow-y: hidden;
+      scrollbar-width: none;
+    }
+
+    .l-timer-panel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .l-timer-panel__stack {
+      gap: var(--sk-space-xs);
+    }
+
+    .l-timer-panel__phase-row {
+      padding: var(--sk-space-sm) 0 var(--sk-space-3xs);
+    }
+
+    .l-timer-panel__actions > :global(button) {
+      min-block-size: var(--sk-timer-primary-height-tight);
+    }
+
+    .l-timer-panel__quick-actions {
+      margin-block: 0;
+    }
+
+    .l-timer-panel__quick-actions > :global(button) {
+      min-block-size: var(--sk-timer-quick-height-tight);
+      font-size: var(--sk-text-note);
+    }
   }
 </style>

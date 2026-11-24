@@ -22,7 +22,7 @@ Siderkit Break is an experimental project from Siderkit. The 1.0 release is inte
 | **Floating timer** | A small always-on-top countdown that stays click-through until you point at it.                       |
 | **Reminders**      | In-app cards at every phase boundary, with postpone, skip, and a built-in chime.                      |
 | **History**        | Every session stored locally in SQLite, with a styled spreadsheet (`.xlsx`) export.                   |
-| **Languages**      | 30 UI languages, system-language detection, and true right-to-left layouts.                           |
+| **Languages**      | 40 UI languages, system-language detection, and true right-to-left layouts.                           |
 | **Your data**      | Local only. No account, no sync; optional anonymous install counts.                                   |
 
 ## A closer look
@@ -40,7 +40,7 @@ The screenshots are captured from the running app. The break card is a native wi
 - **Reminders you can act on.** Every phase boundary opens a small card with the next action. Start the break, postpone it for five minutes, skip it, or close the card. Reminders and the built-in chime can be turned off independently.
 - **A record that stays yours.** Completed, skipped, reset, and interrupted sessions are stored locally. Review them by day or export a formatted spreadsheet with summary, daily, and session sheets.
 - **Updates without the busywork.** On Windows the app checks for signed updates in the background, downloads only when you ask, and installs on restart. macOS and Linux builds are downloaded manually.
-- **Yours in your language.** Choose from 30 languages or follow the system language. Arabic, Persian, and Urdu switch the whole layout to right-to-left. Light, dark, and system themes come with eight color styles.
+- **Yours in your language.** Choose from 40 languages or follow the system language. Arabic, Persian, and Urdu switch the whole layout to right-to-left. Light, dark, and system themes come with twelve color styles that repaint the whole window.
 - **Small conveniences.** Global shortcuts, launch at login, start minimized, and close-to-tray.
 
 ## What it does not do

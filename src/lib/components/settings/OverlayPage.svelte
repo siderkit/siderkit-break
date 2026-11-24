@@ -38,6 +38,7 @@
     <SettingsField
       label={m['settings.overlay.size']()}
       value={`${value.size} · ${pixels[value.size]}`}
+      divided
     >
       <OverlaySizePicker value={value.size} onchange={(size) => onchange({ size })} />
     </SettingsField>
@@ -49,6 +50,7 @@
       max={100}
       step={5}
       valueLabel={`${value.opacity}%`}
+      divided
       onchange={(opacity) => onchange({ opacity })}
     />
 
@@ -63,6 +65,7 @@
       label={m['settings.overlay.resetPosition']()}
       value={m['settings.overlay.resetHint']()}
       chevron
+      divided
       onclick={onreset}
     />
   {/if}
@@ -72,6 +75,5 @@
   .l-overlay-page {
     display: flex;
     flex-direction: column;
-    padding-block-start: var(--sk-space-sm);
   }
 </style>

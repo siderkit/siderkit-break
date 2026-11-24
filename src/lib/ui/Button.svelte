@@ -39,28 +39,24 @@
     justify-content: center;
     gap: var(--sk-space-sm);
     min-block-size: var(--sk-control-height);
+    padding-block: 0;
     padding-inline: var(--sk-space-lg);
     border: var(--sk-edge) solid transparent;
     border-radius: var(--sk-radius-sm);
     font-size: var(--sk-text-md);
     font-weight: var(--sk-weight-semibold);
-    line-height: var(--sk-leading-tight);
+    line-height: normal;
     letter-spacing: var(--sk-tracking-tight);
+    white-space: nowrap;
     transition:
       background-color var(--sk-duration-base) var(--sk-ease-standard),
-      border-color var(--sk-duration-base) var(--sk-ease-standard),
-      color var(--sk-duration-base) var(--sk-ease-standard),
-      transform var(--sk-duration-fast) var(--sk-ease-standard);
+      color var(--sk-duration-base) var(--sk-ease-standard);
   }
 
   .l-button--sm {
     min-block-size: var(--sk-control-height-sm);
     padding-inline: var(--sk-space-md);
     font-size: var(--sk-text-sm);
-  }
-
-  .l-button:active:not(:disabled) {
-    transform: translateY(var(--sk-space-3xs));
   }
 
   .l-button:disabled {
@@ -71,28 +67,25 @@
   .l-button--primary {
     color: hsl(var(--sk-color-on-brand));
     background: hsl(var(--sk-color-brand));
-    border-color: hsl(var(--sk-color-brand));
   }
 
   .l-button--primary:hover:not(:disabled) {
     background: hsl(var(--sk-color-brand-strong));
-    border-color: hsl(var(--sk-color-brand-strong));
   }
 
   .l-button--secondary {
-    color: hsl(var(--sk-color-text));
-    background: hsl(var(--sk-color-bg-raised));
-    border-color: hsl(var(--sk-color-border-strong));
+    color: hsl(var(--sk-color-brand-strong));
+    background: hsl(var(--sk-color-brand-soft) / 0.55);
   }
 
   .l-button--secondary:hover:not(:disabled) {
-    color: hsl(var(--sk-color-brand));
-    border-color: hsl(var(--sk-color-brand));
+    color: hsl(var(--sk-color-brand-strong));
+    background: hsl(var(--sk-color-brand-soft) / 0.8);
   }
 
   .l-button--ghost {
     color: hsl(var(--sk-color-text-muted));
-    background: transparent;
+    background: hsl(var(--sk-color-text) / 0.05);
   }
 
   .l-button--ghost:hover:not(:disabled) {
@@ -103,11 +96,9 @@
   .l-button--danger {
     color: hsl(var(--sk-color-bg-surface));
     background: hsl(var(--sk-color-alert));
-    border-color: hsl(var(--sk-color-alert));
   }
 
   .l-button--danger:hover:not(:disabled) {
     background: hsl(var(--sk-color-alert) / 0.86);
-    border-color: hsl(var(--sk-color-alert) / 0.86);
   }
 </style>

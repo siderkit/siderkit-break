@@ -73,12 +73,16 @@
   }
 
   .l-help-panel__close {
-    padding: var(--sk-space-2xs) var(--sk-space-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sk-space-xs) var(--sk-space-sm);
     border: 0;
-    border-radius: var(--sk-radius-xs);
-    color: hsl(var(--sk-color-text-muted));
-    background: transparent;
+    border-radius: var(--sk-radius-full);
+    color: hsl(var(--sk-color-text));
+    background: hsl(var(--sk-color-text) / 0.06);
     font-size: var(--sk-text-xs);
+    line-height: normal;
   }
 
   .l-help-panel__close:hover {

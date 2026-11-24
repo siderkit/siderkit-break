@@ -17,7 +17,7 @@ Un timer di concentrazione tranquillo e locale per Windows, macOS e Linux. Manti
 - **Un ritmo su misura.** Cicli di concentrazione, pausa breve e pausa lunga con pausa, ripresa, salto e reimpostazione.
 - **Non ingombra.** Un piccolo conto alla rovescia sempre in primo piano che lascia passare i clic finché non lo punti.
 - **Promemoria azionabili.** Schede nell’app a ogni fine fase, con rinvio, salto e un suono integrato.
-- **I tuoi dati restano locali.** Cronologia locale, esportazione in foglio di calcolo, 30 lingue, temi e scorciatoie globali.
+- **I tuoi dati restano locali.** Cronologia locale, esportazione in foglio di calcolo, 40 lingue, temi e scorciatoie globali.
 
 ## Compila dai sorgenti
 

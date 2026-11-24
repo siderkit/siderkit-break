@@ -17,7 +17,7 @@ Um temporizador de concentração calmo e local para Windows, macOS e Linux. Man
 - **Um ritmo à sua medida.** Ciclos de concentração, pausa curta e pausa longa com pausa, retoma, salto e reinício.
 - **Sem atrapalhar.** Uma pequena contagem decrescente sempre visível que deixa passar os cliques até apontar para ela.
 - **Lembretes acionáveis.** Cartões na aplicação no fim de cada fase, com adiar, saltar e um som integrado.
-- **Os seus dados ficam consigo.** Histórico local, exportação para folha de cálculo, 30 idiomas, temas e atalhos globais.
+- **Os seus dados ficam consigo.** Histórico local, exportação para folha de cálculo, 40 idiomas, temas e atalhos globais.
 
 ## Compilar a partir do código-fonte
 

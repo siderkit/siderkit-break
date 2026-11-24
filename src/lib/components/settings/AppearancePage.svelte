@@ -1,7 +1,7 @@
 <script lang="ts">
   import { m } from '../../../paraglide/messages.js';
   import type { Settings, Theme } from '../../ipc/types';
-  import { paletteName, themeName } from '../../settings-summary';
+  import { paletteName, themeName } from '../../utils/settings-summary.util';
   import Segmented from '../../ui/Segmented.svelte';
   import PaletteGrid from './PaletteGrid.svelte';
   import SettingsField from './SettingsField.svelte';
@@ -39,17 +39,10 @@
     />
   </SettingsField>
 
-  <SettingsField label={m['settings.general.palette']()} value={paletteName(value.palette)}>
+  <SettingsField label={m['settings.general.palette']()} value={paletteName(value.palette)} divided>
     <PaletteGrid value={value.palette} onchange={(palette) => onchange({ palette })} />
   </SettingsField>
 
-  <SettingsToggle
-    title={m['settings.appearance.compact']()}
-    note={m['settings.appearance.compactHint']()}
-    checked={value.windowMode === 'Compact'}
-    divided
-    onchange={(compact) => onchange({ windowMode: compact ? 'Compact' : 'Standard' })}
-  />
   <SettingsToggle
     title={m['settings.appearance.reduceMotion']()}
     note={m['settings.appearance.reduceMotionHint']()}
@@ -63,6 +56,5 @@
   .l-appearance-page {
     display: flex;
     flex-direction: column;
-    padding-block-start: var(--sk-space-sm);
   }
 </style>

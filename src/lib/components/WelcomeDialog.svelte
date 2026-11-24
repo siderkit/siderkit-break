@@ -1,5 +1,6 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
+  import ActionBar from '../ui/ActionBar.svelte';
   import Button from '../ui/Button.svelte';
 
   let {
@@ -32,14 +33,14 @@
   <div class="l-welcome-dialog__card">
     <h2 class="l-welcome-dialog__title" id="welcome-title">{m['welcome.title']()}</h2>
     <p class="l-welcome-dialog__body">{m['welcome.body']()}</p>
-    <div class="l-welcome-dialog__actions">
-      <Button variant="Primary" onclick={onstart}>
+    <ActionBar
+      onclose={onskip}
+      closeLabel={pendingBreak ? m['welcome.skipBreak']() : m['common.action.close']()}
+    >
+      <Button variant="Primary" size="Sm" onclick={onstart}>
         {pendingBreak ? m['welcome.startBreak']() : m['timer.action.startFocus']()}
       </Button>
-      <Button variant="Ghost" onclick={onskip}>
-        {pendingBreak ? m['welcome.skipBreak']() : m['common.action.close']()}
-      </Button>
-    </div>
+    </ActionBar>
   </div>
 </dialog>
 
@@ -81,12 +82,5 @@
     margin: 0;
     color: hsl(var(--sk-color-text-muted));
     font-size: var(--sk-text-sm);
-  }
-
-  .l-welcome-dialog__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--sk-space-sm);
   }
 </style>

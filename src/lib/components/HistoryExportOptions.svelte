@@ -1,6 +1,6 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
-  import type { HistoryExportState } from '../history-export.svelte';
+  import type { HistoryExportState } from '../state/history-export.store.svelte.ts';
   import Segmented from '../ui/Segmented.svelte';
 
   let { state }: { state: HistoryExportState } = $props();

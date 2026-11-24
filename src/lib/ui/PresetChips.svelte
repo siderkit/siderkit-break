@@ -42,28 +42,42 @@
   }
 
   .l-preset-chips__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-block-size: var(--sk-control-height-sm);
     padding-inline: var(--sk-space-md);
-    border: var(--sk-edge) solid hsl(var(--sk-color-border-strong));
+    border: 0;
     border-radius: var(--sk-radius-full);
     color: hsl(var(--sk-color-text-muted));
-    background: transparent;
+    background: hsl(var(--sk-color-text) / 0.06);
     font-size: var(--sk-text-sm);
     font-variant-numeric: tabular-nums;
+    line-height: normal;
     transition:
       color var(--sk-duration-base) var(--sk-ease-standard),
-      border-color var(--sk-duration-base) var(--sk-ease-standard),
       background-color var(--sk-duration-base) var(--sk-ease-standard);
+  }
+
+  /* Short windows keep all nine presets without pushing the dialog to scroll. */
+  @media (max-height: 460px) {
+    .l-preset-chips {
+      padding-block-end: 0;
+    }
+
+    .l-preset-chips__chip {
+      min-block-size: var(--sk-control-height-sm-tight);
+      padding-inline: var(--sk-space-sm);
+    }
   }
 
   .l-preset-chips__chip:hover {
     color: hsl(var(--sk-color-text));
-    border-color: hsl(var(--sk-color-brand));
+    background: hsl(var(--sk-color-brand-soft));
   }
 
   .l-preset-chips__chip.is-active {
     color: hsl(var(--sk-color-on-brand));
-    border-color: hsl(var(--sk-color-brand));
     background: hsl(var(--sk-color-brand));
   }
 </style>

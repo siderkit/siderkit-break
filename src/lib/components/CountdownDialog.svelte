@@ -9,9 +9,10 @@
     countdownFields,
     countdownParts,
     storedCountdownMinutes,
-  } from '../countdown';
-  import { formatClock } from '../format';
-  import { timerStore } from '../timer-store.svelte';
+  } from '../utils/countdown.util';
+  import { formatClock } from '../utils/format.util';
+  import { timerStore } from '../state/timer.store.svelte.ts';
+  import ActionBar from '../ui/ActionBar.svelte';
   import Button from '../ui/Button.svelte';
   import PresetChips from '../ui/PresetChips.svelte';
   import Stepper from '../ui/Stepper.svelte';
@@ -111,14 +112,16 @@
       <p class="l-countdown-dialog__error" role="alert">{timerStore.error}</p>
     {/if}
 
-    <div class="l-countdown-dialog__actions">
-      <Button variant="Primary" disabled={!valid || starting} onclick={() => void start()}>
+    <ActionBar onclose={() => dialog?.close()}>
+      <Button
+        variant="Primary"
+        size="Sm"
+        disabled={!valid || starting}
+        onclick={() => void start()}
+      >
         {m['countdown.start']()}
       </Button>
-      <Button variant="Ghost" onclick={() => dialog?.close()}>
-        {m['common.action.cancel']()}
-      </Button>
-    </div>
+    </ActionBar>
   </div>
 </dialog>
 
@@ -148,6 +151,14 @@
     box-shadow: var(--sk-shadow-card);
   }
 
+  /* Short windows: same order, tighter box, so 320x400 never scrolls. */
+  @media (max-height: 460px) {
+    .l-countdown-dialog__card {
+      gap: var(--sk-space-xs);
+      padding: var(--sk-space-md);
+    }
+  }
+
   .l-countdown-dialog__title {
     margin: 0;
     font-size: var(--sk-text-xl);
@@ -168,6 +179,12 @@
     border: var(--sk-edge) solid hsl(var(--sk-color-border));
     border-radius: var(--sk-radius-md);
     background: hsl(var(--sk-color-bg-app));
+  }
+
+  @media (max-height: 460px) {
+    .l-countdown-dialog__custom {
+      padding: var(--sk-space-sm);
+    }
   }
 
   .l-countdown-dialog__summary {
@@ -192,12 +209,5 @@
     margin: 0;
     color: hsl(var(--sk-color-break));
     font-size: var(--sk-text-sm);
-  }
-
-  .l-countdown-dialog__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--sk-space-sm);
   }
 </style>

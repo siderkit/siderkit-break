@@ -13,12 +13,12 @@
     onclose: () => void;
     closeLabel?: string;
     closeDisabled?: boolean;
-    children: Snippet;
+    children?: Snippet;
   } = $props();
 </script>
 
 <div class="l-action-bar">
-  {@render children()}
+  {@render children?.()}
   <Button variant="Ghost" size="Sm" disabled={closeDisabled} onclick={onclose}>
     {closeLabel ?? m['common.action.close']()}
   </Button>

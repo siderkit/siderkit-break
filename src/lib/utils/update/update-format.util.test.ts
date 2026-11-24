@@ -31,3 +31,11 @@ test('a recent check reads as a relative time', () => {
   assert.equal(formatRelative(now - 5 * 60_000, now, 'en'), '5 minutes ago');
   assert.equal(formatRelative(now - 3 * 60 * 60_000, now, 'en'), '3 hours ago');
 });
+
+test('a fresh check reads as just now and keeps moving', () => {
+  const now = 1_700_000_000_000;
+  assert.equal(formatRelative(now, now, 'en'), 'Just now');
+  assert.equal(formatRelative(now, now, 'zh-CN'), '刚刚');
+  assert.equal(formatRelative(now, now, 'zh-TW'), '剛剛');
+  assert.equal(formatRelative(now - 30_000, now, 'en'), '30 seconds ago');
+});

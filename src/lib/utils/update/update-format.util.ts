@@ -33,7 +33,7 @@ export function formatRelative(timestampMs: number, now = Date.now(), locale?: s
   const magnitude = Math.abs(diffSeconds);
   const formatter = new Intl.RelativeTimeFormat(activeLocale(locale), { numeric: 'auto' });
   if (magnitude < 60) {
-    return formatter.format(diffSeconds, 'second');
+    return subMinuteText(diffSeconds, formatter, locale);
   }
   if (magnitude < 60 * 60) {
     return formatter.format(Math.round(diffSeconds / 60), 'minute');
@@ -42,6 +42,29 @@ export function formatRelative(timestampMs: number, now = Date.now(), locale?: s
     return formatter.format(Math.round(diffSeconds / 60 / 60), 'hour');
   }
   return formatter.format(Math.round(diffSeconds / 60 / 60 / 24), 'day');
+}
+
+/**
+ * Under a minute the formatter's bare "now" reads frozen on screen, so a
+ * zero-second check says "刚刚"/"Just now" and the ticking clock keeps the
+ * label moving instead of pinning it to the moment of render.
+ */
+function subMinuteText(
+  diffSeconds: number,
+  formatter: Intl.RelativeTimeFormat,
+  locale?: string,
+): string {
+  if (Math.round(diffSeconds) !== 0) {
+    return formatter.format(diffSeconds, 'second');
+  }
+  const lang = (activeLocale(locale) ?? '').toLowerCase();
+  if (lang.startsWith('zh')) {
+    return /tw|hk|mo|hant/.test(lang) ? '剛剛' : '刚刚';
+  }
+  if (lang.startsWith('en')) {
+    return 'Just now';
+  }
+  return formatter.format(-1, 'second');
 }
 
 /** "3.1 MB" while the total is unknown, otherwise "3.1 / 7.4 MB". */

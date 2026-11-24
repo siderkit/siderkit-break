@@ -7,7 +7,7 @@
   import InsightsPanel from '../components/InsightsPanel.svelte';
   import SettingsPanel from '../components/SettingsPanel.svelte';
   import TimerPanel from '../components/TimerPanel.svelte';
-  import UpdateBanner from '../components/UpdateBanner.svelte';
+  import UpdateDialog from '../components/UpdateDialog.svelte';
   import WelcomeDialog from '../components/WelcomeDialog.svelte';
   import { isTauri, onNavigate } from '../ipc/client';
   import { timerStore } from '../state/timer.store.svelte.ts';
@@ -81,7 +81,6 @@
         onhelp={toggleHelp}
         onsettings={toggleSettings}
       />
-      <UpdateBanner />
     {/if}
 
     {#if timerStore.loading}
@@ -112,6 +111,8 @@
       ondismiss={() => timerStore.dismissWelcome()}
     />
   {/if}
+
+  <UpdateDialog />
 </main>
 
 <style>

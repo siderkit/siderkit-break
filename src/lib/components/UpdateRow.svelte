@@ -25,7 +25,9 @@
       return m['update.state.never']();
     }
     return status.lastCheckedMs
-      ? m['update.state.lastChecked']({ time: formatRelative(status.lastCheckedMs) })
+      ? m['update.state.lastChecked']({
+          time: formatRelative(status.lastCheckedMs, updateStore.now),
+        })
       : m['update.state.never']();
   }
 

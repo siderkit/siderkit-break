@@ -21,10 +21,11 @@
     if (!status?.lastCheckedMs) {
       return '';
     }
-    if (status.phase !== 'Idle' && status.phase !== 'UpToDate' && status.phase !== 'Failed') {
-      return '';
-    }
-    return m['update.state.lastChecked']({ time: formatRelative(status.lastCheckedMs) });
+    // Always visible once a check exists: hiding it while a check runs made
+    // the row change height and the page jump.
+    return m['update.state.lastChecked']({
+      time: formatRelative(status.lastCheckedMs, updateStore.now),
+    });
   });
 
   const simpleText: Partial<Record<UpdatePhase, () => string>> = {

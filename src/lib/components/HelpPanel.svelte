@@ -59,7 +59,7 @@
     flex-direction: column;
     gap: var(--sk-space-md);
     min-block-size: 0;
-    padding: 0 var(--sk-space-lg) var(--sk-space-xl);
+    padding: var(--sk-space-md) var(--sk-space-lg) var(--sk-space-xl);
     overflow-y: auto;
   }
 

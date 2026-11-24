@@ -70,9 +70,6 @@
 
 <section class="l-focus-done" aria-labelledby="l-focus-done-title">
   <div class="l-focus-done__head">
-    <span class="l-focus-done__mark" aria-hidden="true">
-      <DropletMark size="var(--sk-focus-done-mark-size)" />
-    </span>
     <div class="l-focus-done__copy">
       <h2 class="l-focus-done__title" id="l-focus-done-title">
         {m['notification.focus.title']()}
@@ -99,6 +96,9 @@
         </button>
       </div>
     </div>
+    <span class="l-focus-done__mark" aria-hidden="true">
+      <DropletMark size="var(--sk-focus-done-mark-size)" />
+    </span>
   </div>
 
   <p class="l-focus-done__body">{m['notification.focus.body']()}</p>
@@ -117,16 +117,19 @@
   {/if}
 
   <div class="l-focus-done__actions" data-card-actions>
-    <Button variant="Ghost" size="Sm" disabled={saving} onclick={expanded ? toggle : onclose}>
-      {m['tags.skip']()}
-    </Button>
     {#if expanded}
       <Button variant="Primary" size="Sm" disabled={saving} onclick={() => void save()}>
         {m['tags.save']()}
       </Button>
+      <Button variant="Ghost" size="Sm" disabled={saving} onclick={toggle}>
+        {m['tags.skip']()}
+      </Button>
     {:else}
       <Button variant="Primary" size="Sm" onclick={start}>
         {m['timer.action.startBreak']()}
+      </Button>
+      <Button variant="Ghost" size="Sm" disabled={saving} onclick={onclose}>
+        {m['tags.skip']()}
       </Button>
     {/if}
   </div>
@@ -176,7 +179,6 @@
   .l-focus-done__meta-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--sk-space-sm);
     margin-block-start: var(--sk-space-2xs);
   }

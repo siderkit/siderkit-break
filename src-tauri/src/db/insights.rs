@@ -230,12 +230,11 @@ impl InsightsRange {
     }
 }
 
-/// Trims, collapses whitespace, and caps a tag at 40 Unicode scalars.
+/// Trims and collapses whitespace. Storage keeps the full length; the
+/// 40-scalar cap lives in the tag input on the frontend.
 pub fn normalize_tag(value: &str) -> Option<String> {
     let collapsed = value.split_whitespace().collect::<Vec<_>>().join(" ");
-    let truncated: String = collapsed.chars().take(40).collect();
-    let trimmed = truncated.trim_end();
-    (!trimmed.is_empty()).then(|| trimmed.to_owned())
+    (!collapsed.is_empty()).then_some(collapsed)
 }
 
 fn day_payload(date: &str, value: Option<&(u64, u32)>) -> InsightsDay {

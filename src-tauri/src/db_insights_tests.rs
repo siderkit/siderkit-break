@@ -62,16 +62,16 @@ fn a_session_tag_round_trips_and_can_be_cleared() {
 }
 
 #[test]
-fn tags_are_trimmed_collapsed_and_capped_at_forty_characters() {
+fn tags_are_trimmed_and_collapsed_without_truncation() {
     assert_eq!(
         normalize_tag("  write   code "),
         Some("write code".to_owned())
     );
     assert_eq!(normalize_tag("\n\t "), None);
     let long = "a".repeat(60);
-    assert_eq!(normalize_tag(&long).expect("tag").chars().count(), 40);
+    assert_eq!(normalize_tag(&long), Some(long));
     let emoji = "💧".repeat(50);
-    assert_eq!(normalize_tag(&emoji).expect("tag").chars().count(), 40);
+    assert_eq!(normalize_tag(&emoji), Some(emoji));
 }
 
 #[test]

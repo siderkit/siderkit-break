@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to Siderkit Break are recorded here. The project is at the 1.0 release-candidate stage; no public binaries have been published yet.
+All notable changes to Siderkit Break are recorded here. `1.0.0` is the first stable release.
 
-## [Unreleased]
+## [1.0.0] - 2026-11-24
 
 ### Added
 
@@ -11,11 +11,17 @@ All notable changes to Siderkit Break are recorded here. The project is at the 1
 - **Session tags.** Each finished focus round can carry a tag of up to 40 characters, with the last three tags offered as chips. Tags appear under the time in history, can be edited in place, and are written to the Excel export as a `Tag` column. The finish card keeps the tag link collapsed until it is used.
 - **Sound options.** Three built-in timbres (Chime, Soft, Bell) with an independent preview button, a volume slider, and an optional focus-only tick. Custom audio can be imported (≤ 5 s, ≤ 2 MB) and is copied into app data.
 - **Twelve color styles.** Moss, Ink, Dusk, and Clay join the existing eight. Existing `Plum` and `Aurora` values still load. Every style now repaints the page and card surfaces, the heatmap, and the floating droplet instead of only the primary accent.
-- **Ten more UI languages.** Javanese, Punjabi, Hausa, Yoruba, Gujarati, Kannada, Malayalam, Burmese, Amharic, and Nepali join the shipped set, for 40 UI languages at 350 keys each. The tray menu and in-app reminders use the same catalogs.
+- **Ten more UI languages.** Javanese, Punjabi, Hausa, Yoruba, Gujarati, Kannada, Malayalam, Burmese, Amharic, and Nepali join the shipped set, for 40 UI languages at 343 keys each. The tray menu and in-app reminders use the same catalogs.
 - **Floating-window control.** Three sizes (S 96×32, M 136×40, L 180×52) with real droplet previews, a 40–100% opacity slider, a locate hint, and reset position.
 - **Diagnostics.** Version, OS, architecture, WebView, language, theme, palette, tray status, and the last 50 warnings, with copy, open log folder, clear log, and reset anonymous ID.
 
 ### Changed
+
+- Every drill-down surface (settings root and sub-pages, insights, help, and the language sheet) now shares one header component: back chevron, title, optional inline actions, and Done. Done always returns exactly one level, so leaving a deep page no longer means guessing which control closes what.
+- The finish card keeps all primary text left-aligned: the droplet mark sits at the top right, the add-tag link follows the focus pill instead of hugging the far edge, and the primary action (start break) comes first with the skip action last.
+- On the smallest window size the quick actions gain real vertical breathing room around the row.
+- Tags keep the 40-character cap in the input only; storage keeps the full value. The input placeholder is an operation hint ("Type a tag, press Enter") in all 40 languages, and recent-tag chips and history rows ellipsize long values instead of overflowing.
+- The 53-week heatmap shows a GitHub-style tooltip on hover with the full date, focused minutes, and rounds; the chart keeps a single tooltip element that flips above or below the cell and clamps to the chart edges.
 
 - Reminder copy now names a concrete act of care: step away from the screen, look into the distance, sip water, or roll your shoulders and neck. The break-over card welcomes people back gently instead of asking whether they are ready.
 - The main window is now 360×560 by default and can shrink to 320×400. Below 520 px the header, timer ring, and summary compress in stages, so the main view keeps every control without a scrollbar.

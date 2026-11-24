@@ -1,9 +1,11 @@
 /**
- * Display-level tag cleanup. Rust still normalizes on write; this mirrors the
- * same rules so the row can show the saved value without another round trip.
+ * Display-level tag cleanup, mirroring Rust's normalize_tag so rows can show
+ * the saved value without another round trip. Length is capped at input time
+ * (TAG_MAX_CHARS, enforced by TagEditor); storage keeps the full value.
  */
+export const TAG_MAX_CHARS = 40;
+
 export function cleanTag(value: string): string | null {
   const collapsed = value.trim().split(/\s+/).filter(Boolean).join(' ');
-  const truncated = Array.from(collapsed).slice(0, 40).join('').trimEnd();
-  return truncated.length > 0 ? truncated : null;
+  return collapsed.length > 0 ? collapsed : null;
 }

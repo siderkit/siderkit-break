@@ -1,6 +1,6 @@
 # Release guide
 
-> Status: `1.0.0-rc.1` is published on GitHub Releases and served through `https://dl.siderkit.com`. The `1.0.0` implementation is complete in the repository but has not been built or published yet; the version fields and this guide are ready for that build.
+> Status: `1.0.0` is built and signed; publishing the GitHub release is the remaining step. `1.0.0-rc.1` stays online as the previous tag until that release is live.
 
 ## Update host
 
@@ -58,9 +58,20 @@ A release build adds `--config src-tauri/tauri.release.conf.json` to Windows. Th
 
 The build workflow in `.github/workflows/build.yml` runs the same commands and uploads the bundles as workflow artifacts. It does not create a GitHub release.
 
+## Local build record (2026-11-24)
+
+`1.0.0` was built from the 2026-11-24 source tree with `--config src-tauri/tauri.release.conf.json`, so the installer carries an updater signature:
+
+| Artifact                                                     | Size     | SHA-256                                                            |
+| ------------------------------------------------------------ | -------- | ------------------------------------------------------------------ |
+| `Siderkit Break_1.0.0_x64-setup.exe` (NSIS, 23 UI languages) | 6.81 MiB | `C8242E091A7F93C1D157FEB3DBFCFBBDFC1C4BFD76FEB666DF98271B11026A91` |
+| `Siderkit Break_1.0.0_x64-setup.exe.sig` (minisign)          | 444 B    | —                                                                  |
+
+The release assets use the versioned names the download host proxies: `Siderkit-Break_1.0.0_windows_x64-setup.exe` and its `.sig`, plus `latest-dl.json`, `latest.json`, and `SHA256SUMS.txt`.
+
 ## 1.0.0 implementation status (2026-11-24)
 
-The 1.0.0 feature set is implemented and verified in source, but no 1.0.0 installer exists yet. Before publishing, run a fresh build with the steps below and record the artifacts here.
+The 1.0.0 feature set is implemented and verified in source.
 
 Source-level gates already pass:
 

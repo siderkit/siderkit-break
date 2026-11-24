@@ -223,7 +223,7 @@
     }
 
     .l-timer-panel__stack {
-      gap: var(--sk-space-xs);
+      gap: var(--sk-space-sm);
     }
 
     .l-timer-panel__phase-row {
@@ -235,7 +235,7 @@
     }
 
     .l-timer-panel__quick-actions {
-      margin-block: 0;
+      margin-block: var(--sk-space-md);
     }
 
     .l-timer-panel__quick-actions > :global(button) {

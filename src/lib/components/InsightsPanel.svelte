@@ -12,6 +12,7 @@
   import InsightsHeatmap from './InsightsHeatmap.svelte';
   import InsightsLegend from './InsightsLegend.svelte';
   import InsightsTagBlock from './InsightsTagBlock.svelte';
+  import PanelHeader from '../ui/PanelHeader.svelte';
 
   let { onclose }: { onclose: () => void } = $props();
 
@@ -55,19 +56,7 @@
 </script>
 
 <section class="l-insights" aria-labelledby="insights-title">
-  <header class="l-insights__head">
-    <button
-      class="l-insights__back"
-      type="button"
-      aria-label={m['history.back']()}
-      onclick={onclose}
-    >
-      <svg class="l-insights__back-icon" viewBox="0 0 20 20" aria-hidden="true">
-        <path d="M12.3 4.6 6.9 10l5.4 5.4" />
-      </svg>
-    </button>
-    <h2 class="l-insights__title" id="insights-title">{m['insights.title']()}</h2>
-  </header>
+  <PanelHeader title={m['insights.title']()} titleId="insights-title" onback={onclose} />
 
   <div class="l-insights__body">
     <div class="l-insights__tabs" role="tablist" aria-label={m['insights.title']()}>
@@ -124,58 +113,6 @@
     flex-direction: column;
     min-block-size: 0;
     overflow: hidden;
-  }
-
-  .l-insights__head {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: var(--sk-space-sm);
-    min-block-size: var(--sk-settings-page-header);
-    padding-inline: var(--sk-space-lg);
-    border-block-end: var(--sk-edge) solid hsl(var(--sk-color-border));
-  }
-
-  .l-insights__back {
-    display: grid;
-    place-items: center;
-    inline-size: var(--sk-icon-button-size);
-    block-size: var(--sk-icon-button-size);
-    margin-inline-start: calc(-1 * var(--sk-space-sm));
-    padding: 0;
-    border: 0;
-    border-radius: var(--sk-radius-control);
-    color: hsl(var(--sk-color-text-muted));
-    background: transparent;
-    transition:
-      color var(--sk-duration-base) var(--sk-ease-standard),
-      background-color var(--sk-duration-base) var(--sk-ease-standard);
-  }
-
-  .l-insights__back:hover {
-    color: hsl(var(--sk-color-text));
-    background: hsl(var(--sk-color-brand-soft) / 0.55);
-  }
-
-  .l-insights__back-icon {
-    inline-size: var(--sk-icon-size-lg);
-    block-size: var(--sk-icon-size-lg);
-    fill: none;
-    stroke: currentColor;
-    stroke-width: var(--sk-icon-stroke);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .l-insights__title {
-    flex: 1 1 auto;
-    margin: 0;
-    overflow: hidden;
-    font-size: var(--sk-text-title);
-    font-weight: var(--sk-weight-strong);
-    letter-spacing: var(--sk-tracking-title);
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .l-insights__body {

@@ -23,8 +23,8 @@
   import OverlayPage from './settings/OverlayPage.svelte';
   import RemindersPage from './settings/RemindersPage.svelte';
   import RhythmPage from './settings/RhythmPage.svelte';
-  import SettingsHeader from './settings/SettingsHeader.svelte';
   import SettingsRoot from './settings/SettingsRoot.svelte';
+  import PanelHeader from '../ui/PanelHeader.svelte';
   import type { SettingsPage } from './settings/settings-pages.model';
 
   let { onclose }: { onclose: () => void } = $props();
@@ -61,6 +61,15 @@
   });
 
   const backTarget = $derived<SettingsPage>(page === 'diagnostics' ? 'data' : 'root');
+
+  /** Root exits to the timer; a subpage returns to its parent page. */
+  function headerBack(): void {
+    if (page === 'root') {
+      onclose();
+      return;
+    }
+    page = backTarget;
+  }
 
   function clone(value: Settings): Settings {
     return structuredClone($state.snapshot(value));
@@ -99,7 +108,9 @@
   }
 
   async function pickLanguage(locale: string | null): Promise<void> {
-    languageOpen = false;
+    // Picking applies immediately; the sheet stays open so the check mark
+    // moves and further picks stay one click away. Leaving happens through
+    // the header back button or Done.
     await patchGeneral({ locale });
   }
 
@@ -134,20 +145,22 @@
 </script>
 
 <section class="l-settings-shell">
-  <SettingsHeader {page} {title} {onclose} onback={() => (page = backTarget)}>
-    {#if page === 'root'}
-      <Button
-        variant="Ghost"
-        size="Sm"
-        onclick={() => {
-          restoreError = null;
-          restoreOpen = true;
-        }}
-      >
-        {m['settings.restoreDefaults']()}
-      </Button>
-    {/if}
-  </SettingsHeader>
+  <PanelHeader {title} onback={headerBack}>
+    {#snippet actions()}
+      {#if page === 'root'}
+        <Button
+          variant="Ghost"
+          size="Sm"
+          onclick={() => {
+            restoreError = null;
+            restoreOpen = true;
+          }}
+        >
+          {m['settings.restoreDefaults']()}
+        </Button>
+      {/if}
+    {/snippet}
+  </PanelHeader>
 
   <div class="l-settings-shell__body">
     {#if page === 'root'}

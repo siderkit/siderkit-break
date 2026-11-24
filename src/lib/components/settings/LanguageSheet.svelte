@@ -1,7 +1,7 @@
 <script lang="ts">
   import { m } from '../../../paraglide/messages.js';
+  import PanelHeader from '../../ui/PanelHeader.svelte';
   import { filterLocales, localeMeta, systemLocale } from '../../utils/locale.util';
-  import Button from '../../ui/Button.svelte';
 
   let {
     value,
@@ -53,14 +53,11 @@
 <svelte:window onkeydown={onKeydown} />
 
 <section class="l-language-sheet" aria-labelledby="language-sheet-title">
-  <header class="l-language-sheet__head">
-    <h2 class="l-language-sheet__title" id="language-sheet-title">
-      {m['settings.general.language']()}
-    </h2>
-    <Button variant="Secondary" size="Sm" onclick={onclose}>
-      {m['common.action.done']()}
-    </Button>
-  </header>
+  <PanelHeader
+    title={m['settings.general.language']()}
+    titleId="language-sheet-title"
+    onback={onclose}
+  />
 
   <div class="l-language-sheet__search">
     <span class="l-language-sheet__search-icon" aria-hidden="true">⌕</span>
@@ -143,26 +140,6 @@
     background: hsl(var(--sk-color-bg-app));
   }
 
-  .l-language-sheet__head {
-    display: flex;
-    flex: 0 0 var(--sk-language-head-height);
-    align-items: center;
-    gap: var(--sk-space-sm);
-    padding-inline: var(--sk-space-lg);
-    border-block-end: var(--sk-edge) solid hsl(var(--sk-color-border));
-  }
-
-  .l-language-sheet__title {
-    flex: 1 1 auto;
-    margin: 0;
-    overflow: hidden;
-    font-size: var(--sk-text-title);
-    font-weight: var(--sk-weight-strong);
-    letter-spacing: var(--sk-tracking-title);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .l-language-sheet__search {
     display: flex;
     flex: 0 0 var(--sk-language-search-height);
@@ -235,6 +212,7 @@
     min-inline-size: 0;
     overflow: hidden;
     font-size: var(--sk-text-sm);
+    line-height: var(--sk-leading-none);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -244,6 +222,7 @@
     overflow: hidden;
     color: hsl(var(--sk-color-text-muted));
     font-size: var(--sk-text-2xs);
+    line-height: var(--sk-leading-none);
     text-overflow: ellipsis;
     white-space: nowrap;
   }

@@ -3,6 +3,7 @@
 
   import { m } from '../../paraglide/messages.js';
   import { getRecentTags, isTauri } from '../ipc/client';
+  import { TAG_MAX_CHARS } from '../utils/tag.util';
 
   let {
     value = $bindable(''),
@@ -42,10 +43,10 @@
     node.select();
   }
 
-  /** Caps input at 40 Unicode scalars, the same unit Rust normalizes with. */
+  /** Caps input at 40 Unicode scalars; storage keeps the full value. */
   function limit(event: Event): void {
     const input = event.currentTarget as HTMLInputElement;
-    const next = Array.from(input.value).slice(0, 40).join('');
+    const next = Array.from(input.value).slice(0, TAG_MAX_CHARS).join('');
     if (next !== input.value) {
       input.value = next;
     }
@@ -85,7 +86,7 @@
       oninput={limit}
       onkeydown={onKeydown}
     />
-    <span class="l-tag-editor__count">{count}/40</span>
+    <span class="l-tag-editor__count">{count}/{TAG_MAX_CHARS}</span>
   </div>
 
   {#if recent.length > 0}
@@ -162,6 +163,8 @@
     align-items: center;
     justify-content: center;
     min-block-size: var(--sk-tag-chip-height);
+    max-inline-size: 100%;
+    overflow: hidden;
     padding-inline: var(--sk-space-sm);
     border: 0;
     border-radius: var(--sk-radius-full);
@@ -169,6 +172,8 @@
     background: hsl(var(--sk-color-text) / 0.06);
     font-size: var(--sk-text-xs);
     line-height: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .l-tag-editor__chip:hover {

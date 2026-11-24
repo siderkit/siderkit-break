@@ -1,17 +1,13 @@
 <script lang="ts">
   import { m } from '../../paraglide/messages.js';
+  import PanelHeader from '../ui/PanelHeader.svelte';
   import AboutInfo from './AboutInfo.svelte';
 
   let { onclose }: { onclose: () => void } = $props();
 </script>
 
 <section class="l-help-panel" aria-labelledby="help-title">
-  <header class="l-help-panel__header">
-    <h2 class="l-help-panel__title" id="help-title">{m['help.title']()}</h2>
-    <button class="l-help-panel__close" type="button" onclick={onclose}>
-      {m['help.close']()}
-    </button>
-  </header>
+  <PanelHeader title={m['help.title']()} titleId="help-title" onback={onclose} />
 
   <div class="l-help-panel__scroll">
     <section class="l-help-panel__section">
@@ -55,39 +51,6 @@
     flex: 1;
     flex-direction: column;
     min-block-size: 0;
-  }
-
-  .l-help-panel__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sk-space-md);
-    padding: var(--sk-space-lg) var(--sk-space-lg) var(--sk-space-sm);
-  }
-
-  .l-help-panel__title {
-    margin: 0;
-    font-size: var(--sk-text-xl);
-    font-weight: var(--sk-weight-semibold);
-    letter-spacing: var(--sk-tracking-tight);
-  }
-
-  .l-help-panel__close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--sk-space-xs) var(--sk-space-sm);
-    border: 0;
-    border-radius: var(--sk-radius-full);
-    color: hsl(var(--sk-color-text));
-    background: hsl(var(--sk-color-text) / 0.06);
-    font-size: var(--sk-text-xs);
-    line-height: normal;
-  }
-
-  .l-help-panel__close:hover {
-    color: hsl(var(--sk-color-text));
-    background: hsl(var(--sk-color-brand-soft));
   }
 
   .l-help-panel__scroll {

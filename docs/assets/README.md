@@ -2,36 +2,32 @@
 
 These images are captured from the running app. They are not mockups, and the UI text is not retouched.
 
-| File                | Source                                                                     | Intrinsic size |
-| ------------------- | -------------------------------------------------------------------------- | -------------- |
-| `hero.png`          | `hero.html`, composed from the screenshots below                           | 1280 × 640     |
-| `hero-neutral.png`  | `hero-neutral.html`, no headline text                                      | 1280 × 640     |
-| `main-focus.png`    | `http://localhost:1420/` at 360 × 600, 2×                                  | 720 × 1200     |
-| `break-running.png` | `http://localhost:1420/break.html` with a running short break, transparent | 720 × 400      |
-| `overlay-focus.png` | `http://localhost:1420/overlay.html` at 128 × 32, transparent              | 256 × 64       |
-| `settings.png`      | Settings → Timer                                                           | 720 × 1200     |
-| `languages.png`     | Settings → General → Language                                              | 720 × 1200     |
+| File                | Source                                                      | Intrinsic size |
+| ------------------- | ----------------------------------------------------------- | -------------- |
+| `hero.png`          | Composed: main window beside the break reminder card        | 1200 × 630     |
+| `hero-neutral.png`  | Main window on the paper background, no headline text       | 1280 × 640     |
+| `main-focus.png`    | Main window, focus running (768 × 500 client area)          | 770 × 517      |
+| `break-running.png` | Break reminder card window, short break running             | 360 × 157      |
+| `settings.png`      | Settings root page (768 × 500 client area)                  | 770 × 532      |
+| `languages.png`     | Settings → General → Language sheet (768 × 500 client area) | 770 × 532      |
 
 ## Regenerating
 
-1. Install dependencies and start the Vite preview:
+1. Install dependencies and build the app, then stop any running instance.
 
-   ```bash
-   pnpm install
-   pnpm dev
-   ```
+2. Seed a deterministic demo database (about 180 days of plausible history) and
+   a fixed window position, start the packaged app, and capture its real
+   windows. The capture tooling prints every visible top-level window of the
+   app process with exact pixel edges, resizes the main window to a 768 × 500
+   client area, and drives navigation through UI Automation, so no pixel is
+   hand-edited.
 
-2. Capture each app page at the viewport listed above with a 2× device scale factor. Use a Chrome DevTools Protocol client, for example with a 9222 debugging port:
+3. Compose `hero.png` (main window beside the reminder card) and
+   `hero-neutral.png` (main window on the paper background) from those
+   captures with the same layout the website's Open Graph image uses.
 
-   ```bash
-   chrome --remote-debugging-port=9222 --user-data-dir=<temp-profile>
-   ```
-
-3. For the running states, inject the timer snapshot before the screenshot. The browser preview exposes the store at `/src/lib/timer-store.svelte.ts`; set `timerStore.snapshot` and `timerStore.summary` to the values shown in the image.
-
-4. Open `hero.html` or `hero-neutral.html` through the dev server at a 1280 × 640 viewport and capture at 1×. The HTML files use the screenshots above and CSS-only shadows and gradients.
-
-5. Keep the transparent background of the break cards and the overlay. The card shadow is part of the PNG.
+4. The reminder card window is transparent, so its capture keys out the empty
+   black backdrop before it is placed on any background.
 
 ## Rules
 

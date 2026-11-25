@@ -1,6 +1,6 @@
 # Release guide
 
-> Status: `1.0.0` is published on GitHub Releases and served through `https://dl.siderkit.com`. `1.0.0-rc.1` stays online as the previous tag.
+> Status: `1.0.2` is published on GitHub Releases and served through `https://dl.siderkit.com`. `1.0.1` stays online as the previous tag.
 
 ## Update host
 
@@ -42,7 +42,7 @@ The release keeps the manifest version identical in:
 - `src-tauri/Cargo.toml`
 - `src-tauri/tauri.conf.json`
 
-All three are now `1.0.0`, matching the implemented settings, Insights, tags, sound, and window work. `1.0.0-rc.1` remains the published baseline that existing installs update from. The app reads the Tauri version at runtime for the About panel.
+All three are now `1.0.2`, matching the shipped shared-clock time fixes. `1.0.1` remains the published baseline that existing installs update from. The app reads the Tauri version at runtime for the About panel.
 
 ## Artifact matrix
 
@@ -57,6 +57,27 @@ All three are now `1.0.0`, matching the implemented settings, Insights, tags, so
 A release build adds `--config src-tauri/tauri.release.conf.json` to Windows. That config sets `bundle.createUpdaterArtifacts` and makes Tauri emit the `.sig` file next to the NSIS installer; it requires `TAURI_SIGNING_PRIVATE_KEY`. Do not use it for a local smoke build unless the key is set.
 
 The build workflow in `.github/workflows/build.yml` runs the same commands and uploads the bundles as workflow artifacts. It does not create a GitHub release.
+
+## Local build record (2026-11-25)
+
+`1.0.2` ships the shared-clock time fixes. The Windows installer was built
+locally with `--config src-tauri/tauri.release.conf.json` and the minisign
+private key; the macOS and Linux artifacts come from the `release.yml` run for
+the tag, whose Windows signing step still failed because no repository secrets
+were set (see §Signing). The draft release was created and verified over the
+REST API and published with `PATCH {"draft": false}`; `promote.yml` confirmed
+the live manifest afterwards.
+
+| Artifact                                                     | Size     | SHA-256                                                            |
+| ------------------------------------------------------------ | -------- | ------------------------------------------------------------------ |
+| `Siderkit Break_1.0.2_x64-setup.exe` (NSIS, 23 UI languages) | 6.81 MiB | `86cb61aafbd2d6655a5d3e13beae8fa55d0782b432afdc2c2ce8d8e5dc65de12` |
+| `Siderkit Break_1.0.2_x64-setup.exe.sig` (minisign)          | 444 B    | —                                                                  |
+
+The release assets keep the versioned names the download host proxies:
+`Siderkit-Break_1.0.2_windows_x64-setup.exe` and its `.sig`,
+`Siderkit-Break_1.0.2_macos_universal.dmg`, `Siderkit-Break_1.0.2_linux_amd64.deb`,
+`Siderkit-Break_1.0.2_linux_x86_64.rpm`, `Siderkit-Break_1.0.2_linux_amd64.AppImage`,
+plus `latest-dl.json`, `latest.json`, and `SHA256SUMS.txt`.
 
 ## Local build record (2026-11-24)
 
@@ -205,6 +226,12 @@ Set these repository secrets:
 | ------------------------------------ | -------------------------------------------------------- |
 | `TAURI_SIGNING_PRIVATE_KEY`          | the private key file contents, or its path on the runner |
 | `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | the key passphrase, when one was set                     |
+
+The key secret must carry the **full file contents, including the
+`untrusted comment:` first line**. With no secret set the workflow passes an
+empty value and the signing step fails with `failed to decode secret key:
+... Missing comment in secret key`; that is what happened on every release run
+before `1.0.2`, which is why those Windows installers were built locally.
 
 Losing the private key ends the update path for existing installs; the only
 recovery is a manual reinstall. Rotate only while there are no installed users,

@@ -2,6 +2,21 @@
 
 All notable changes to Siderkit Break are recorded here. `1.0.0` is the first stable release.
 
+## [1.0.2] - 2026-11-25
+
+### Fixed
+
+- **Every clock updates in real time, across midnight too.** The page now runs on a single shared 30-second tick, so a running break and the history rows roll over on their own when the date changes instead of freezing at yesterday's stamp.
+- **A throttled tray can no longer promise the future.** Relative labels clamp negative differences and floor the wall clock, so "in a few minutes" can no longer appear when Windows throttles the tray icon or the system clock skips around; the worst case is a truthful "刚刚 / Just now".
+
+### Changed
+
+- **Time logic lives in one place.** Day keys, day-rollover detection, and relative-time formatting moved into one time utility shared by the timer, update, history, and insights stores.
+
+### Added
+
+- **The unit suite runs on vitest with coverage gates.** 191 tests across 28 files run through vitest with happy-dom, and every check enforces coverage thresholds — 80% lines / 75% functions globally, 90% for the state stores.
+
 ## [1.0.1] - 2026-11-24
 
 ### Changed

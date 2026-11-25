@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Siderkit Break",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "identifier": "com.siderkit.break",
   "build": {
     "beforeDevCommand": "pnpm dev",

@@ -1,12 +1,8 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 
-import {
-  formatRangeLabel,
-  localDateKey,
-  rangeForPreset,
-  rangeFromDates,
-} from './export-range.util.ts';
+import { formatRangeLabel, rangeForPreset, rangeFromDates } from './export-range.util.ts';
+import { localDateKey } from '../time/time.util.ts';
 
 // 2026-11-18 is a Wednesday, so "this week" must start on Monday the 16th.
 const WEDNESDAY = new Date(2026, 10, 18, 10, 30, 0);

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 
 import {
   HEATMAP_DAYS,
@@ -8,7 +8,7 @@ import {
   heatmapWeeks,
   tagBarPercent,
 } from './insights.util.ts';
-import { localDateKey } from '../format.util.ts';
+import { localDateKey } from '../time/time.util.ts';
 
 test('heatLevel buckets the day by focused time', () => {
   assert.equal(heatLevel(0), 0);

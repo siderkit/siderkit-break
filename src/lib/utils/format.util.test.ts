@@ -1,7 +1,24 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 
-import { formatClock, formatDateHeading, formatFullDate, formatMinutes } from './format.util.ts';
+import type { TimerConfig } from '../ipc/types.ts';
+import {
+  cancelLabel,
+  formatClock,
+  formatCompactDuration,
+  formatDateHeading,
+  formatFullDate,
+  formatMinutes,
+  formatMinutesLabel,
+  formatTime,
+  outcomeLabel,
+  phaseClass,
+  phaseDurationMs,
+  phaseLabel,
+  sessionKindLabel,
+  skipLabel,
+} from './format.util.ts';
+import { localDateKey } from './time/time.util.ts';
 
 test('formatClock uses MM:SS below one hour', () => {
   assert.equal(formatClock(0), '00:00');
@@ -38,9 +55,60 @@ test('formatFullDate always keeps the year', () => {
 
 test('formatDateHeading keeps the year and today label', () => {
   const today = new Date();
-  const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const heading = formatDateHeading(key, 'en');
+  const key = localDateKey(today);
+  const heading = formatDateHeading(key, 'en', key);
   assert.equal(heading.includes('Today'), true);
   assert.equal(heading.includes(String(today.getFullYear())), true);
-  assert.equal(formatDateHeading('2026-11-20', 'en').includes('2026'), true);
+  assert.equal(formatDateHeading('2026-11-20', 'en', key).includes('2026'), true);
+});
+
+const timer: TimerConfig = {
+  focusMinutes: 25,
+  shortBreakMinutes: 5,
+  longBreakMinutes: 15,
+  longBreakEvery: 4,
+  autoStartBreaks: true,
+  autoStartFocus: false,
+};
+
+test('phase durations and classes map the full phase set', () => {
+  assert.equal(phaseDurationMs('Focus', timer), 25 * 60_000);
+  assert.equal(phaseDurationMs('ShortBreak', timer), 5 * 60_000);
+  assert.equal(phaseDurationMs('LongBreak', timer), 15 * 60_000);
+  assert.equal(phaseDurationMs('Countdown', timer), 0);
+  assert.equal(phaseClass('Focus'), 'is-focus');
+  assert.equal(phaseClass('ShortBreak'), 'is-break');
+  assert.equal(phaseClass('LongBreak'), 'is-break');
+  assert.equal(phaseClass('Countdown'), 'is-countdown');
+  assert.equal(phaseClass('Idle'), 'is-idle');
+});
+
+test('labels cover every phase, kind, outcome, and action branch', () => {
+  const phases = ['Focus', 'ShortBreak', 'LongBreak', 'Countdown', 'Idle'] as const;
+  for (const phase of phases) {
+    assert.ok(phaseLabel(phase).length > 0);
+    assert.ok(skipLabel(phase, null).length > 0);
+    assert.ok(skipLabel(phase, 'ShortBreak').length > 0);
+    assert.ok(cancelLabel(phase, null).length > 0);
+    assert.ok(cancelLabel(phase, 'LongBreak').length > 0);
+  }
+  for (const kind of ['Focus', 'ShortBreak', 'LongBreak', 'Countdown'] as const) {
+    assert.ok(sessionKindLabel(kind).length > 0);
+  }
+  for (const outcome of ['Completed', 'Skipped', 'Reset', 'Interrupted'] as const) {
+    assert.ok(outcomeLabel(outcome).length > 0);
+  }
+});
+
+test('durations and timestamps format for display', () => {
+  assert.equal(formatCompactDuration(6 * 60 * 60_000 + 20 * 60_000), '6h 20m');
+  assert.equal(formatCompactDuration(45 * 60_000), '45m');
+  assert.equal(formatCompactDuration(0), '0m');
+  assert.ok(formatTime(new Date(2026, 10, 20, 9, 5).getTime(), 'en').includes('09'));
+  assert.ok(formatMinutesLabel(90_000).length > 0);
+});
+
+test('invalid date inputs fall back to the raw key', () => {
+  assert.equal(formatFullDate('not-a-date', 'en'), 'not-a-date');
+  assert.equal(formatDateHeading('bad', 'en', '2026-11-25'), 'bad');
 });

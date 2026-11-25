@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 
 import { cleanTag, TAG_MAX_CHARS } from './tag.util.ts';
 

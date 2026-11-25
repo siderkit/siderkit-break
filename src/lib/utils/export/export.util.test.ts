@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { expect, test, vi } from 'vitest';
 
-import { bytesToBase64, exportFilename, fileNameOf, localStampKey } from './export.util.ts';
+import {
+  bytesToBase64,
+  downloadBytes,
+  exportFilename,
+  fileNameOf,
+  localStampKey,
+} from './export.util.ts';
 import { rangeFromDates } from './export-range.util.ts';
 
 test('exportFilename carries the range and the local timestamp', () => {
@@ -41,4 +47,28 @@ test('bytesToBase64 keeps the workbook bytes intact', () => {
   }
   const decoded = Uint8Array.from(Buffer.from(bytesToBase64(bytes), 'base64'));
   assert.deepEqual(decoded, bytes);
+});
+
+test('downloadBytes saves through an anchor with a revocable URL', () => {
+  const createObjectURL = vi.fn(() => 'blob:mocked');
+  const revokeObjectURL = vi.fn();
+  const originalCreate = URL.createObjectURL;
+  const originalRevoke = URL.revokeObjectURL;
+  URL.createObjectURL = createObjectURL;
+  URL.revokeObjectURL = revokeObjectURL;
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  vi.useFakeTimers();
+  try {
+    downloadBytes(new Uint8Array([1, 2, 3]), 'report.xlsx', 'application/octet-stream');
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(click).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1_000);
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:mocked');
+  } finally {
+    vi.useRealTimers();
+    click.mockRestore();
+    URL.createObjectURL = originalCreate;
+    URL.revokeObjectURL = originalRevoke;
+  }
 });

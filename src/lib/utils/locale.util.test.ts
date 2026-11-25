@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { expect, test, vi } from 'vitest';
 
+import {
+  applyDocumentLocale,
+  activeLocale,
+  currentLocale,
+  prepareLocale,
+  switchLocale,
+} from './locale.util.ts';
 import {
   LOCALES,
   filterLocales,
@@ -10,6 +17,11 @@ import {
   normalizeLocale,
   systemLocale,
 } from './locale.util.ts';
+
+vi.mock('../../paraglide/runtime.js', () => ({
+  getLocale: () => 'en',
+  setLocale: vi.fn(async () => {}),
+}));
 
 test('normalizeLocale matches shipped tags case-insensitively', () => {
   assert.equal(normalizeLocale('en'), 'en');
@@ -68,4 +80,39 @@ test('language search matches native name, English name, and code', () => {
   );
   assert.equal(filterLocales('').length, LOCALES.length);
   assert.equal(filterLocales('zzzz').length, 0);
+});
+
+test('currentLocale resolves the paraglide locale', () => {
+  assert.equal(currentLocale(), 'en');
+});
+
+test('activeLocale prefers the override and then the document', () => {
+  assert.equal(activeLocale('zh-TW'), 'zh-TW');
+  document.documentElement.lang = 'fr';
+  assert.equal(activeLocale(), 'fr');
+  assert.equal(activeLocale('en'), 'en');
+});
+
+test('applyDocumentLocale stamps language and direction', () => {
+  applyDocumentLocale('ar');
+  assert.equal(document.documentElement.lang, 'ar');
+  assert.equal(document.documentElement.dir, 'rtl');
+  assert.equal(document.documentElement.dataset.locale, 'ar');
+  applyDocumentLocale('en');
+  assert.equal(document.documentElement.lang, 'en');
+  assert.equal(document.documentElement.dir, 'ltr');
+});
+
+test('prepareLocale sets paraglide without reloading', async () => {
+  const runtime = await import('../../paraglide/runtime.js');
+  await prepareLocale('zh-TW');
+  expect(runtime.setLocale).toHaveBeenCalledWith('zh-TW', { reload: false });
+  assert.equal(document.documentElement.lang, 'zh-TW');
+});
+
+test('switchLocale applies immediately and asks paraglide to reload', async () => {
+  const runtime = await import('../../paraglide/runtime.js');
+  switchLocale('de');
+  expect(runtime.setLocale).toHaveBeenCalledWith('de');
+  assert.equal(document.documentElement.lang, 'de');
 });

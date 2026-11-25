@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 
 import type { HistoryDay } from '../../ipc/types.ts';
+import { dateKeyToMs } from '../time/time.util.ts';
 import {
   buildHistoryLayout,
-  dayStartMs,
   firstItemEndingAfter,
   mergeHistoryDays,
   spacerHeights,
@@ -110,7 +110,7 @@ test('merging pages keeps one newest-first group per date', () => {
 });
 
 test('day keys resolve to local midnight and reject impossible dates', () => {
-  assert.equal(dayStartMs(TODAY), new Date(2026, 10, 21).getTime());
-  assert.equal(dayStartMs('2026-02-30'), null);
-  assert.equal(dayStartMs('21-11-2026'), null);
+  assert.equal(dateKeyToMs(TODAY), new Date(2026, 10, 21).getTime());
+  assert.equal(dateKeyToMs('2026-02-30'), null);
+  assert.equal(dateKeyToMs('21-11-2026'), null);
 });

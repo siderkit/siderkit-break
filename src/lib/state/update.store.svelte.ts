@@ -15,6 +15,7 @@ import {
 } from '../ipc/client';
 import type { UpdateStatus } from '../ipc/types';
 import type { UpdateAction } from '../utils/update/update-status.util';
+import { clockStore } from './clock.store.svelte.ts';
 
 /**
  * Shared updater state for the main window. Rust remains authoritative; this
@@ -25,12 +26,17 @@ class UpdateStore {
   currentVersion = $state('');
   error = $state<string | null>(null);
   dismissedVersion = $state<string | null>(null);
-  /** Ticking timestamp so relative last-checked text keeps moving on screen. */
-  now = $state(Date.now());
+  /**
+   * Ticking timestamp so relative last-checked text keeps moving on screen.
+   * Delegates to the shared window clock: one interval serves every window,
+   * and its visibility catch-up keeps labels correct after hours in the tray.
+   */
+  get now(): number {
+    return clockStore.now;
+  }
 
   private started = false;
   private unlisten: UnlistenFn[] = [];
-  private clock: ReturnType<typeof setInterval> | undefined;
 
   async init(): Promise<void> {
     if (this.started) {
@@ -56,7 +62,6 @@ class UpdateStore {
     } catch (error) {
       this.fail(error);
     }
-    this.startClock();
   }
 
   destroy(): void {
@@ -64,25 +69,7 @@ class UpdateStore {
       unlisten();
     }
     this.unlisten = [];
-    this.stopClock();
     this.started = false;
-  }
-
-  private startClock(): void {
-    if (this.clock !== undefined) {
-      return;
-    }
-    this.clock = setInterval(() => {
-      this.now = Date.now();
-    }, 30_000);
-  }
-
-  private stopClock(): void {
-    if (this.clock === undefined) {
-      return;
-    }
-    clearInterval(this.clock);
-    this.clock = undefined;
   }
 
   get visible(): boolean {

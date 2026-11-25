@@ -20,6 +20,7 @@ import {
   updateSettings,
 } from '../ipc/client';
 import type { Settings, TimerSnapshot, TodaySummary } from '../ipc/types';
+import { clockStore } from './clock.store.svelte.ts';
 import { applyAppearance } from '../utils/theme.util';
 import { m } from '../../paraglide/messages.js';
 
@@ -130,6 +131,13 @@ class TimerStore {
         await onSettingsChanged((next) => {
           this.settings = next;
           applyAppearance(next.general);
+        }),
+      );
+      // A day rollover invalidates the "today" summary; refetch as soon as the
+      // shared clock flips instead of waiting for a timer event.
+      this.unlisten.push(
+        clockStore.onDayChange(() => {
+          void this.refreshSummary();
         }),
       );
       const [snapshot, settings, summary] = await Promise.all([

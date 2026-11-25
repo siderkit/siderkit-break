@@ -1,5 +1,6 @@
 import type { Phase, SessionKind, SessionOutcome, TimerConfig } from '../ipc/types.ts';
 import type { Locale } from './locale.util.ts';
+import { parseLocalDateKey } from './time/time.util.ts';
 import { m } from '../../paraglide/messages.js';
 
 /**
@@ -112,19 +113,9 @@ export function outcomeLabel(outcome: SessionOutcome): string {
   }
 }
 
-/** Local calendar key (`YYYY-MM-DD`) for "today" checks. */
-export function localDateKey(date = new Date()): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-}
-
-function parseLocalDate(date: string): Date | null {
-  const parsed = new Date(`${date}T12:00:00`);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
-}
-
 /** Full calendar date with the year, e.g. 2026年11月20日 or November 20, 2026. */
 export function formatFullDate(date: string, locale: Locale): string {
-  const parsed = parseLocalDate(date);
+  const parsed = parseLocalDateKey(date);
   if (!parsed) {
     return date;
   }
@@ -135,12 +126,14 @@ export function formatFullDate(date: string, locale: Locale): string {
   }).format(parsed);
 }
 
-/** Formats a local `YYYY-MM-DD` heading; today keeps its label plus the date. */
-export function formatDateHeading(date: string, locale: Locale): string {
-  if (date === localDateKey()) {
+/** Formats a local `YYYY-MM-DD` heading; today keeps its label plus the date.
+ * The caller passes today's key so a live heading flips to the new day as
+ * soon as the shared clock rolls over, without any window reload. */
+export function formatDateHeading(date: string, locale: Locale, todayKey: string): string {
+  if (date === todayKey) {
     return `${m['history.today']()} · ${formatFullDate(date, locale)}`;
   }
-  const parsed = parseLocalDate(date);
+  const parsed = parseLocalDateKey(date);
   if (!parsed) {
     return date;
   }

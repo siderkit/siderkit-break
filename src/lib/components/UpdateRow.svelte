@@ -2,8 +2,9 @@
   import { m } from '../../paraglide/messages.js';
   import { isTauri } from '../ipc/client';
   import type { Settings } from '../ipc/types';
-  import { formatDownloadSize, formatRelative } from '../utils/update/update-format.util';
+  import { formatDownloadSize } from '../utils/update/update-format.util';
   import { presentUpdate } from '../utils/update/update-status.util';
+  import { formatRelative } from '../utils/time/time.util';
   import { updateStore } from '../state/update.store.svelte.ts';
   import Button from '../ui/Button.svelte';
   import SettingsRow from './settings/SettingsRow.svelte';

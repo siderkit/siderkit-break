@@ -1,4 +1,5 @@
 import { getSettings, isTauri, onLocaleChanged, onSettingsChanged } from '../ipc/client';
+import { clockStore } from '../state/clock.store.svelte.ts';
 import { installContextMenu } from '../utils/context-menu.util';
 import {
   applyDocumentLocale,
@@ -20,6 +21,9 @@ export type WindowName = 'main' | 'overlay' | 'break' | 'locate';
 export async function prepareWindow(name: WindowName): Promise<void> {
   document.documentElement.dataset.window = name;
   installRipple();
+  // One clock serves every window: "today" reads, relative labels, and day
+  // rollovers all derive from it, so it starts before the first render.
+  clockStore.start();
   let locale: Locale = systemLocale();
   if (isTauri) {
     try {

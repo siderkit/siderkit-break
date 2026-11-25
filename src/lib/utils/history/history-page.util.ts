@@ -112,9 +112,6 @@ export function visibleItemRange(
   return { start, end: Math.max(start, end) };
 }
 
-/** Local midnight for a `YYYY-MM-DD` key, or null when the key is invalid. */
-export { dateKeyToMs as dayStartMs } from '../export/export-range.util.ts';
-
 /** Merges newest-first day groups; a day appears once even across page edges. */
 export function mergeHistoryDays(existing: HistoryDay[], incoming: HistoryDay[]): HistoryDay[] {
   const byDate = new Map<string, HistoryDay>();

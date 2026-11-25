@@ -4,6 +4,7 @@
   import { m } from '../../paraglide/messages.js';
   import { formatCompactDuration } from '../utils/format.util';
   import type { InsightsRange } from '../ipc/types';
+  import { clockStore } from '../state/clock.store.svelte.ts';
   import { insightsStore } from '../state/insights.store.svelte.ts';
   import { currentLocale } from '../utils/locale.util';
   import { timerStore } from '../state/timer.store.svelte.ts';
@@ -47,6 +48,11 @@
 
   onMount(() => {
     void insightsStore.load(insightsStore.range);
+    // Midnight invalidates "today": reload the visible range the moment the
+    // shared clock rolls over instead of showing yesterday until remount.
+    return clockStore.onDayChange(() => {
+      void insightsStore.refresh();
+    });
   });
 
   function startFocus(): void {

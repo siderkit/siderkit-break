@@ -7,6 +7,7 @@
     outcomeLabel,
     sessionKindLabel,
   } from '../utils/format.util';
+  import { clockStore } from '../state/clock.store.svelte.ts';
   import type { HistoryListItem } from '../utils/history/history-page.util';
   import type { HistoryDay, HistorySession } from '../ipc/types';
   import type { Locale } from '../utils/locale.util';
@@ -32,7 +33,9 @@
 
 {#if item.kind === 'day'}
   <div class="l-history-row__day" style:block-size="{item.height}px">
-    <h3 class="l-history-row__date">{formatDateHeading(item.day.date, locale)}</h3>
+    <h3 class="l-history-row__date">
+      {formatDateHeading(item.day.date, locale, clockStore.dayKey)}
+    </h3>
     <span class="l-history-row__summary">{daySummary(item.day)}</span>
   </div>
 {:else if item.session}

@@ -120,6 +120,17 @@ export function currentLocale(): Locale {
   return isLocale(value) ? value : 'en';
 }
 
+/** Resolves the effective BCP-47 tag for Intl formatting (document wins). */
+export function activeLocale(override?: string): string | undefined {
+  if (override) {
+    return override;
+  }
+  if (typeof document === 'undefined') {
+    return undefined;
+  }
+  return document.documentElement.lang || undefined;
+}
+
 /** Applies the document language and writing direction without reloading. */
 export function applyDocumentLocale(locale: Locale): void {
   if (typeof document === 'undefined') {

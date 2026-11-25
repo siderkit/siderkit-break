@@ -1,5 +1,5 @@
 import type { InsightsDay, InsightsPayload, InsightsRange } from '../../ipc/types.ts';
-import { localDateKey } from '../format.util.ts';
+import { localDateKey } from '../time/time.util.ts';
 
 export const HEATMAP_DAYS = 371;
 const HEATMAP_COLUMNS = 53;

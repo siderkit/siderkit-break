@@ -1,9 +1,9 @@
 import { tick } from 'svelte';
 
-import { localDayStartFromNow, shiftLocalDays } from '../utils/export/export-range.util';
 import { getHistoryWindow, isTauri } from '../ipc/client';
 import type { HistoryDay } from '../ipc/types';
-import { dayStartMs, mergeHistoryDays } from '../utils/history/history-page.util';
+import { mergeHistoryDays } from '../utils/history/history-page.util';
+import { dateKeyToMs, localDayStartFromNow, shiftLocalDays } from '../utils/time/time.util';
 
 export const PAGE_DAYS = 30;
 
@@ -112,7 +112,7 @@ export class HistoryListState {
 
 function oldestDayStart(groups: HistoryDay[]): number | null {
   const oldest = groups.at(-1);
-  return oldest ? dayStartMs(oldest.date) : null;
+  return oldest ? dateKeyToMs(oldest.date) : null;
 }
 
 function errorMessage(cause: unknown): string {

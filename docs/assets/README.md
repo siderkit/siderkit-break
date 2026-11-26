@@ -2,14 +2,15 @@
 
 These images are captured from the running app. They are not mockups, and the UI text is not retouched.
 
-| File                | Source                                                      | Intrinsic size |
-| ------------------- | ----------------------------------------------------------- | -------------- |
-| `hero.png`          | Composed: main window beside the break reminder card        | 1200 × 630     |
-| `hero-neutral.png`  | Main window on the paper background, no headline text       | 1280 × 640     |
-| `main-focus.png`    | Main window, focus running (768 × 500 client area)          | 770 × 517      |
-| `break-running.png` | Break reminder card window, short break running             | 360 × 157      |
-| `settings.png`      | Settings root page (768 × 500 client area)                  | 770 × 532      |
-| `languages.png`     | Settings → General → Language sheet (768 × 500 client area) | 770 × 532      |
+| File                 | Source                                                      | Intrinsic size |
+| -------------------- | ----------------------------------------------------------- | -------------- |
+| `hero.png`           | Composed: main window beside the break reminder card        | 1200 × 630     |
+| `hero-neutral.png`   | Main window on the paper background, no headline text       | 1280 × 640     |
+| `social-preview.png` | Composed social card: headline, main window, reminder card  | 1280 × 640     |
+| `main-focus.png`     | Main window, focus running (768 × 500 client area)          | 770 × 517      |
+| `break-running.png`  | Break reminder card window, short break running             | 360 × 157      |
+| `settings.png`       | Settings root page (768 × 500 client area)                  | 770 × 532      |
+| `languages.png`      | Settings → General → Language sheet (768 × 500 client area) | 770 × 532      |
 
 ## Regenerating
 
@@ -28,6 +29,12 @@ These images are captured from the running app. They are not mockups, and the UI
 
 4. The reminder card window is transparent, so its capture keys out the empty
    black backdrop before it is placed on any background.
+
+5. `social-preview.png` is the GitHub repository social preview. It reuses the
+   same stage as the website's Open Graph image, recomposed at 1280 × 640 so
+   GitHub's topic and search cards have room for the headline. GitHub stores it
+   in repository settings (Settings → Social preview), not in the README; keep
+   this file as the versioned source.
 
 ## Rules
 

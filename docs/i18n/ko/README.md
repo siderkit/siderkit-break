@@ -10,7 +10,7 @@ Windows, macOS, Linux를 위한 조용하고 로컬 우선의 집중 타이머�
 
 **언어:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · [繁體中文](../zh-TW/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · [తెలుగు](../te/README.md) · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · **한국어** · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · [Italiano](../it/README.md) · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **상태:** 1.0 릴리스 후보. 공개 바이너리는 아직 없습니다. 소스에서 빌드하세요.
+> **상태:** 1.0.4가 Windows, macOS, Linux용으로 공개되었습니다. [최신 릴리스 다운로드](https://github.com/siderkit/siderkit-break/releases/latest). macOS 빌드는 서명되지 않아 Gatekeeper에서 한 번 수동으로 허용해야 합니다.
 
 ## 주요 기능
 

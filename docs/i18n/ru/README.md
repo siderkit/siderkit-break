@@ -10,7 +10,7 @@
 
 **Языки:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · [繁體中文](../zh-TW/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · **Русский** · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · [తెలుగు](../te/README.md) · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · [한국어](../ko/README.md) · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · [Italiano](../it/README.md) · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **Статус:** Кандидат в релиз 1.0. Публичных бинарных файлов пока нет; соберите из исходников.
+> **Статус:** версия 1.0.4 доступна для Windows, macOS и Linux. [Скачать последний выпуск](https://github.com/siderkit/siderkit-break/releases/latest). Сборки macOS не подписаны, поэтому Gatekeeper требует однократного ручного разрешения.
 
 ## Возможности
 

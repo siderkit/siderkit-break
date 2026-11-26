@@ -10,7 +10,7 @@ Windows, macOS ও Linux-এর জন্য একটি শান্ত, ল�
 
 **ভাষা:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · [繁體中文](../zh-TW/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · **বাংলা** · [Bahasa Indonesia](../id/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · [తెలుగు](../te/README.md) · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · [한국어](../ko/README.md) · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · [Italiano](../it/README.md) · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **অবস্থা:** 1.0 রিলিজ ক্যান্ডিডেট। এখনও কোনো পাবলিক বাইনারি নেই; সোর্স থেকে বানান।
+> **অবস্থা:** 1.0.4 প্রকাশিত (Windows, macOS, Linux)। [সর্বশেষ সংস্করণ ডাউনলোড করুন](https://github.com/siderkit/siderkit-break/releases/latest)। macOS বিল্ড স্বাক্ষরিত নয়, তাই একবার ম্যানুয়াল অনুমতি লাগে।
 
 ## প্রধান বৈশিষ্ট্য
 

@@ -1,6 +1,6 @@
 # Release guide
 
-> Status: `1.0.3` is published on GitHub Releases and served through `https://dl.siderkit.com`. `1.0.2` stays online as the previous tag. `1.0.4` is prepared locally with the GPL-3.0-only license change and is not published yet.
+> Status: `1.0.4` is published on GitHub Releases and served through `https://dl.siderkit.com`. `1.0.3` stays online as the previous tag.
 
 ## Update host
 
@@ -42,7 +42,7 @@ The release keeps the manifest version identical in:
 - `src-tauri/Cargo.toml`
 - `src-tauri/tauri.conf.json`
 
-All three are now `1.0.4`, the license-only release that moves Break to `GPL-3.0-only`. `1.0.3` remains the published release and, like every earlier version, stays under `Apache-2.0`; the GPL applies from `1.0.4` onward. There are no functional changes. The app reads the Tauri version at runtime for the About panel.
+All three are now `1.0.4`, the license-only release that moves Break to `GPL-3.0-only`. `1.0.3` and every earlier version stay under `Apache-2.0`. There are no functional changes. The app reads the Tauri version at runtime for the About panel.
 
 ## Artifact matrix
 
@@ -57,6 +57,33 @@ All three are now `1.0.4`, the license-only release that moves Break to `GPL-3.0
 A release build adds `--config src-tauri/tauri.release.conf.json` to Windows. That config sets `bundle.createUpdaterArtifacts` and makes Tauri emit the `.sig` file next to the NSIS installer; it requires `TAURI_SIGNING_PRIVATE_KEY`. Since `1.0.3` the repository secret holds the empty-passphrase key (the whole key file on one line), so `release.yml` signs Windows without a local build. Do not use the release config for a local smoke build unless the key is set.
 
 The build workflow in `.github/workflows/build.yml` runs the same commands and uploads the bundles as workflow artifacts. It does not create a GitHub release.
+
+## CI build record (2026-11-26, 1.0.4)
+
+`1.0.4` is the license-only release that moves Break to `GPL-3.0-only`. Run
+`45774357737` on tag `v1.0.4` succeeded in all four jobs (Windows installer,
+macOS disk image, Linux packages, draft release). The draft carried the same
+unversioned asset set as `1.0.3`:
+
+- `Siderkit-Break_windows_x64-setup.exe` and `.sig`
+- `Siderkit-Break_macos_universal.dmg`
+- `Siderkit-Break_linux_amd64.deb`, `Siderkit-Break_linux_x86_64.rpm`, `Siderkit-Break_linux_amd64.AppImage`
+- `latest.json`, `latest-dl.json`, `SHA256SUMS.txt`
+
+The CI manifests ship with empty notes, so both were regenerated locally with
+`scripts/make-latest-json.mjs` (release notes filled in) and uploaded over the
+REST API with `--clobber`. The draft was published with
+`PATCH {"draft": false}`; `promote.yml` run `45777339788` confirmed the live
+manifest and the installer URL.
+
+| Artifact                                      | Size      | SHA-256                                                            |
+| --------------------------------------------- | --------- | ------------------------------------------------------------------ |
+| `Siderkit-Break_windows_x64-setup.exe` (NSIS) | 6.82 MiB  | `11e942630a0162e2f1ac9705e7ac11480d9ce9c8292cd4648f1b134c39f63af4` |
+| `Siderkit-Break_windows_x64-setup.exe.sig`    | 444 B     | —                                                                  |
+| `Siderkit-Break_macos_universal.dmg`          | 14.53 MiB | `a61c237de3d12902227c2f46149d504540e3e3025cb4c739120f17787ed3b971` |
+| `Siderkit-Break_linux_amd64.deb`              | 8.64 MiB  | `e70d7e9b61f4a2203e70520a51d1d6f37a07c74601966c52b6f46166ff233eb3` |
+| `Siderkit-Break_linux_x86_64.rpm`             | 8.64 MiB  | `13d8b56fc2afd19a185d6e1d9f5e4ea1b2fbd98ffd40ec68007707e09d82654c` |
+| `Siderkit-Break_linux_amd64.AppImage`         | 83.06 MiB | `da4b05df3e3a2057f508bce9737e842801c8b18b6e5bf042eaf3320a6d030a06` |
 
 ## CI build record (2026-11-26)
 

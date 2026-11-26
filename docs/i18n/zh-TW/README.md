@@ -10,7 +10,7 @@
 
 **語言:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · **繁體中文** · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · [తెలుగు](../te/README.md) · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · [한국어](../ko/README.md) · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · [Italiano](../it/README.md) · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **狀態:** 1.0 候選版本。尚未發布公開二進位檔；請從原始碼建置。
+> **狀態:** 1.0.4 已發布，支援 Windows、macOS 與 Linux。[下載最新版本](https://github.com/siderkit/siderkit-break/releases/latest)。macOS 版本未簽署，Gatekeeper 需要手動允許一次。
 
 ## 功能亮點
 

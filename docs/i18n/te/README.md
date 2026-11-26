@@ -10,7 +10,7 @@ Windows, macOS మరియు Linux కోసం ప్రశాంతమైన
 
 **భాషలు:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · [繁體中文](../zh-TW/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · **తెలుగు** · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · [한국어](../ko/README.md) · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · [Italiano](../it/README.md) · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **స్థితి:** 1.0 విడుదల అభ్యర్థి. ఇంకా పబ్లిక్ బైనరీలు లేవు; సోర్స్ నుండి బిల్డ్ చేయండి.
+> **స్థితి:** 1.0.4 Windows, macOS మరియు Linux కోసం అందుబాటులో ఉంది. [తాజా విడుదలను డౌన్‌లోడ్ చేయండి](https://github.com/siderkit/siderkit-break/releases/latest). macOS బిల్డ్‌లు సంతకం చేయబడలేదు, కాబట్టి Gatekeeper ఒకసారి మాన్యువల్ అనుమతి అడుగుతుంది.
 
 ## ముఖ్యాంశాలు
 

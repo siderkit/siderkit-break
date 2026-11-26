@@ -10,7 +10,7 @@ Un temporizador de concentración tranquilo y local para Windows, macOS y Linux.
 
 **Idiomas:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · [繁體中文](../zh-TW/README.md) · [हिन्दी](../hi/README.md) · **Español** · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · [తెలుగు](../te/README.md) · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · [한국어](../ko/README.md) · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · [Italiano](../it/README.md) · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **Estado:** Versión candidata 1.0. Aún no hay binarios públicos; compila desde el código fuente.
+> **Estado:** 1.0.4 ya está disponible para Windows, macOS y Linux. [Descarga la última versión](https://github.com/siderkit/siderkit-break/releases/latest). Las compilaciones de macOS no están firmadas, así que Gatekeeper necesita un permiso manual.
 
 ## Aspectos destacados
 

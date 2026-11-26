@@ -10,7 +10,7 @@ Un timer di concentrazione tranquillo e locale per Windows, macOS e Linux. Manti
 
 **Lingue:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · [繁體中文](../zh-TW/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · [తెలుగు](../te/README.md) · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · [한국어](../ko/README.md) · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · **Italiano** · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **Stato:** Versione candidata 1.0. Nessun binario pubblico ancora; compila dai sorgenti.
+> **Stato:** 1.0.4 è disponibile per Windows, macOS e Linux. [Scarica l’ultima versione](https://github.com/siderkit/siderkit-break/releases/latest). Le build macOS non sono firmate, quindi Gatekeeper richiede un’autorizzazione manuale.
 
 ## In evidenza
 

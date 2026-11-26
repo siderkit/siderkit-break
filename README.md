@@ -10,9 +10,9 @@ A calm, local-first focus timer for Windows, macOS, and Linux. It keeps a quiet 
 
 **Languages:** English · [简体中文](docs/i18n/zh-CN/README.md) · [繁體中文](docs/i18n/zh-TW/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [Español](docs/i18n/es/README.md) · [Français](docs/i18n/fr/README.md) · [Português](docs/i18n/pt/README.md) · [العربية](docs/i18n/ar/README.md) · [বাংলা](docs/i18n/bn/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [Русский](docs/i18n/ru/README.md) · [اردو](docs/i18n/ur/README.md) · [Deutsch](docs/i18n/de/README.md) · [日本語](docs/i18n/ja/README.md) · [Kiswahili](docs/i18n/sw/README.md) · [मराठी](docs/i18n/mr/README.md) · [తెలుగు](docs/i18n/te/README.md) · [Türkçe](docs/i18n/tr/README.md) · [தமிழ்](docs/i18n/ta/README.md) · [Tiếng Việt](docs/i18n/vi/README.md) · [한국어](docs/i18n/ko/README.md) · [فارسی](docs/i18n/fa/README.md) · [Filipino](docs/i18n/fil/README.md) · [ไทย](docs/i18n/th/README.md) · [Italiano](docs/i18n/it/README.md) · [Bahasa Melayu](docs/i18n/ms/README.md) · [Polski](docs/i18n/pl/README.md) · [Українська](docs/i18n/uk/README.md) · [Nederlands](docs/i18n/nl/README.md) · [Română](docs/i18n/ro/README.md)
 
-> **Status:** 1.0 release candidate. Windows and Linux artifacts are built and verified on test machines; the macOS build is unsigned. No public binaries have been published yet. [Build from source](#build-from-source) to try it now.
+> **Status:** 1.0.4 is out for Windows, macOS, and Linux. [Download the latest release](https://github.com/siderkit/siderkit-break/releases/latest). macOS builds are unsigned, so Gatekeeper needs one manual allow.
 
-Siderkit Break is an experimental project from Siderkit. The 1.0 release is intentionally small: a local-first focus timer with a tray presence, a transparent floating countdown, and in-app reminder cards. It needs no account and no server for your data. On Windows it can check for updates; anonymous install counts are optional and can be turned off.
+Siderkit Break is a local-first focus timer with a tray presence, a transparent floating countdown, and in-app reminder cards. It needs no account and no server for your data. On Windows it can check for updates; anonymous install counts are optional and can be turned off.
 
 ## At a glance
 

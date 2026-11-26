@@ -10,7 +10,7 @@ Pengingat fokus yang tenang dan mengutamakan data lokal untuk Windows, macOS, da
 
 **Bahasa:** [English](../../../README.md) · [简体中文](../zh-CN/README.md) · [繁體中文](../zh-TW/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [Português](../pt/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · **Bahasa Indonesia** · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Deutsch](../de/README.md) · [日本語](../ja/README.md) · [Kiswahili](../sw/README.md) · [मराठी](../mr/README.md) · [తెలుగు](../te/README.md) · [Türkçe](../tr/README.md) · [தமிழ்](../ta/README.md) · [Tiếng Việt](../vi/README.md) · [한국어](../ko/README.md) · [فارسی](../fa/README.md) · [Filipino](../fil/README.md) · [ไทย](../th/README.md) · [Italiano](../it/README.md) · [Bahasa Melayu](../ms/README.md) · [Polski](../pl/README.md) · [Українська](../uk/README.md) · [Nederlands](../nl/README.md) · [Română](../ro/README.md)
 
-> **Status:** Kandidat rilis 1.0. Belum ada biner publik; bangun dari sumber.
+> **Status:** 1.0.4 tersedia untuk Windows, macOS, dan Linux. [Unduh rilis terbaru](https://github.com/siderkit/siderkit-break/releases/latest). Build macOS belum ditandatangani, jadi Gatekeeper perlu izin manual sekali.
 
 ## Sorotan
 

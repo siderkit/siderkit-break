@@ -1,6 +1,6 @@
 [package]
 name = "siderkit-break"
-version = "1.0.2"
+version = "1.0.3"
 description = "A tiny cross-platform break reminder."
 authors = ["Siderkit contributors"]
 edition = "2021"

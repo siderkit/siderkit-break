@@ -2,6 +2,13 @@
 
 All notable changes to Siderkit Break are recorded here. `1.0.0` is the first stable release.
 
+## [1.0.3] - 2026-11-26
+
+### Changed
+
+- **Launch at login is on by default for new installs.** Break now starts quietly at sign-in and waits in the tray, so the next break is already running instead of something you have to remember to open. Upgrades keep your stored choice; turn it off any time in Settings → General.
+- **The Help panel leads with About.** The version card and the update check are now the first block in Help, so checking for updates or reading the version takes one look instead of scrolling to the bottom.
+
 ## [1.0.2] - 2026-11-25
 
 ### Fixed

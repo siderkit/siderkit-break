@@ -40,4 +40,4 @@ A matriz completa de plataformas e os comandos de empacotamento estão no README
 
 ## Licença
 
-Apache-2.0. See [LICENSE](../../../LICENSE) and [NOTICE](../../../NOTICE).
+GPL-3.0-only. See [LICENSE](../../../LICENSE) and [NOTICE](../../../NOTICE). Releases up to 1.0.3 remain under Apache-2.0.

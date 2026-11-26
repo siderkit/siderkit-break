@@ -2,6 +2,12 @@
 
 All notable changes to Siderkit Break are recorded here. `1.0.0` is the first stable release.
 
+## [1.0.4] - 2026-11-26
+
+### Changed
+
+- **Break is now licensed under GPL-3.0-only.** Releases up to `1.0.3` remain under Apache-2.0. The app, the installer, the About panel, and the source tree now carry the new license; there are no functional changes in this release.
+
 ## [1.0.3] - 2026-11-26
 
 ### Changed

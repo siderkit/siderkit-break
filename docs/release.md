@@ -1,6 +1,6 @@
 # Release guide
 
-> Status: `1.0.3` is published on GitHub Releases and served through `https://dl.siderkit.com`. `1.0.2` stays online as the previous tag.
+> Status: `1.0.3` is published on GitHub Releases and served through `https://dl.siderkit.com`. `1.0.2` stays online as the previous tag. `1.0.4` is prepared locally with the GPL-3.0-only license change and is not published yet.
 
 ## Update host
 
@@ -42,7 +42,7 @@ The release keeps the manifest version identical in:
 - `src-tauri/Cargo.toml`
 - `src-tauri/tauri.conf.json`
 
-All three are now `1.0.3`, which leads the Help panel with About and turns on launch-at-login for new installs. `1.0.2` remains the previous tag. The app reads the Tauri version at runtime for the About panel.
+All three are now `1.0.4`, the license-only release that moves Break to `GPL-3.0-only`. `1.0.3` remains the published release and, like every earlier version, stays under `Apache-2.0`; the GPL applies from `1.0.4` onward. There are no functional changes. The app reads the Tauri version at runtime for the About panel.
 
 ## Artifact matrix
 

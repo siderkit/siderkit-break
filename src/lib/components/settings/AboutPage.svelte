@@ -37,7 +37,7 @@
   <SettingsRow label={m['settings.about.version']()} value={`v${version}`} divided />
   <SettingsRow
     label={m['settings.about.license']()}
-    value="Apache-2.0"
+    value="GPL-3.0-only"
     chevron
     divided
     onclick={onlicense}

@@ -1,10 +1,10 @@
 {
   "name": "siderkit-break",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "type": "module",
   "description": "A tiny cross-platform break reminder.",
-  "license": "Apache-2.0",
+  "license": "GPL-3.0-only",
   "packageManager": "pnpm@12.16.1",
   "engines": {
     "node": ">=22"

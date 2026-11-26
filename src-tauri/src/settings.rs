@@ -139,7 +139,7 @@ pub struct GeneralSettings {
 impl Default for GeneralSettings {
     fn default() -> Self {
         Self {
-            launch_at_login: false,
+            launch_at_login: true,
             start_minimized: false,
             theme: Theme::System,
             palette: Palette::Forest,
@@ -257,8 +257,9 @@ mod tests {
     }
 
     #[test]
-    fn settings_default_to_system_language_and_forest_palette() {
+    fn new_settings_default_to_autostart_system_language_and_forest_palette() {
         let settings = Settings::default();
+        assert!(settings.general.launch_at_login);
         assert_eq!(settings.general.locale, None);
         assert_eq!(settings.general.palette, Palette::Forest);
         assert!(settings.update.auto_check);

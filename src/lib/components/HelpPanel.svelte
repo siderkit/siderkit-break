@@ -11,6 +11,10 @@
 
   <div class="l-help-panel__scroll">
     <section class="l-help-panel__section">
+      <h3 class="l-help-panel__heading">{m['settings.about.title']()}</h3>
+      <AboutInfo />
+    </section>
+    <section class="l-help-panel__section">
       <h3 class="l-help-panel__heading">{m['help.start.title']()}</h3>
       <p class="l-help-panel__body">{m['help.start.body']()}</p>
     </section>
@@ -37,10 +41,6 @@
     <section class="l-help-panel__section">
       <h3 class="l-help-panel__heading">{m['help.troubleshooting.title']()}</h3>
       <p class="l-help-panel__body">{m['help.troubleshooting.body']()}</p>
-    </section>
-    <section class="l-help-panel__section">
-      <h3 class="l-help-panel__heading">{m['settings.about.title']()}</h3>
-      <AboutInfo />
     </section>
   </div>
 </section>

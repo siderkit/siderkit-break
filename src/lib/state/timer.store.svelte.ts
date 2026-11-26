@@ -64,7 +64,7 @@ const DEFAULT_SETTINGS: Settings = {
     tick: false,
   },
   general: {
-    launchAtLogin: false,
+    launchAtLogin: true,
     startMinimized: false,
     theme: 'System',
     palette: 'Forest',
